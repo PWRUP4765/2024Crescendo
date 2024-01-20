@@ -35,6 +35,7 @@ public class RobotContainer {
 
 
     System.out.println("aldghlsegmdfbgmdfg");
+    System.out.println("Hi");
   }
 
   /**
