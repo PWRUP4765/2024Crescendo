@@ -19,15 +19,15 @@ import frc.robot.SwerveConstants;
 public class SwerveModule {
 
     //the driving electronics
-    private final CANSparkMax driveMotor;
+    private CANSparkMax driveMotor;
     private SparkPIDController drivePIDController;
 
     //the turning electronics
-    private final CANSparkMax turnMotor;
+    private CANSparkMax turnMotor;
     private SparkPIDController turnPIDController;
-    private final RelativeEncoder turnRelativeEncoder;
+    private RelativeEncoder turnRelativeEncoder;
 
-    private final CANcoder turnCANcoder;
+    private CANcoder turnCANcoder;
 
 
     //the Shuffleboard tab and entries
@@ -123,7 +123,6 @@ public class SwerveModule {
         //setting up the drive motor
         driveMotor.restoreFactoryDefaults();
         driveMotor.setInverted(driveMotorReversed);
-        driveMotor.setIdleMode(SwerveConstants.kDriveIdleMode);
         drivePIDController.setP(kDriveP);
         drivePIDController.setI(kDriveI);
         drivePIDController.setD(kDriveD);
@@ -135,7 +134,6 @@ public class SwerveModule {
         turnMotor.restoreFactoryDefaults();
         turnMotor.setInverted(turnMotorReversed);
         turnMotor.setSmartCurrentLimit(40);
-        turnMotor.setIdleMode(SwerveConstants.kTurnIdleMode);
         turnPIDController.setP(kTurnP);
         turnPIDController.setI(kTurnI);
         turnPIDController.setD(kTurnD);
@@ -194,7 +192,7 @@ public class SwerveModule {
             return new double[]{speed, angle};
         }
         
-        return new double[]{-speed, ((angle + 1) % 1) - 0.5};        
+        return new double[]{-speed, ((angle + 1) % 1) - 0.5};
     }
 
     public void createShuffleboardTab(String abbreviation) {
@@ -237,11 +235,6 @@ public class SwerveModule {
 
         sb_turnRelativeEncoderAngle.setDouble(turnRelativeEncoder.getPosition());
         sb_turnCANcoderAngle.setDouble(turnCANcoder.getAbsolutePosition().getValueAsDouble());
-    }
-
-
-    public void updatePID() {
-
     }
 
     public void updatePIDFromShuffleboard(){

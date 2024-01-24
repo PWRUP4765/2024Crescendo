@@ -16,4 +16,26 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class ArmConstants {
+    public static final int kArmMotorPort = 0; //TEMP
+    public static final boolean kArmMotorReversed = false; // TEMP
+
+    //Arm PID constants
+    public static final double kArmP = 0;
+    public static final double kArmI = 0;
+    public static final double kArmD = 0;
+    public static final double kArmIZ = 0;
+    public static final double kArmFF = 0;
+    public static final double kArmMinOutput = -1;
+    public static final double kArmMaxOutput = 1;
+
+    public static final double kArmEncoderOffset = 0;
+    public static final double kArmEncoderConversionFactor = 1;
+
+    public static final double kArmMinPosition = 0;
+    public static final double kArmMaxPosition = 1;
+
+
+  }
 }

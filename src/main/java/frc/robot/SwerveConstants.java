@@ -4,7 +4,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkMax;
 
 public class SwerveConstants {
-    //the driving motor ports - updated 12/11/23
+    //the driving motor ports
     public static final int kFrontLeftDriveMotorPort = 10;
     public static final int kFrontRightDriveMotorPort = 21;
     public static final int kRearLeftDriveMotorPort = 12;
@@ -16,7 +16,7 @@ public class SwerveConstants {
     public static final boolean kFrontRightDriveMotorReversed = true;
     public static final boolean kRearRightDriveMotorReversed = true;
 
-    //the turning motor ports - updated 12/11/23
+    //the turning motor ports
     public static final int kFrontLeftTurningMotorPort = 22;
     public static final int kFrontRightTurningMotorPort = 20;
     public static final int kRearLeftTurningMotorPort = 25;
@@ -28,19 +28,19 @@ public class SwerveConstants {
     public static final boolean kRearLeftTurningMotorReversed = false;
     public static final boolean kRearRightTurningMotorReversed = false;
     
-    //the CANCoder turning encoder ports - updated 12/11/23
+    //the CANCoder turning encoder ports
     public static final int kFrontLeftCANcoderPort = 3;
     public static final int kFrontRightCANcoderPort = 4;
     public static final int kRearLeftCANcoderPort = 2;
     public static final int kRearRightCANcoderPort = 1;
 
-    //whether the turning CANCoders are flipped - updated 1/13/24
+    //whether the turning CANCoders are flipped
     public static final SensorDirectionValue kFrontLeftCANcoderDirection = SensorDirectionValue.Clockwise_Positive;
     public static final SensorDirectionValue kFrontRightCANcoderDirection = SensorDirectionValue.Clockwise_Positive;
     public static final SensorDirectionValue kRearLeftCANcoderDirection = SensorDirectionValue.Clockwise_Positive;
     public static final SensorDirectionValue kRearRightCANcoderDirection = SensorDirectionValue.Clockwise_Positive;
 
-    //magnetic offset for the CANCoders - updated 12/14/23
+    //magnetic offset for the CANCoders
     //you can find these by connecting to the RoboRIO by USB on the drive station, opening the Phoenix Tuner app, and taking snapshots of
     //the rotational values of the CANCoders while in they are in the forward state
     public static final double kFrontLeftCANcoderMagnetOffset = -0.403; //-0.403 rotations
@@ -90,7 +90,5 @@ public class SwerveConstants {
     //because the turn gearing ratio is not 1:1, we need to spin the motor many times to equal one spin of the module
     //this constant is used for the position conversion factor. (every 150 turns of motors is 7 rotations of the module)
     public static final double kTurnConversionFactor = 7.0 / 150.0;
-    //the way that the turn motor controller sends power when not receiving a signal from the code (kBrake or kCoast)
-    public static final CANSparkMax.IdleMode kTurnIdleMode = CANSparkMax.IdleMode.kBrake;
 
 }
