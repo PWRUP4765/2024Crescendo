@@ -1,5 +1,8 @@
 package frc.robot.error;
 
+/**
+ * @author godbrigero
+ */
 public class NoChannelFoundException extends Exception {
 
   public final int channelTried;

@@ -1,5 +1,8 @@
 package frc.robot.error;
 
+/**
+ * @author godbrigero
+ */
 public class LimitException extends Exception {
 
   final double speed;
