@@ -49,4 +49,22 @@ public final class Constants {
     public static final int kClimbArmMotorPort = 0; // TEMP
     public static final boolean kClimbArmMotorIsBrushless = true; // TEMP
   }
+
+  public static class IntakeConstants {
+    // Motor Speeds
+    public static final kIntakeSpeed = 0.2; // TEMP
+    public static final kShooterSpeed = 0.8; // TEMP
+
+    // Intake Paramters 
+    public static final int kIntakePort = 0; // TEMP
+    public static final int kShooterPort1 = 1; // TEMP
+    public static final int kShooterPort2 = 2; // TEMP
+    public static final boolean kIsBrushless = true; // TEMP
+
+    public static final boolean kIsIntakeReversed = false; // TEMP
+    public static final boolean kIsShooter1Reversed = false; // TEMP
+    public static final boolean kIsShooter2Reversed = true; // TEMP
+    
+
+  }  
 }

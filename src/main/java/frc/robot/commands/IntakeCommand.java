@@ -5,17 +5,17 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.Constants.IntakeConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class IntakeCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+
   private final IntakeSubsystem m_IntakeSubsystem;
+  private final IntakeSpeed = IntakeConstants.kIntakeSpeed;
 
   /**
-   * Creates a new ExampleCommand.
-   *
    * @param subsystem The subsystem used by this command.
    */
   public IntakeCommand(IntakeSubsystem IntakeSubsystem) {
@@ -24,24 +24,20 @@ public class IntakeCommand extends Command {
     addRequirements(IntakeSubsystem);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_IntakeSubsystem.setMotor(1)
+    m_IntakeSubsystem.setMotor(IntakeSpeed)
 
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_IntakeSubsystem.setMotor(1)
+    m_IntakeSubsystem.setMotor(0)
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return m_IntakeSubsystem.isDetected();
