@@ -8,7 +8,7 @@ import frc.robot.subsystems.ClimbArmSubsystem;
  * @apiNote This is just for extending the arm / decending. It does not keep the robot in place for now (when finished)
  * @TODO Add code in order to stay in same spot (relative)
  * @author godbrigero
- * @author Ari
+ * @co-author Ari
  */
 
 public class ClimbArmCommand extends Command {
