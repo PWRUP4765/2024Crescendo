@@ -21,6 +21,12 @@ public class IntakeSubsystem extends SubsystemBase {
         shooterMotor2 = new CANSparkMax(shooterMotorChannel2, MotorType.kBrushless);
 
     }
+    /* HIGH LEVEL WHAT WE WANT TO DO:
+     * 
+     * When the disc is slides in to the robot from the bottom, the intake motors are moving,
+     * then once the disc hits a metal sensor, the intake motors stop, and the disc is ready to be shot.
+     * Once the command is given to shoot the disc, the intake motors will spin inwards, and
+     */
     @Override
     public void periodic() {
         // Check if the intake sensor is triggered
