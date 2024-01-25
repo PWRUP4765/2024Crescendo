@@ -3,7 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.ClimbArmSubsystem;
-import javax.naming.LimitExceededException;
+
+/**
+ * @apiNote This is just for extending the arm / decending. It does not keep the robot in place for now (when finished)
+ * @TODO Add code in order to stay in same spot (relative)
+ * @author godbrigero
+ * @author Ari
+ */
 
 public class ClimbArmCommand extends Command {
 
