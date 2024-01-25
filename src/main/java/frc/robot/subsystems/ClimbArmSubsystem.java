@@ -4,8 +4,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
-import frc.robot.error.SpeedLimitException;
 
 public class ClimbArmSubsystem extends SubsystemBase {
 
@@ -25,9 +25,13 @@ public class ClimbArmSubsystem extends SubsystemBase {
   }
 
   // -100% to 100%
-  public void setSpeed(double speedPerc) throws SpeedLimitException {
+  public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
-    if (checkSpeed(speed)) throw new SpeedLimitException(speedPerc);
+    // TODO: test @this
+    if (checkSpeed(speed)) throw new LimitException(
+      speedPerc,
+      this.getClass().getName()
+    );
 
     this.sparkMax.set(speed);
   }
@@ -49,7 +53,8 @@ public class ClimbArmSubsystem extends SubsystemBase {
     return this.sparkMax.get();
   }
 
+  // This CAN be negative
   public double getRevSinceStart() {
-    return encoder.getCountsPerRevolution();
+    return encoder.getPosition();
   }
 }
