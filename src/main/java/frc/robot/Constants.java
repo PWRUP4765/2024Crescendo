@@ -16,4 +16,13 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class CameraConstants {
+    //height of camera off the ground
+    public static final double kCameraHeight = 0.0;
+    //offset of camera from the horizontal center of the robot, in units
+    public static final double kCameraSideOffset = 0.0;
+    //offset of camera from the front-to-back center of the robot, in units
+    public static final double kCameraFrontOffset = 0.0;
+  }
 }
