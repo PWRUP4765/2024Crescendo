@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.error.LimitException;
 import frc.robot.inter.BalanceMotorAtSpotInterface;
@@ -100,12 +99,22 @@ public class BalanceMotorAtSpot extends Command {
         // YCoef is used to adapt to the motor not having enough power to move up even though it is not in position.
         // Might need re-coding
         yCoef += change == 0 ? 1 : 0;
-        double motorSpeed = MathFun.getPosOnGraph(x, yCoef);
-        motorCommands.setMotorSpeed(motorSpeed);
+        double motorSpeed = MathFun.getPosOnGraph(x, yCoef) * 100;
+        if (motorSpeed < motorMaxSpeedPerc) {
+          motorCommands.setMotorSpeed(motorSpeed);
+        } else {
+          // TODO: this might have to be re-coded THIS IS JST FOR DEBUG!
+          throw new LimitException(motorSpeed, this.getClass().getName());
+        }
       } else if (p > destPos + acuracy && p > destPos - acuracy) {
         yCoef -= change == 0 ? 1 : 0;
-        double motorSpeed = MathFun.getPosOnGraph(x, yCoef);
-        motorCommands.setMotorSpeed(motorSpeed);
+        double motorSpeed = MathFun.getPosOnGraph(x, yCoef) * 100;
+        if (motorSpeed < motorMaxSpeedPerc) {
+          motorCommands.setMotorSpeed(motorSpeed);
+        } else {
+          // TODO: this might have to be re-coded THIS IS JST FOR DEBUG!
+          throw new LimitException(motorSpeed, this.getClass().getName());
+        }
       }
     } catch (LimitException e) {
       e.printStackTrace();
