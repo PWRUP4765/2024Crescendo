@@ -5,7 +5,7 @@ import frc.robot.error.LimitException;
 /**
  * @author godbrigero
  */
-public interface BalanceMotorAtSpot {
+public interface BalanceMotorAtSpotInterface {
   public double getMotorCurPosition();
 
   /**
