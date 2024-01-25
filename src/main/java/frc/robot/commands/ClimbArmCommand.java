@@ -17,6 +17,7 @@ public class ClimbArmCommand extends Command {
 
   final double gearDiameter, armLen, speed, circum, gotoPos, acuracy;
   final ClimbArmSubsystem subsystem;
+  final boolean stayInPlace;
   boolean isOnline = false;
 
   /**
@@ -30,6 +31,7 @@ public class ClimbArmCommand extends Command {
    * @param acuracy Since the motor will adjust it's position based on where it is right now, the acurasy
    * is like how accurate you want the motor to go to a specific position. For example if u put 1 then the motor will
    * stop when it is in the window of a +- meter of the goToPos
+   * @param stayInPlace this will make the arm stay in place untill told not to AKA interrupted / stopped / canceled
    * @throws LimitException if the goToPos is greater then the length of the arm, it is impossible to go to it.
    * Similarly if the speed exceeds 100% / 0, the exception will be thrown
    *
@@ -41,7 +43,8 @@ public class ClimbArmCommand extends Command {
     double speed,
     ClimbArmSubsystem subsystem,
     double goToPos,
-    double acuracy
+    double acuracy,
+    boolean stayInPlace
   ) throws LimitException {
     // check if any limits have been exceeded and throw a new exception if they have been.
     if (
@@ -56,6 +59,7 @@ public class ClimbArmCommand extends Command {
     this.circum = gearDiameter * Math.PI;
     this.gotoPos = goToPos;
     this.acuracy = acuracy;
+    this.stayInPlace = stayInPlace;
   }
 
   @Override
@@ -69,7 +73,7 @@ public class ClimbArmCommand extends Command {
     double revs = subsystem.getRevSinceStart();
     double curDist = circum * revs;
 
-    if (Math.abs(curDist - gotoPos) < acuracy) {
+    if (Math.abs(curDist - gotoPos) < acuracy && !stayInPlace) {
       isOnline = false;
       return;
     }
