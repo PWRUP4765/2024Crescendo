@@ -25,14 +25,18 @@ public class ClimbArmSubsystem extends SubsystemBase {
    *                                 for now it will throw this
    * @todo add a thing that gradually increases the motor speed. Can be helpful
    */
-  public ClimbArmSubsystem()
-      throws NoChannelFoundException {
+  public ClimbArmSubsystem() throws NoChannelFoundException {
     // @this might have to be re-worked since the channels may be > also.
-    if (ClimbArmConstants.kClimbArmMotorPort < 0)
-      throw new NoChannelFoundException(ClimbArmConstants.kClimbArmMotorPort);
-    sparkMax = new CANSparkMax(
+    if (
+      ClimbArmConstants.kClimbArmMotorPort < 0
+    ) throw new NoChannelFoundException(ClimbArmConstants.kClimbArmMotorPort);
+    sparkMax =
+      new CANSparkMax(
         ClimbArmConstants.kClimbArmMotorPort,
-        ClimbArmConstants.kClimbArmMotorIsBrushless ? MotorType.kBrushless : MotorType.kBrushed);
+        ClimbArmConstants.kClimbArmMotorIsBrushless
+          ? MotorType.kBrushless
+          : MotorType.kBrushed
+      );
     this.encoder = sparkMax.getEncoder();
   }
 
@@ -44,10 +48,10 @@ public class ClimbArmSubsystem extends SubsystemBase {
   public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
     // TODO: test @this
-    if (checkSpeed(speed))
-      throw new LimitException(
-          speedPerc,
-          this.getClass().getName());
+    if (checkSpeed(speed)) throw new LimitException(
+      speedPerc,
+      this.getClass().getName()
+    );
 
     this.sparkMax.set(speed);
   }
