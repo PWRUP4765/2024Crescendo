@@ -17,19 +17,18 @@ public class ClimbArmSubsystem extends SubsystemBase {
   final RelativeEncoder encoder;
 
   /**
-   * @param channel     the motor channel
+   * @param channel     the motor channel this is FOR DEBUG PURPOSES
    * @param isBrushless not sure what this is but it will set the
    *                    MotorType.kBrushed if "isBrushless == false" and
    *                    MotorType.kBrushless if "isBrushless == true"
    * @throws NoChannelFoundException if the channel is below the min threshhold 0
    *                                 for now it will throw this
-   * @todo add a thing that gradually increases the motor speed. Can be helpful
    */
-  public ClimbArmSubsystem() throws NoChannelFoundException {
+  public ClimbArmSubsystem(int channel, boolean isBrushless)
+    throws NoChannelFoundException {
     // @this might have to be re-worked since the channels may be > also.
-    if (
-      ClimbArmConstants.kClimbArmMotorPort < 0
-    ) throw new NoChannelFoundException(ClimbArmConstants.kClimbArmMotorPort);
+    if (channel < 0) throw new NoChannelFoundException(channel);
+
     sparkMax =
       new CANSparkMax(
         ClimbArmConstants.kClimbArmMotorPort,
@@ -37,6 +36,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
           ? MotorType.kBrushless
           : MotorType.kBrushed
       );
+
     this.encoder = sparkMax.getEncoder();
   }
 
@@ -47,7 +47,6 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
-    // TODO: test @this
     if (checkSpeed(speed)) throw new LimitException(
       speedPerc,
       this.getClass().getName()
@@ -94,5 +93,12 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public double getRevSinceStart() {
     return encoder.getPosition();
+  }
+
+  /**
+   * @apiNote this resets the encoder's position to 0 res
+   */
+  public void resetPosition() {
+    encoder.setPosition(0);
   }
 }
