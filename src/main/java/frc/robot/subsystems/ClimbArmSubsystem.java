@@ -47,7 +47,6 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
-    // TODO: test @this
     if (checkSpeed(speed)) throw new LimitException(
       speedPerc,
       this.getClass().getName()

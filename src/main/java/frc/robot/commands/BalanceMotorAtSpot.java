@@ -125,7 +125,7 @@ public class BalanceMotorAtSpot extends Command {
       time -= 0.02;
 
       if (time <= 0) {
-        // TODO: this MIGHT need to be re-coded. Because the top speed might not be the best speed that makes the thing stay
+        // FIXME: this MIGHT need to be re-coded. Because the top speed might not be the best speed that makes the thing stay
         // in one place ngl this needs testing.
         topStaySpeed = curMotorSpeed;
       }
