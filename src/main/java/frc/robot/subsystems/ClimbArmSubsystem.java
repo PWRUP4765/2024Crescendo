@@ -17,7 +17,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
   final RelativeEncoder encoder;
 
   /**
-   * @param channel     the motor channel
+   * @param channel     the motor channel this is FOR DEBUG PURPOSES
    * @param isBrushless not sure what this is but it will set the
    *                    MotorType.kBrushed if "isBrushless == false" and
    *                    MotorType.kBrushless if "isBrushless == true"
@@ -25,11 +25,10 @@ public class ClimbArmSubsystem extends SubsystemBase {
    *                                 for now it will throw this
    * @todo add a thing that gradually increases the motor speed. Can be helpful
    */
-  public ClimbArmSubsystem() throws NoChannelFoundException {
+  public ClimbArmSubsystem(int channel, boolean isBrushless)
+    throws NoChannelFoundException {
     // @this might have to be re-worked since the channels may be > also.
-    if (
-      ClimbArmConstants.kClimbArmMotorPort < 0
-    ) throw new NoChannelFoundException(ClimbArmConstants.kClimbArmMotorPort);
+    if (channel < 0) throw new NoChannelFoundException(channel);
     sparkMax =
       new CANSparkMax(
         ClimbArmConstants.kClimbArmMotorPort,
