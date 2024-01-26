@@ -98,7 +98,7 @@ public class BalanceMotorAtSpot extends Command {
       if (p < destPos - acuracy && p < destPos + acuracy) {
         // YCoef is used to adapt to the motor not having enough power to move up even though it is not in position.
         // Might need re-coding
-        yCoef += change == 0 ? 1 : 0;
+        yCoef += change <= 0 ? 1 : 0;
         double motorSpeed = MathFun.getPosOnGraph(x, yCoef) * 100;
         if (motorSpeed < motorMaxSpeedPerc) {
           motorCommands.setMotorSpeed(motorSpeed);
@@ -107,7 +107,7 @@ public class BalanceMotorAtSpot extends Command {
           throw new LimitException(motorSpeed, this.getClass().getName());
         }
       } else if (p > destPos + acuracy && p > destPos - acuracy) {
-        yCoef -= change == 0 ? 1 : 0;
+        yCoef -= change >= 0 ? 1 : 0;
         double motorSpeed = MathFun.getPosOnGraph(x, yCoef) * 100;
         if (motorSpeed < motorMaxSpeedPerc) {
           motorCommands.setMotorSpeed(motorSpeed);
