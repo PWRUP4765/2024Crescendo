@@ -15,11 +15,13 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimbArmCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +35,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
@@ -82,6 +85,9 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
+
+    new Trigger(controller::getBButton) // Intake Button TBD
+      .onTrue(new IntakeCommand(m_intake, controller));
 
     try {
       new Trigger(controller::getAButton)

@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.IntakeConstants;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
-
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
+//import com.ctre.phoenix6.hardware.TalonFX; 
 
 public class IntakeSubsystem extends SubsystemBase{
 

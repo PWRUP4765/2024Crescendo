@@ -7,26 +7,20 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
-import edu.wpi.first.wpilibj.XboxController;
 
-public class IntakeCommand extends Command {
+// WORK IN PROGRESS
+public class OutputCommand extends Command {
 
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final IntakeSubsystem m_intakeSubsystem;
 
-  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed;
-  private final XboxController controller; 
-
-  private boolean isFinished = false;
-  private boolean previousButton = true;
-  private boolean currentButton = false;
+  private final int outputSpeed = - (int) IntakeConstants.kIntakeSpeed;
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
    */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, XboxController controller) {
+  public OutputCommand(IntakeSubsystem intakeSubsystem) {
     this.m_intakeSubsystem = intakeSubsystem;
-    this.controller = controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem);
   }
@@ -36,7 +30,7 @@ public class IntakeCommand extends Command {
 
   @Override
   public void execute() {
-    m_intakeSubsystem.setMotor(intakeSpeed);
+    m_intakeSubsystem.setMotor(outputSpeed);
   }
 
   @Override
@@ -46,13 +40,6 @@ public class IntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    previousButton = currentButton; 
-    currentButton = controller.getBButtonPressed(); // Button mapping TBD
-
-    // if currentButton = true and previousButton = false 
-    isFinished = (currentButton && !previousButton); 
-
-    // if isFinsihed already true by the if statement above or if the intake senses if the note is inside the intake
-    return (isFinished || m_intakeSubsystem.isDetected()); 
+    return m_intakeSubsystem.isDetected(); // TODO: idk how we should stop the code
   }
 }
