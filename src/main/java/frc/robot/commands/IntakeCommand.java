@@ -5,24 +5,24 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
-/** An example command that uses an example subsystem. */
 public class IntakeCommand extends Command {
 
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final IntakeSubsystem m_IntakeSubsystem;
+  private final IntakeSubsystem m_intakeSubsystem;
 
-  private final int IntakeSpeed = (int) IntakeConstants.kIntakeSpeed;
+  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed;
 
   /**
-   * @param subsystem The subsystem used by this command.
+   * @param intakeSubsystem The subsystem used by this command.
    */
-  public IntakeCommand(IntakeSubsystem IntakeSubsystem) {
-    this.m_IntakeSubsystem = IntakeSubsystem;
+  public IntakeCommand(IntakeSubsystem intakeSubsystem) {
+    this.m_intakeSubsystem = intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(IntakeSubsystem);
+    addRequirements(intakeSubsystem);
   }
 
   @Override
@@ -30,16 +30,16 @@ public class IntakeCommand extends Command {
 
   @Override
   public void execute() {
-    m_IntakeSubsystem.setMotor(IntakeSpeed);
+    m_intakeSubsystem.setMotor(intakeSpeed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_IntakeSubsystem.setMotor(0);
+    m_intakeSubsystem.setMotor(0);
   }
 
   @Override
   public boolean isFinished() {
-    return m_IntakeSubsystem.isDetected();
+    return m_intakeSubsystem.isDetected();
   }
 }
