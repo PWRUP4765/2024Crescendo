@@ -20,7 +20,7 @@ public class ArmSubsystem {
   private ShuffleboardTab sb_tab;
   private String sb_name;
 
-  private GenericEntry sb_kP, sb_kI, sb_kD, sb_kIZ, sb_kFF, sb_encoderPosition;
+  private GenericEntry sb_kP, sb_kI, sb_kD, sb_kIZ, sb_kFF, sb_encoderPosition, sb_setPosition;
 
   /**
    * Constructor class for ArmSubsystem
@@ -30,7 +30,7 @@ public class ArmSubsystem {
 
     //setting up the arm motor
     armMotor =
-      new CANSparkMax(ArmConstants.kArmMotorPort, MotorType.kBrushless);
+      new CANSparkMax(ArmConstants.kArmMotorPort, MotorType.kBrushed);
     armMotor.setInverted(ArmConstants.kArmMotorReversed);
 
     kP = ArmConstants.kArmP;
@@ -63,7 +63,10 @@ public class ArmSubsystem {
    * The arm will begin moving to the desired position. 0 means flat forwards, 1 means flat backwards.
    * @param Position The position to move to. Domain: [0, 1]
    */
-  public void setPosition(double position) {}
+  public void setPosition(double position) {
+    armPIDController.setReference(position, CANSparkMax.ControlType.kPosition);
+    sb_setPosition.setDouble(position);
+  }
 
   public void createShuffleboardTab() {
     sb_name = "ArmSubsystem";
@@ -75,7 +78,8 @@ public class ArmSubsystem {
     sb_kIZ = sb_tab.add("kIZ", kIZ).getEntry();
     sb_kFF = sb_tab.add("kFF", kFF).getEntry();
 
-    sb_encoderPosition = sb_tab.add("sb_encoderPosition", 0).getEntry();
+    sb_encoderPosition = sb_tab.add("encoderPosition", 0).getEntry();
+    sb_setPosition = sb_tab.add("setPosition", 0).getEntry();
   }
 
   public void updateShuffleboardTab() {
