@@ -16,6 +16,8 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ClimbArmCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.error.LimitException;
+import frc.robot.error.NoChannelFoundException;
+import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -31,6 +33,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+  private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
@@ -54,6 +57,16 @@ public class RobotContainer {
         m_robotDrive
       )
     );
+
+    try {
+      climbArmSubsystem =
+        new ClimbArmSubsystem(
+          Constants.ClimbArmConstants.kClimbArmMotorPort,
+          Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
+        );
+    } catch (NoChannelFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -71,9 +84,16 @@ public class RobotContainer {
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     try {
-      // placeholder vals
       new Trigger(controller::getAButton)
-        .onTrue(new ClimbArmCommand(0, 0, 0, null, 0, 0, false));
+        .onTrue(
+          new ClimbArmCommand(
+            Constants.ClimbArmConstants.kClimbArmLengthMeters,
+            Constants.ClimbArmConstants.kClimbGearDiameterMeters,
+            Constants.ClimbArmConstants.kClimbArmLengthMeters / 100 * 90,
+            true,
+            climbArmSubsystem
+          )
+        );
     } catch (LimitException e) {
       e.printStackTrace();
     }
