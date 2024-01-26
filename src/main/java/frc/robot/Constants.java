@@ -48,6 +48,9 @@ public final class Constants {
 
     public static final int kClimbArmMotorPort = 0; // TEMP
     public static final boolean kClimbArmMotorIsBrushless = true; // TEMP
+
+    public static final double kClimbArmLengthMeters = 1; // TMP
+    public static final double kClimbGearDiameterMeters = 0.2; // TMP
   }
 
   public static class IntakeConstants {
