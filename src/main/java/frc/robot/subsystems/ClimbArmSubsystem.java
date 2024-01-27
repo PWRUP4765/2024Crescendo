@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimbArmConstants;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
@@ -42,11 +43,11 @@ public class ClimbArmSubsystem extends SubsystemBase {
     this.encoder = sparkMax.getEncoder();
 
     pid = getPid();
-    pid.setP(0);
-    pid.setI(0);
-    pid.setD(0);
-    pid.setIZone(0);
-    pid.setFF(0);
+    pid.setP(Constants.ClimbArmConstants.kProportionalGain);
+    pid.setI(Constants.ClimbArmConstants.kIntegralGain);
+    pid.setD(Constants.ClimbArmConstants.kDerivativeGain);
+    pid.setIZone(Constants.ClimbArmConstants.kIZone);
+    pid.setFF(Constants.ClimbArmConstants.kFeedForward);
   }
 
   /**
@@ -64,7 +65,12 @@ public class ClimbArmSubsystem extends SubsystemBase {
     this.sparkMax.set(speed);
   }
 
-  public void setReference(double pos) {
+  public void setReference(double pos) throws LimitException {
+    if (
+      pos < Constants.ClimbArmConstants.kClimbArmMinLengthMeters ||
+      pos > Constants.ClimbArmConstants.kClimbArmLengthMeters
+    ) throw new LimitException(pos, this.getClass().getName());
+
     pid.setReference(pos, CANSparkMax.ControlType.kPosition);
   }
 
