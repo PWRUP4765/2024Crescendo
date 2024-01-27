@@ -25,29 +25,21 @@ public class IntakeSubsystem extends SubsystemBase {
      * 
      * When the disc is slides in to the robot from the bottom, the intake motors are moving,
      * then once the disc hits a metal sensor, the intake motors stop, and the disc is ready to be shot.
-     * Once the command is given to shoot the disc, the intake motors will spin inwards, and
+     * Once the command is given to shoot the disc, the intake motors will spin inwards, and the shooter
+     * motors will spin clockwise
      */
     @Override
     public void periodic() {
-        // Check if the intake sensor is triggered
-        if (/*intakeSensor.get()*/ true) {
-            // Start intake motor
-            inputMotor.set(1.0); // Adjust speed as necessary
-        } else {
-            // Stop intake motor
-            inputMotor.set(0.0);
-        }
 
-        // Check if the shooter sensor is triggered
+        if (/* controller button pressed */ true) {
+            inputMotor.set(1.0);
+            shooterMotor1.set(1.0); 
+            shooterMotor2.set(1.0); 
+        }
         if (/*intakeSensor.get()*/ true) {
-            // Start shooter motors
-            shooterMotor1.set(1.0); // Adjust speed as necessary
-            shooterMotor2.set(1.0); // Adjust speed as necessary
-        } else {
-            // Stop shooter motors
-            shooterMotor1.set(0.0);
-            shooterMotor2.set(0.0);
+            inputMotor.set(0);
+            shooterMotor1.set(0); 
+            shooterMotor2.set(0); 
         }
     }
-
 }
