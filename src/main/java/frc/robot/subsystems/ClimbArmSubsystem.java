@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbArmConstants;
 import frc.robot.error.LimitException;
@@ -15,6 +16,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
 
   final CANSparkMax sparkMax;
   final RelativeEncoder encoder;
+  final SparkPIDController pid;
 
   /**
    * @param channel     the motor channel this is FOR DEBUG PURPOSES
@@ -38,6 +40,13 @@ public class ClimbArmSubsystem extends SubsystemBase {
       );
 
     this.encoder = sparkMax.getEncoder();
+
+    pid = getPid();
+    pid.setP(0);
+    pid.setI(0);
+    pid.setD(0);
+    pid.setIZone(0);
+    pid.setFF(0);
   }
 
   /**
@@ -53,6 +62,10 @@ public class ClimbArmSubsystem extends SubsystemBase {
     );
 
     this.sparkMax.set(speed);
+  }
+
+  public void setReference(double pos) {
+    pid.setReference(pos, CANSparkMax.ControlType.kPosition);
   }
 
   /**
@@ -100,5 +113,9 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void resetPosition() {
     encoder.setPosition(0);
+  }
+
+  public SparkPIDController getPid() {
+    return this.sparkMax.getPIDController();
   }
 }
