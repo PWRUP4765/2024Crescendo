@@ -18,6 +18,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -36,6 +37,7 @@ public class RobotContainer {
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
@@ -87,7 +89,7 @@ public class RobotContainer {
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     new Trigger(controller::getBButton) // Intake Button TBD
-      .toggleOnTrue(new IntakeCommand(m_intake));
+      .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
 
     // FIXME: test @this.
     new Trigger(controller::getAButton)
