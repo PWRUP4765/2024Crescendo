@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.error.LimitException;
 import frc.robot.inter.BalanceMotorAtSpotInterface;
-import frc.robot.util.MathFun;
+import frc.robot.util.MathFunc;
 
 /**
  * @author godbrigero
