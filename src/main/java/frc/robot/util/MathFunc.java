@@ -15,6 +15,10 @@ public class MathFunc {
     return Math.cbrt(x) + yCoef;
   }
 
+  /**
+   * @param values double values for which you want to get the biggest value
+   * @return the max value form the input values
+   */
   public static double max(double... values) {
     double m = values[0];
 
@@ -27,6 +31,10 @@ public class MathFunc {
     return m;
   }
 
+  /**
+   * @param values
+   * @return
+   */
   public static double min(double... values) {
     double m = values[0];
     for (double value : values) {

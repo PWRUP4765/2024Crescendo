@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimbArmConstants;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
@@ -15,6 +17,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
 
   final CANSparkMax sparkMax;
   final RelativeEncoder encoder;
+  final SparkPIDController pid;
 
   /**
    * @param channel     the motor channel this is FOR DEBUG PURPOSES
@@ -38,6 +41,17 @@ public class ClimbArmSubsystem extends SubsystemBase {
       );
 
     this.encoder = sparkMax.getEncoder();
+
+    pid = getPid();
+    pid.setP(Constants.ClimbArmConstants.kProportionalGain);
+    pid.setI(Constants.ClimbArmConstants.kIntegralGain);
+    pid.setD(Constants.ClimbArmConstants.kDerivativeGain);
+    pid.setIZone(Constants.ClimbArmConstants.kIZone);
+    pid.setFF(Constants.ClimbArmConstants.kFeedForward);
+
+    encoder.setPositionConversionFactor(
+      Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
+    );
   }
 
   /**
@@ -53,6 +67,19 @@ public class ClimbArmSubsystem extends SubsystemBase {
     );
 
     this.sparkMax.set(speed);
+  }
+
+  /**
+   * @param pos position IN METERS
+   * @throws LimitException will be thrown if the pos exceeds the Min / Max possible postion
+   */
+  public void setReference(double pos) throws LimitException {
+    if (
+      pos < Constants.ClimbArmConstants.kClimbArmMinLengthMeters ||
+      pos > Constants.ClimbArmConstants.kClimbArmLengthMeters
+    ) throw new LimitException(pos, this.getClass().getName());
+
+    pid.setReference(pos, CANSparkMax.ControlType.kPosition);
   }
 
   /**
@@ -100,5 +127,9 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void resetPosition() {
     encoder.setPosition(0);
+  }
+
+  public SparkPIDController getPid() {
+    return this.sparkMax.getPIDController();
   }
 }
