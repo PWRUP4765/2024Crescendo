@@ -91,7 +91,7 @@ public class RobotContainer {
 
     // FIXME: test @this.
     new Trigger(controller::getAButton)
-      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10));
+      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
