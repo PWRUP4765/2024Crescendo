@@ -10,7 +10,7 @@ import frc.robot.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  private final SwerveModule frontLeftSwerveModule = new SwerveModule(
+  private final SwerveModule m_frontLeftSwerveModule = new SwerveModule(
     SwerveConstants.kFrontLeftDriveMotorPort,
     SwerveConstants.kFrontLeftDriveMotorReversed,
     SwerveConstants.kFrontLeftTurningMotorPort,
@@ -20,8 +20,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kFrontLeftCANcoderMagnetOffset,
     "FL"
   );
-
-  private final SwerveModule frontRightSwerveModule = new SwerveModule(
+  private final SwerveModule m_frontRightSwerveModule = new SwerveModule(
     SwerveConstants.kFrontRightDriveMotorPort,
     SwerveConstants.kFrontRightDriveMotorReversed,
     SwerveConstants.kFrontRightTurningMotorPort,
@@ -31,8 +30,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kFrontRightCANcoderMagnetOffset,
     "FR"
   );
-
-  private final SwerveModule rearLeftSwerveModule = new SwerveModule(
+  private final SwerveModule m_rearLeftSwerveModule = new SwerveModule(
     SwerveConstants.kRearLeftDriveMotorPort,
     SwerveConstants.kRearLeftDriveMotorReversed,
     SwerveConstants.kRearLeftTurningMotorPort,
@@ -42,8 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kRearLeftCANcoderMagnetOffset,
     "RL"
   );
-
-  private final SwerveModule rearRightSwerveModule = new SwerveModule(
+  private final SwerveModule m_rearRightSwerveModule = new SwerveModule(
     SwerveConstants.kRearRightDriveMotorPort,
     SwerveConstants.kRearRightDriveMotorReversed,
     SwerveConstants.kRearRightTurningMotorPort,
@@ -55,14 +52,13 @@ public class SwerveSubsystem extends SubsystemBase {
   );
 
   //the gyroscope
-  AHRS gyro;
+  AHRS m_gyro;
 
   double desiredAngle;
 
   //the Shuffleboard tab and entries
   private String sb_name;
   private ShuffleboardTab sb_tab;
-
   public GenericEntry sb_frontLeftSpeed, sb_frontRightSpeed, sb_rearLeftSpeed, sb_rearRightSpeed, sb_frontLeftAngle, sb_frontRightAngle, sb_rearLeftAngle, sb_rearRightAngle, sb_NAVXPitch, sb_NAVXYaw, sb_NAVXRoll; //yaw appears to be the axis for horizontal rotation, (-180, 180)
 
   /**
@@ -71,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem() {
     createShuffleboardTab();
 
-    gyro = new AHRS(I2C.Port.kMXP);
+    m_gyro = new AHRS(I2C.Port.kMXP);
   }
 
   /**
@@ -109,10 +105,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public void drive(double x, double y, double r) {
     //adjusting for field relativity if necessary
     if (SwerveConstants.kFieldRelative) {
-      double gyroAngle = gyro.getAngle() / 360; //this gets the angle and puts it from -1/2 to 1/2
-
+      double gyroAngle = m_gyro.getAngle() / 360; //this gets the angle and puts it from -1/2 to 1/2
       double nonFieldRelativeAngle = Math.atan2(x, y) / (2 * Math.PI); //again, the return value is from -1/2 to 1/2
-
       double fieldRelativeAngle = nonFieldRelativeAngle - gyroAngle;
 
       double magnitude = Math.sqrt((x * x) + (y * y));
@@ -159,10 +153,10 @@ public class SwerveSubsystem extends SubsystemBase {
     double rearRightAngle = Math.atan2(a, c) / Math.PI / 2;
 
     //sending the wheel and angle speeds to the motor controllers
-    frontLeftSwerveModule.drive(frontLeftSpeed, frontLeftAngle);
-    frontRightSwerveModule.drive(frontRightSpeed, frontRightAngle);
-    rearLeftSwerveModule.drive(rearLeftSpeed, rearLeftAngle);
-    rearRightSwerveModule.drive(rearRightSpeed, rearRightAngle);
+    m_frontLeftSwerveModule.drive(frontLeftSpeed, frontLeftAngle);
+    m_frontRightSwerveModule.drive(frontRightSpeed, frontRightAngle);
+    m_rearLeftSwerveModule.drive(rearLeftSpeed, rearLeftAngle);
+    m_rearRightSwerveModule.drive(rearRightSpeed, rearRightAngle);
 
     updateShuffleboardTab(
       frontLeftSpeed,
@@ -177,12 +171,12 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void reset() {
-    gyro.reset();
+    m_gyro.reset();
 
-    frontLeftSwerveModule.reset();
-    frontRightSwerveModule.reset();
-    rearLeftSwerveModule.reset();
-    rearRightSwerveModule.reset();
+    m_frontLeftSwerveModule.reset();
+    m_frontRightSwerveModule.reset();
+    m_rearLeftSwerveModule.reset();
+    m_rearRightSwerveModule.reset();
   }
 
   public void createShuffleboardTab() {
@@ -225,9 +219,9 @@ public class SwerveSubsystem extends SubsystemBase {
     sb_rearLeftAngle.setDouble(rearLeftAngle);
     sb_rearRightAngle.setDouble(rearRightAngle);
 
-    sb_NAVXPitch.setDouble(gyro.getPitch());
-    sb_NAVXYaw.setDouble(gyro.getYaw());
-    sb_NAVXRoll.setDouble(gyro.getRoll());
+    sb_NAVXPitch.setDouble(m_gyro.getPitch());
+    sb_NAVXYaw.setDouble(m_gyro.getYaw());
+    sb_NAVXRoll.setDouble(m_gyro.getRoll());
   }
 
   public double[] optimize(double speed, double angle, double encoderAngle) {

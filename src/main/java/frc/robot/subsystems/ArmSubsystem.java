@@ -7,9 +7,10 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-public class ArmSubsystem {
+public class ArmSubsystem extends SubsystemBase {
 
   private CANSparkMax armMotor;
   private SparkPIDController armPIDController;
@@ -60,8 +61,8 @@ public class ArmSubsystem {
   }
 
   /**
-   * The arm will begin moving to the desired position. 0 means flat forwards, 1 means flat backwards.
-   * @param Position The position to move to. Domain: [0, 1]
+   * The arm will begin moving to the desired position. 0 means flat forwards, 0.5 means flat backwards.
+   * @param Position The position to move to. Domain: [0, 0.5]
    */
   public void setPosition(double position) {
     armPIDController.setReference(position, CANSparkMax.ControlType.kPosition);

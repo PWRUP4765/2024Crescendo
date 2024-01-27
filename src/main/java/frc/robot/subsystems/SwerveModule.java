@@ -17,13 +17,12 @@ import frc.robot.SwerveConstants;
 public class SwerveModule {
 
   //the driving electronics
-  private CANSparkMax driveMotor;
-  private SparkPIDController drivePIDController;
+  private CANSparkMax m_driveMotor;
 
   //the turning electronics
-  private CANSparkMax turnMotor;
-  private SparkPIDController turnPIDController;
-  private RelativeEncoder turnRelativeEncoder;
+  private CANSparkMax m_turnMotor;
+  private SparkPIDController m_turnPIDController;
+  private RelativeEncoder m_turnRelativeEncoder;
 
   private CANcoder turnCANcoder;
 
@@ -35,7 +34,7 @@ public class SwerveModule {
 
   public double kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnFF;
 
-  public GenericEntry sb_kDriveP, sb_kDriveI, sb_kDriveD, sb_kDriveIZ, sb_kDriveFF, sb_kTurnP, sb_kTurnI, sb_kTurnD, sb_kTurnIZ, sb_kTurnFF, sb_speed, sb_angle, sb_turnRelativeEncoderAngle, sb_turnCANcoderAngle;
+  public GenericEntry sb_kDriveP, sb_kDriveI, sb_kDriveD, sb_kDriveIZ, sb_kDriveFF, sb_kTurnP, sb_kTurnI, sb_kTurnD, sb_kTurnIZ, sb_kTurnFF, sb_speed, sb_angle, sb_m_turnRelativeEncoderAngle, sb_turnCANcoderAngle;
 
   public SwerveModule(
     int driveMotorChannel,
@@ -48,34 +47,25 @@ public class SwerveModule {
     String abbreviation
   ) {
     //setting up the drive motor controller
-    driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
-    drivePIDController = driveMotor.getPIDController();
+    m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
 
     //setting up the turning motor controller and encoders
-    turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
-    turnPIDController = turnMotor.getPIDController();
-    turnRelativeEncoder = turnMotor.getEncoder();
+    m_turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
+    m_turnPIDController = m_turnMotor.getPIDController();
+    m_turnRelativeEncoder = m_turnMotor.getEncoder();
 
     //setting up the CANCoder
     turnCANcoder = new CANcoder(CANCoderEncoderChannel);
-
     CANcoderConfiguration config = new CANcoderConfiguration();
     config.MagnetSensor.MagnetOffset = -CANCoderMagnetOffset;
     config.MagnetSensor.AbsoluteSensorRange =
       AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     config.MagnetSensor.SensorDirection = CANCoderDirection;
-
     turnCANcoder.getConfigurator().apply(config);
 
     //for a full list of SparkMax commands, vist https://robotpy.readthedocs.io/projects/rev/en/latest/rev/RelativeEncoder.html
 
     //creating the PID values from the SwerveConstants file
-    kDriveP = SwerveConstants.kDriveP;
-    kDriveI = SwerveConstants.kDriveI;
-    kDriveD = SwerveConstants.kDriveD;
-    kDriveIZ = SwerveConstants.kDriveIZ;
-    kDriveFF = SwerveConstants.kDriveFF;
-
     kTurnP = SwerveConstants.kTurnP;
     kTurnI = SwerveConstants.kTurnI;
     kTurnD = SwerveConstants.kTurnD;
@@ -83,39 +73,30 @@ public class SwerveModule {
     kTurnFF = SwerveConstants.kTurnFF;
 
     //setting up the drive motor
-    driveMotor.restoreFactoryDefaults();
-    driveMotor.setInverted(driveMotorReversed);
-    drivePIDController.setP(kDriveP);
-    drivePIDController.setI(kDriveI);
-    drivePIDController.setD(kDriveD);
-    drivePIDController.setIZone(kDriveIZ);
-    drivePIDController.setFF(kDriveFF);
-    drivePIDController.setOutputRange(
-      SwerveConstants.kDriveMinOutput,
-      SwerveConstants.kDriveMaxOutput
-    );
+    m_driveMotor.restoreFactoryDefaults();
+    m_driveMotor.setInverted(driveMotorReversed);
 
     //setting up the turn motor
-    turnMotor.restoreFactoryDefaults();
-    turnMotor.setInverted(turnMotorReversed);
-    turnMotor.setSmartCurrentLimit(40);
-    turnPIDController.setP(kTurnP);
-    turnPIDController.setI(kTurnI);
-    turnPIDController.setD(kTurnD);
-    turnPIDController.setIZone(kTurnIZ);
-    turnPIDController.setFF(kTurnFF);
-    turnPIDController.setPositionPIDWrappingEnabled(true);
-    turnPIDController.setPositionPIDWrappingMinInput(-1.0 / 2.0);
-    turnPIDController.setPositionPIDWrappingMaxInput(1.0 / 2.0);
-    turnPIDController.setOutputRange(
+    m_turnMotor.restoreFactoryDefaults();
+    m_turnMotor.setInverted(turnMotorReversed);
+    m_turnMotor.setSmartCurrentLimit(40);
+    m_turnPIDController.setP(kTurnP);
+    m_turnPIDController.setI(kTurnI);
+    m_turnPIDController.setD(kTurnD);
+    m_turnPIDController.setIZone(kTurnIZ);
+    m_turnPIDController.setFF(kTurnFF);
+    m_turnPIDController.setPositionPIDWrappingEnabled(true);
+    m_turnPIDController.setPositionPIDWrappingMinInput(-1.0 / 2.0);
+    m_turnPIDController.setPositionPIDWrappingMaxInput(1.0 / 2.0);
+    m_turnPIDController.setOutputRange(
       SwerveConstants.kTurnMinOutput,
       SwerveConstants.kTurnMaxOutput
     );
-    turnRelativeEncoder.setPosition(
+    m_turnRelativeEncoder.setPosition(
       turnCANcoder.getAbsolutePosition().getValueAsDouble() /
       SwerveConstants.kTurnConversionFactor
     );
-    turnRelativeEncoder.setPositionConversionFactor(
+    m_turnRelativeEncoder.setPositionConversionFactor(
       SwerveConstants.kTurnConversionFactor
     );
 
@@ -133,16 +114,16 @@ public class SwerveModule {
     double[] optimizedState = optimize(
       speed,
       angle,
-      turnRelativeEncoder.getPosition()
+      m_turnRelativeEncoder.getPosition()
     );
     speed = optimizedState[0];
     angle = optimizedState[1];
 
     //sending the motor speed to the driving motor controller
-    driveMotor.set(speed * SwerveConstants.speedMultiplier);
+    m_driveMotor.set(speed * SwerveConstants.speedMultiplier);
 
     //sending the motor angle to the turning motor controller
-    turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
+    m_turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
 
     //updatePIDFromShuffleboard();
 
@@ -151,7 +132,7 @@ public class SwerveModule {
   }
 
   public void reset() {
-    turnRelativeEncoder.setPosition(
+    m_turnRelativeEncoder.setPosition(
       turnCANcoder.getAbsolutePosition().getValueAsDouble() /
       SwerveConstants.kTurnConversionFactor
     );
@@ -196,7 +177,7 @@ public class SwerveModule {
     sb_angle = sb_tab.add("angle", 0).getEntry();
 
     //for the reported angles from the encoders with the sparkMax
-    sb_turnRelativeEncoderAngle = sb_tab.add("turnEncoderAngle", 0).getEntry();
+    sb_m_turnRelativeEncoderAngle = sb_tab.add("turnEncoderAngle", 0).getEntry();
     sb_turnCANcoderAngle = sb_tab.add("turnCANcoderAngle", 0).getEntry();
   }
 
@@ -204,55 +185,34 @@ public class SwerveModule {
     sb_speed.setDouble(speed);
     sb_angle.setDouble(angle);
 
-    sb_turnRelativeEncoderAngle.setDouble(turnRelativeEncoder.getPosition());
+    sb_m_turnRelativeEncoderAngle.setDouble(m_turnRelativeEncoder.getPosition());
     sb_turnCANcoderAngle.setDouble(
       turnCANcoder.getAbsolutePosition().getValueAsDouble()
     );
   }
 
   public void updatePIDFromShuffleboard() {
-    //this method should only be used to iPID tuning; it should not be used during
-
-    if (sb_kDriveP.getDouble(0) != kDriveP) {
-      kDriveP = sb_kDriveP.getDouble(0);
-      drivePIDController.setP(kDriveP);
-    }
-    if (sb_kDriveI.getDouble(0) != kDriveI) {
-      kDriveI = sb_kDriveI.getDouble(0);
-      drivePIDController.setI(kDriveI);
-    }
-    if (sb_kDriveD.getDouble(0) != kDriveD) {
-      kDriveD = sb_kDriveD.getDouble(0);
-      drivePIDController.setD(kDriveD);
-    }
-    if (sb_kDriveIZ.getDouble(0) != kDriveIZ) {
-      kDriveIZ = sb_kDriveIZ.getDouble(0);
-      drivePIDController.setIZone(kDriveIZ);
-    }
-    if (sb_kDriveFF.getDouble(0) != kDriveFF) {
-      kDriveFF = sb_kDriveFF.getDouble(0);
-      drivePIDController.setFF(kDriveFF);
-    }
+    //this method should only be used to tune PID; it should not be used during competition
 
     if (sb_kTurnP.getDouble(0) != kTurnP) {
       kTurnP = sb_kTurnP.getDouble(0);
-      turnPIDController.setP(kTurnP);
+      m_turnPIDController.setP(kTurnP);
     }
     if (sb_kTurnI.getDouble(0) != kTurnI) {
       kTurnI = sb_kTurnI.getDouble(0);
-      turnPIDController.setP(kTurnI);
+      m_turnPIDController.setP(kTurnI);
     }
     if (sb_kTurnD.getDouble(0) != kTurnD) {
       kTurnD = sb_kTurnD.getDouble(0);
-      turnPIDController.setD(kTurnD);
+      m_turnPIDController.setD(kTurnD);
     }
     if (sb_kTurnIZ.getDouble(0) != kTurnIZ) {
       kTurnIZ = sb_kTurnIZ.getDouble(0);
-      turnPIDController.setIZone(kTurnIZ);
+      m_turnPIDController.setIZone(kTurnIZ);
     }
     if (sb_kTurnFF.getDouble(0) != kTurnFF) {
       kTurnFF = sb_kTurnFF.getDouble(0);
-      turnPIDController.setFF(kTurnFF);
+      m_turnPIDController.setFF(kTurnFF);
     }
   }
 }
