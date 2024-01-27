@@ -87,7 +87,7 @@ public class RobotContainer {
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     new Trigger(controller::getBButton) // Intake Button TBD
-      .onTrue(new IntakeCommand(m_intake, controller));
+      .toggleOnTrue(new IntakeCommand(m_intake));
 
     try {
       new Trigger(controller::getAButton)
