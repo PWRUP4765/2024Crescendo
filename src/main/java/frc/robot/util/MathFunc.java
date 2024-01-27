@@ -45,7 +45,13 @@ public class MathFunc {
 
     return m;
   }
-
+  /**
+   * Deadbands joystick input, then scales it from the deadband to 1. Ask Jared for clarification.
+   * @param input the joystick input, [0, 1]
+   * @param deadband ignores the input if it is less than this value, [0, 1]
+   * @param minValue adds this value if the input overcomes the deadband, [0, 1]
+   * @return the return value, [0, 1]
+   */
   public static double deadband(
     double input,
     double deadband,
