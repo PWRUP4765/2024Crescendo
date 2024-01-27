@@ -48,6 +48,10 @@ public class ClimbArmSubsystem extends SubsystemBase {
     pid.setD(Constants.ClimbArmConstants.kDerivativeGain);
     pid.setIZone(Constants.ClimbArmConstants.kIZone);
     pid.setFF(Constants.ClimbArmConstants.kFeedForward);
+
+    encoder.setPositionConversionFactor(
+      Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
+    );
   }
 
   /**
@@ -65,6 +69,10 @@ public class ClimbArmSubsystem extends SubsystemBase {
     this.sparkMax.set(speed);
   }
 
+  /**
+   * @param pos position IN METERS
+   * @throws LimitException will be thrown if the pos exceeds the Min / Max possible postion
+   */
   public void setReference(double pos) throws LimitException {
     if (
       pos < Constants.ClimbArmConstants.kClimbArmMinLengthMeters ||

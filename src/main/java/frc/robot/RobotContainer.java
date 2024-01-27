@@ -20,8 +20,8 @@ import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -89,20 +89,9 @@ public class RobotContainer {
     new Trigger(controller::getBButton) // Intake Button TBD
       .onTrue(new IntakeCommand(m_intake, controller));
 
-    try {
-      new Trigger(controller::getAButton)
-        .onTrue(
-          new ClimbArmCommand(
-            Constants.ClimbArmConstants.kClimbArmLengthMeters,
-            Constants.ClimbArmConstants.kClimbGearDiameterMeters,
-            Constants.ClimbArmConstants.kClimbArmLengthMeters / 100 * 90,
-            true,
-            climbArmSubsystem
-          )
-        );
-    } catch (LimitException e) {
-      e.printStackTrace();
-    }
+    // FIXME: test @this.
+    new Trigger(controller::getAButton)
+      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
