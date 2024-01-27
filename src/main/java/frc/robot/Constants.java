@@ -29,19 +29,25 @@ public final class Constants {
     public static final boolean kArmMotorReversed = false; // TEMP
 
     // Arm PID constants
-    public static final double kArmP = 0;
-    public static final double kArmI = 0;
-    public static final double kArmD = 0;
-    public static final double kArmIZ = 0;
-    public static final double kArmFF = 0;
-    public static final double kArmMinOutput = -1;
-    public static final double kArmMaxOutput = 1;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kIZ = 0;
+    public static final double kFF = 0;
+    public static final double kMinOutput = -1;
+    public static final double kMaxOutput = 1;
 
-    public static final double kArmEncoderOffset = 0;
-    public static final double kArmEncoderConversionFactor = 1;
+    public static final double kEncoderOffset = 0;
+    public static final double kEncoderConversionFactor = 1;
 
-    public static final double kArmMinPosition = 0;
-    public static final double kArmMaxPosition = 1;
+    public static final double kMinPosition = 0;
+    public static final double kMaxPosition = 0.5;
+
+    public static final double kArmWeight = 0;
+
+    public static final double kArmFlatPosition = 0;
+    public static final double kArmDefaultPosition = 0; // TEMP
+    public static final double kArmScoringPosition = 0; // TEMP
   }
 
   public static class ClimbArmConstants {
