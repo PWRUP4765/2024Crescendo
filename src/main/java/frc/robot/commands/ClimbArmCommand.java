@@ -16,13 +16,13 @@ public class ClimbArmCommand extends Command {
 
   // Assuming that when the gear rotates, the arm moves the diameter
 
+  final String name = "ClimbArm";
   final double gearDiameter, armLen, circum, gotoPos;
   final ShuffleboardTab sb_tab;
-  final String name = "ClimbArm";
   final boolean stayInPlace;
   final ClimbArmSubsystem subsystem;
   boolean isOnline = false;
-  BalanceMotorAtSpot armCommand = null;
+  MoveMotor armCommand = null;
 
   /**
    *
@@ -67,7 +67,7 @@ public class ClimbArmCommand extends Command {
   @Override
   public void initialize() {
     armCommand =
-      new BalanceMotorAtSpot(
+      new MoveMotor(
         new BalanceMotorAtSpotInterface() {
           @Override
           public double getMotorCurPosition() {

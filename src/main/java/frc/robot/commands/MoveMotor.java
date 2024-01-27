@@ -9,7 +9,7 @@ import frc.robot.util.MathFun;
  * @author godbrigero
  * @apiNote this features both an adaptive method of having the arm stay / move to a place and a avg method which idk if works
  */
-public class BalanceMotorAtSpot extends Command {
+public class MoveMotor extends Command {
 
   final BalanceMotorAtSpotInterface motorCommands;
   final boolean stayAtTop;
@@ -27,7 +27,7 @@ public class BalanceMotorAtSpot extends Command {
    * @param acuracy the +- position that the motor has to be in
    * @param stayAtTop if true, it will TRY to stay on top. If the normal speed istoo high tho, it will just break (probably)
    */
-  public BalanceMotorAtSpot(
+  public MoveMotor(
     BalanceMotorAtSpotInterface motorCommands,
     double normalSpeed,
     double destPos,
@@ -53,7 +53,7 @@ public class BalanceMotorAtSpot extends Command {
    * @param time the time it will take the arm to get to the spot
    * @param stayAtTop if true will stay at top. if not, will just turn off the motor
    */
-  public BalanceMotorAtSpot(
+  public MoveMotor(
     BalanceMotorAtSpotInterface motorCommands,
     double destPos,
     double getMotorCurPosCoef,
