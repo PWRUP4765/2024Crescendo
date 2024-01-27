@@ -33,7 +33,7 @@ public class MathFunc {
 
   /**
    * @param values
-   * @return
+   * @return the minimum value from the values
    */
   public static double min(double... values) {
     double m = values[0];
