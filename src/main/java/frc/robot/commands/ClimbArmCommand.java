@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.error.LimitException;
@@ -15,6 +17,8 @@ public class ClimbArmCommand extends Command {
   // Assuming that when the gear rotates, the arm moves the diameter
 
   final double gearDiameter, armLen, circum, gotoPos;
+  final ShuffleboardTab sb_tab;
+  final String name = "ClimbArm";
   final boolean stayInPlace;
   final ClimbArmSubsystem subsystem;
   boolean isOnline = false;
@@ -50,6 +54,14 @@ public class ClimbArmCommand extends Command {
     this.gotoPos = goToPos;
     this.stayInPlace = stayInPlace;
     this.subsystem = subsystem;
+
+    this.sb_tab = Shuffleboard.getTab(name);
+  }
+
+  @Override
+  public void execute() {
+    // FIXME: This will need to be tested
+    sb_tab.add("Position Of Climb Arm", 0);
   }
 
   @Override
