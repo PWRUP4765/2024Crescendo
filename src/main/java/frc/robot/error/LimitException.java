@@ -2,6 +2,7 @@ package frc.robot.error;
 
 /**
  * @author godbrigero
+ * @apiNote can be used for any limit
  */
 public class LimitException extends Exception {
 

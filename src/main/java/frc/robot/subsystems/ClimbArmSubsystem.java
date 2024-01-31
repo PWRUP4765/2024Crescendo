@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ClimbArmConstants;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
@@ -15,21 +17,21 @@ public class ClimbArmSubsystem extends SubsystemBase {
 
   final CANSparkMax sparkMax;
   final RelativeEncoder encoder;
+  final SparkPIDController pid;
 
   /**
-   * @param channel     the motor channel
+   * @param channel     the motor channel this is FOR DEBUG PURPOSES
    * @param isBrushless not sure what this is but it will set the
    *                    MotorType.kBrushed if "isBrushless == false" and
    *                    MotorType.kBrushless if "isBrushless == true"
    * @throws NoChannelFoundException if the channel is below the min threshhold 0
    *                                 for now it will throw this
-   * @todo add a thing that gradually increases the motor speed. Can be helpful
    */
-  public ClimbArmSubsystem() throws NoChannelFoundException {
+  public ClimbArmSubsystem(int channel, boolean isBrushless)
+    throws NoChannelFoundException {
     // @this might have to be re-worked since the channels may be > also.
-    if (
-      ClimbArmConstants.kClimbArmMotorPort < 0
-    ) throw new NoChannelFoundException(ClimbArmConstants.kClimbArmMotorPort);
+    if (channel < 0) throw new NoChannelFoundException(channel);
+
     sparkMax =
       new CANSparkMax(
         ClimbArmConstants.kClimbArmMotorPort,
@@ -37,7 +39,19 @@ public class ClimbArmSubsystem extends SubsystemBase {
           ? MotorType.kBrushless
           : MotorType.kBrushed
       );
+
     this.encoder = sparkMax.getEncoder();
+
+    pid = getPid();
+    pid.setP(Constants.ClimbArmConstants.kProportionalGain);
+    pid.setI(Constants.ClimbArmConstants.kIntegralGain);
+    pid.setD(Constants.ClimbArmConstants.kDerivativeGain);
+    pid.setIZone(Constants.ClimbArmConstants.kIZone);
+    pid.setFF(Constants.ClimbArmConstants.kFeedForward);
+
+    encoder.setPositionConversionFactor(
+      Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
+    );
   }
 
   /**
@@ -47,13 +61,25 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
-    // TODO: test @this
     if (checkSpeed(speed)) throw new LimitException(
       speedPerc,
       this.getClass().getName()
     );
 
     this.sparkMax.set(speed);
+  }
+
+  /**
+   * @param pos position IN METERS
+   * @throws LimitException will be thrown if the pos exceeds the Min / Max possible postion
+   */
+  public void setReference(double pos) throws LimitException {
+    if (
+      pos < Constants.ClimbArmConstants.kClimbArmMinLengthMeters ||
+      pos > Constants.ClimbArmConstants.kClimbArmLengthMeters
+    ) throw new LimitException(pos, this.getClass().getName());
+
+    pid.setReference(pos, CANSparkMax.ControlType.kPosition);
   }
 
   /**
@@ -94,5 +120,16 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public double getRevSinceStart() {
     return encoder.getPosition();
+  }
+
+  /**
+   * @apiNote this resets the encoder's position to 0 res
+   */
+  public void resetPosition() {
+    encoder.setPosition(0);
+  }
+
+  public SparkPIDController getPid() {
+    return this.sparkMax.getPIDController();
   }
 }

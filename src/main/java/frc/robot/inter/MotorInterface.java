@@ -4,8 +4,9 @@ import frc.robot.error.LimitException;
 
 /**
  * @author godbrigero
+ * @apiNote can be useful later to make libraries in which multiple motors can work
  */
-public interface BalanceMotorAtSpotInterface {
+public interface MotorInterface {
   public double getMotorCurPosition();
 
   /**

@@ -29,25 +29,42 @@ public final class Constants {
     public static final boolean kArmMotorReversed = false; // TEMP
 
     // Arm PID constants
-    public static final double kArmP = 0;
-    public static final double kArmI = 0;
-    public static final double kArmD = 0;
-    public static final double kArmIZ = 0;
-    public static final double kArmFF = 0;
-    public static final double kArmMinOutput = -1;
-    public static final double kArmMaxOutput = 1;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final double kIZ = 0;
+    public static final double kFF = 0;
+    public static final double kMinOutput = -1;
+    public static final double kMaxOutput = 1;
 
-    public static final double kArmEncoderOffset = 0;
-    public static final double kArmEncoderConversionFactor = 1;
+    public static final double kEncoderOffset = 0;
+    public static final double kEncoderConversionFactor = 1;
 
-    public static final double kArmMinPosition = 0;
-    public static final double kArmMaxPosition = 1;
+    public static final double kMinPosition = 0;
+    public static final double kMaxPosition = 0.5;
+
+    public static final double kArmWeight = 0;
+
+    public static final double kArmFlatPosition = 0;
+    public static final double kArmDefaultPosition = 0; // TEMP
+    public static final double kArmScoringPosition = 0; // TEMP
   }
 
   public static class ClimbArmConstants {
 
     public static final int kClimbArmMotorPort = 0; // TEMP
     public static final boolean kClimbArmMotorIsBrushless = true; // TEMP
+
+    public static final double kClimbArmLengthMeters = 1; // TMP
+    public static final double kClimbArmMinLengthMeters = 1; // TMP
+    public static final double kClimbGearDiameterMeters = 0.2; // TMP
+
+    public static final double kProportionalGain = 0; // FIXME: will need to be changed!
+    public static final double kIntegralGain = 0; // FIXME: will need to be changed!
+    public static final double kDerivativeGain = 0; // FIXME: will need to be changed!
+
+    public static final double kIZone = 0; // FIXME: will need to be changed!
+    public static final double kFeedForward = 0; // FIXME: will need to be changed!
   }
 
   public static class IntakeConstants {
@@ -60,7 +77,7 @@ public final class Constants {
     public static final int kIntakePort = 0; // TEMP
     public static final int kShooterPort1 = 1; // TEMP
     public static final int kShooterPort2 = 2; // TEMP
-    public static final boolean kIsBrushless = true; // TEMP
+    public static final boolean kIsBrushless = false; // TEMP
 
     public static final boolean kIsIntakeReversed = false; // TEMP
     public static final boolean kIsShooter1Reversed = false; // TEMP

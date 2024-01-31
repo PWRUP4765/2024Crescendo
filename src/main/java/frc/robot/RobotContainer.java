@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -12,8 +13,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ClimbArmCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.error.LimitException;
+import frc.robot.error.NoChannelFoundException;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -27,12 +35,15 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ArmSubsystem m_arm = new ArmSubsystem();
+  private ClimbArmSubsystem climbArmSubsystem;
 
-  Joystick m_driverController = new Joystick(
+  final Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
   );
+  final XboxController controller = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -51,6 +62,16 @@ public class RobotContainer {
         m_robotDrive
       )
     );
+
+    try {
+      climbArmSubsystem =
+        new ClimbArmSubsystem(
+          Constants.ClimbArmConstants.kClimbArmMotorPort,
+          Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
+        );
+    } catch (NoChannelFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -66,6 +87,13 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
+
+    new Trigger(controller::getBButton) // Intake Button TBD
+      .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
+
+    // FIXME: test @this.
+    new Trigger(controller::getAButton)
+      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

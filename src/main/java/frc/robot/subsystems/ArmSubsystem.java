@@ -1,21 +1,23 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-public class ArmSubsystem {
+public class ArmSubsystem extends SubsystemBase {
 
-  private CANSparkMax armMotor;
-  private SparkPIDController armPIDController;
-  private SparkAbsoluteEncoder armEncoder;
+  private CANSparkMax m_armMotor;
+  private SparkPIDController m_armPIDController;
+  private SparkAbsoluteEncoder m_armEncoder;
 
-  private double kP, kI, kD, kIZ, kFF;
+  private double currentSetPosition, kP, kI, kD, kIZ, kFF;
 
   private ShuffleboardTab sb_tab;
   private String sb_name;
@@ -29,42 +31,58 @@ public class ArmSubsystem {
     //example code for REVrobotics parts: https://github.com/REVrobotics/SPARK-MAX-Examples/tree/master/Java
 
     //setting up the arm motor
-    armMotor =
+    m_armMotor =
       new CANSparkMax(ArmConstants.kArmMotorPort, MotorType.kBrushed);
-    armMotor.setInverted(ArmConstants.kArmMotorReversed);
+    m_armMotor.setInverted(ArmConstants.kArmMotorReversed);
 
-    kP = ArmConstants.kArmP;
-    kI = ArmConstants.kArmI;
-    kD = ArmConstants.kArmD;
-    kIZ = ArmConstants.kArmIZ;
-    kFF = ArmConstants.kArmFF;
+    kP = ArmConstants.kP;
+    kI = ArmConstants.kI;
+    kD = ArmConstants.kD;
+    kIZ = ArmConstants.kIZ;
+    kFF = ArmConstants.kFF;
 
-    armPIDController = armMotor.getPIDController();
-    armPIDController.setP(kP);
-    armPIDController.setI(kI);
-    armPIDController.setD(kD);
-    armPIDController.setIZone(kIZ);
-    armPIDController.setFF(kFF);
-    armPIDController.setOutputRange(
-      ArmConstants.kArmMinOutput,
-      ArmConstants.kArmMaxOutput
+    m_armPIDController = m_armMotor.getPIDController();
+    m_armPIDController.setP(kP);
+    m_armPIDController.setI(kI);
+    m_armPIDController.setD(kD);
+    m_armPIDController.setIZone(kIZ);
+    m_armPIDController.setFF(kFF);
+    m_armPIDController.setOutputRange(
+      ArmConstants.kMinOutput,
+      ArmConstants.kMaxOutput
     );
 
-    armEncoder =
-      armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-    armEncoder.setZeroOffset(ArmConstants.kArmEncoderOffset);
-    armEncoder.setPositionConversionFactor(
-      ArmConstants.kArmEncoderConversionFactor
+    m_armEncoder =
+      m_armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    m_armEncoder.setZeroOffset(ArmConstants.kEncoderOffset);
+    m_armEncoder.setPositionConversionFactor(
+      ArmConstants.kEncoderConversionFactor
     );
-    armPIDController.setFeedbackDevice(armEncoder);
+    m_armPIDController.setFeedbackDevice(m_armEncoder);
   }
 
   /**
-   * The arm will begin moving to the desired position. 0 means flat forwards, 1 means flat backwards.
-   * @param Position The position to move to. Domain: [0, 1]
+   * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
+   */
+  public void updateFF() {
+    m_armPIDController.setReference(
+      currentSetPosition,
+      CANSparkBase.ControlType.kPosition,
+      0,
+      ArmConstants.kArmWeight * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+  }
+
+  /**
+   * The arm will begin moving to the desired position. 0 means flat forwards, 0.5 means flat backwards.
+   * @param Position The position to move to. Domain: [0, 0.5]
    */
   public void setPosition(double position) {
-    armPIDController.setReference(position, CANSparkMax.ControlType.kPosition);
+    currentSetPosition = position;
+    m_armPIDController.setReference(
+      position,
+      CANSparkBase.ControlType.kPosition,
+      0,
+      ArmConstants.kArmWeight * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
     sb_setPosition.setDouble(position);
   }
 
@@ -83,6 +101,6 @@ public class ArmSubsystem {
   }
 
   public void updateShuffleboardTab() {
-    sb_encoderPosition.setDouble(armEncoder.getPosition());
+    sb_encoderPosition.setDouble(m_armEncoder.getPosition());
   }
 }
