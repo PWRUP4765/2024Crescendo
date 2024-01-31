@@ -31,11 +31,16 @@ public class IntakeSubsystem extends SubsystemBase{
         //intakeSensor = new...
     }
 
-    // speed is from [-1 to 1]
+    /**
+     * @param speed will take a value between [-1, 1]
+     */
     public void setMotor(int speed){ 
             m_intakeMotor.set(speed);
     }
 
+    /** 
+     * @return returns whether the sensor detects an object 
+     */
     public boolean isDetected(){
        //return m_intakeSensor.
        return false; 

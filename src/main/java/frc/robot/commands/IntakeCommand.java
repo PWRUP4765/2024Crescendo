@@ -10,17 +10,22 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
+/**
+ * @author seankusu
+ */
+
 public class IntakeCommand extends Command {
 
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final IntakeSubsystem m_intakeSubsystem;
   private final ArmSubsystem m_armSubsystem;
 
-  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed;
+  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed 
   
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
+   * @param armSubsystem the other subsystem used by this command
    */
   public IntakeCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem) {
     this.m_intakeSubsystem = intakeSubsystem;

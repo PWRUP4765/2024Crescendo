@@ -88,7 +88,8 @@ public class RobotContainer {
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    new Trigger(controller::getBButton) // Intake Button TBD
+    // Intake Button TBD
+    new Trigger(controller::getBButton) 
       .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
 
     // FIXME: test @this.
