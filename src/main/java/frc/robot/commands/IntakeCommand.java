@@ -20,7 +20,7 @@ public class IntakeCommand extends Command {
   private final IntakeSubsystem m_intakeSubsystem;
   private final ArmSubsystem m_armSubsystem;
 
-  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed 
+  private final int intakeSpeed = (int) IntakeConstants.kIntakeSpeed;
   
 
   /**

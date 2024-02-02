@@ -68,6 +68,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
+    public static final String kCanbusAddress = ""; //TEMP
 
     // Motor Speeds
     public static final float kIntakeSpeed = 0.2F; // TEMP

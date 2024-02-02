@@ -4,12 +4,16 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.hardware.TalonFX; 
 
-//import com.ctre.phoenix6.hardware.TalonFX; 
+
+/**
+ * @author seankusu
+ */
 
 public class IntakeSubsystem extends SubsystemBase{
 
-    private CANSparkMax m_intakeMotor;
+    private TalonFX m_intakeMotor;
     private CANSparkMax m_shooterMotor1;
     private CANSparkMax m_shooterMotor2;
     
@@ -20,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public void IntakeSubsytem(){
 
-        m_intakeMotor = new CANSparkMax(IntakeConstants.kIntakePort, IsBrushless);
+        m_intakeMotor = new TalonFX(IntakeConstants.kIntakePort, IntakeConstants.kCanbusAddress);
         m_shooterMotor1 = new CANSparkMax(IntakeConstants.kShooterPort1, IsBrushless);
         m_shooterMotor2 = new CANSparkMax(IntakeConstants.kShooterPort2, IsBrushless);
 
