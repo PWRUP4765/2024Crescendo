@@ -26,7 +26,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private final MotorType IsBrushless = IntakeConstants.kIsBrushless ? MotorType.kBrushless : MotorType.kBrushed;
 
     public void IntakeSubsytem(){
-
+        System.out.println("I juts created the m_analog!");
         m_intakeMotor = new TalonFX(IntakeConstants.kIntakePort, IntakeConstants.kCanbusAddress);
         m_shooterMotor1 = new CANSparkMax(IntakeConstants.kShooterPort1, IsBrushless);
         m_shooterMotor2 = new CANSparkMax(IntakeConstants.kShooterPort2, IsBrushless);
@@ -37,6 +37,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
         //intakeSensor = new...
         m_analog = new AnalogInput(0);
+        System.out.println("I juts created the m_analog!");
     }
 
     /**
@@ -46,7 +47,9 @@ public class IntakeSubsystem extends SubsystemBase{
         m_intakeMotor.set(speed);
     }
     public int getSensorValue() {
-        return m_analog.getValue();
+        int value = m_analog.getAverageValue();
+        System.out.println(value);
+        return value;
     }
     /** 
      * @return returns whether the sensor detects an object 
