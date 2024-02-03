@@ -52,6 +52,13 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    
+    m_intake.setDefaultCommand(
+      new RunCommand(
+        () ->
+          System.out.println(m_intake.getSensorValue())
+      )
+    );
 
     m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
@@ -61,8 +68,7 @@ public class RobotContainer {
             m_driverController.getRawAxis(0) * 1,
             m_driverController.getRawAxis(1) * -1,
             m_driverController.getRawAxis(2) * 1
-          ),
-        m_robotDrive
+          )
       )
     );
 
