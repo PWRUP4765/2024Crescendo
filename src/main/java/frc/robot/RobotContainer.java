@@ -54,7 +54,7 @@ public class RobotContainer {
     configureBindings();
 
     m_intake.setDefaultCommand(
-      new RunCommand(() -> m_intake.getSensorValue(), m_intake)
+      new RunCommand(() -> m_intake.isDetected(), m_intake)
     );
 
     /*m_robotDrive.setDefaultCommand(
