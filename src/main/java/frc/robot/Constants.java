@@ -76,7 +76,7 @@ public final class Constants {
     public static final float kShooterSpeed = 0.8F; // TEMP
 
     // Intake Paramters
-    public static final int kIntakePort = 0; // TEMP
+    public static final int kIntakePort = 3; // TEMP
     public static final int kShooterPort1 = 1; // TEMP
     public static final int kShooterPort2 = 2; // TEMP
     public static final boolean kIsBrushless = false; // TEMP

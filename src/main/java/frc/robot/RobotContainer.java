@@ -36,11 +36,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  //private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+  // private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
-  private ClimbArmSubsystem climbArmSubsystem;
+  //private final ArmSubsystem m_arm = new ArmSubsystem();
+  //private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
@@ -53,7 +53,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    m_robotDrive.setDefaultCommand(
+    m_intake.setDefaultCommand(
+      new RunCommand(() -> m_intake.getSensorValue(), m_intake)
+    );
+
+    /*m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
       new RunCommand(
         () ->
@@ -61,14 +65,14 @@ public class RobotContainer {
             m_driverController.getRawAxis(0) * 1,
             m_driverController.getRawAxis(1) * -1,
             m_driverController.getRawAxis(2) * 1
-          ),
-        m_robotDrive
+          )
       )
-    );
+    ); */
 
     m_armSubsystem.setDefaultCommand(
       new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
     );
+
     try {
       climbArmSubsystem =
         new ClimbArmSubsystem(
@@ -78,12 +82,6 @@ public class RobotContainer {
     } catch (NoChannelFoundException e) {
       e.printStackTrace();
     }
-
-    climbArmSubsystem.setDefaultCommand(
-      new RunCommand(() ->
-        climbArmSubsystem.tick(false, controller.getAButton())
-      )
-    );
   }
 
   /**
@@ -106,15 +104,14 @@ public class RobotContainer {
     // Intake Button TBD
     new Trigger(controller::getBButton)
       .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
-
     // FIXME: test @this.
-    new Trigger(controller::getAButton)
-      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
+    // new Trigger(controller::getAButton)
+    //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
-    m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+    //m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
   /**
