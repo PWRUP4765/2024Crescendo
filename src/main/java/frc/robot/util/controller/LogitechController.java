@@ -1,7 +1,8 @@
-package frc.robot.util;
+package frc.robot.util.controller;
 
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.error.NoChannelFoundException;
+import java.util.List;
 
 /**
  * @author goofball06
@@ -26,7 +27,7 @@ public class LogitechController extends Joystick {
     LEFTJOYSTICKBUTTON(10),
     RIGHTJOYSTICKBUTTON(11);
 
-    public final int value;
+    public int value;
 
     /**
      * @param val for enum setting
@@ -44,6 +45,14 @@ public class LogitechController extends Joystick {
         "ButtonEnum{" + "name='" + name() + '\'' + ", intValue=" + value + '}'
       );
     }
+
+    /**
+     * @apiNote DO NOT SET VALUES! THIS IS ONLY FOR CUSTOM CONFIGS!
+     * @param newVal the new value of the enum
+     */
+    public void setValue(int newVal) {
+      this.value = newVal;
+    }
   }
 
   /**
@@ -55,7 +64,7 @@ public class LogitechController extends Joystick {
     RIGHTJOYSTICKX(2),
     RIGHTJOYSTICKY(3);
 
-    public final int value;
+    public int value;
 
     /**
      * @param val for setting the port
@@ -73,6 +82,14 @@ public class LogitechController extends Joystick {
         "ButtonEnum{" + "name='" + name() + '\'' + ", intValue=" + value + '}'
       );
     }
+
+    /**
+     * @apiNote DO NOT SET VALUES! THIS IS ONLY FOR CUSTOM CONFIGS!
+     * @param newVal the new value of the enum
+     */
+    public void setValue(int newVal) {
+      this.value = newVal;
+    }
   }
 
   /**
@@ -83,6 +100,19 @@ public class LogitechController extends Joystick {
     super(port);
     if (port < 0) {
       throw new NoChannelFoundException(port);
+    }
+  }
+
+  /**
+   * @param values new values
+   */
+  public void setValues(List<Integer> values) {
+    for (int i = 0; i < values.size(); i++) {
+      if (i < 12) {
+        ButtonEnum.values()[i].setValue(values.get(i));
+      } else {
+        AxisEnum.values()[i].setValue(values.get(i));
+      }
     }
   }
 }
