@@ -67,12 +67,8 @@ public class RobotContainer {
     );
 
     m_armSubsystem.setDefaultCommand(
-      new RunCommand(
-        () ->
-          m_armSubsystem.updateFF(), m_armSubsystem
-      )
+      new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
     );
-
     try {
       climbArmSubsystem =
         new ClimbArmSubsystem(
@@ -82,6 +78,12 @@ public class RobotContainer {
     } catch (NoChannelFoundException e) {
       e.printStackTrace();
     }
+
+    climbArmSubsystem.setDefaultCommand(
+      new RunCommand(() ->
+        climbArmSubsystem.tick(false, controller.getAButton())
+      )
+    );
   }
 
   /**
@@ -94,15 +96,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
     //new JoystickButton(m_driverController, 1).onTrue(new );
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Intake Button TBD
-    new Trigger(controller::getBButton) 
+    new Trigger(controller::getBButton)
       .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
 
     // FIXME: test @this.

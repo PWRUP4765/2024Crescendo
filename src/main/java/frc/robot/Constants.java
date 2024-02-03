@@ -52,12 +52,12 @@ public final class Constants {
 
   public static class ClimbArmConstants {
 
-    public static final int kClimbArmMotorPort = 0; // TEMP
-    public static final boolean kClimbArmMotorIsBrushless = true; // TEMP
+    public static final int kClimbArmMotorPort = 0; // FIXME: will need to be changed!
+    public static final boolean kClimbArmMotorIsBrushless = true; // FIXME: will need to be changed!
 
-    public static final double kClimbArmLengthMeters = 1; // TMP
-    public static final double kClimbArmMinLengthMeters = 1; // TMP
-    public static final double kClimbGearDiameterMeters = 0.2; // TMP
+    public static final double kClimbArmLengthMeters = 1; // FIXME: will need to be changed!
+    public static final double kClimbArmMinLengthMeters = 1; // FIXME: will need to be changed!
+    public static final double kClimbGearDiameterMeters = 0.2; // FIXME: will need to be changed!
 
     public static final double kProportionalGain = 0; // FIXME: will need to be changed!
     public static final double kIntegralGain = 0; // FIXME: will need to be changed!
@@ -68,6 +68,7 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
+
     public static final String kCanbusAddress = ""; //TEMP
 
     // Motor Speeds

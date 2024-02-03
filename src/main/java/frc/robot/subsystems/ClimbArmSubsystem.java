@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -16,7 +18,7 @@ import frc.robot.error.NoChannelFoundException;
 public class ClimbArmSubsystem extends SubsystemBase {
 
   final CANSparkMax sparkMax;
-  final RelativeEncoder encoder;
+  final AbsoluteEncoder encoder;
   final SparkPIDController pid;
 
   /**
@@ -40,7 +42,9 @@ public class ClimbArmSubsystem extends SubsystemBase {
           : MotorType.kBrushed
       );
 
-    this.encoder = sparkMax.getEncoder();
+    this.encoder =
+      sparkMax.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    sparkMax.restoreFactoryDefaults();
 
     pid = getPid();
     pid.setP(Constants.ClimbArmConstants.kProportionalGain);
@@ -52,6 +56,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
     encoder.setPositionConversionFactor(
       Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
     );
+    encoder.setInverted(true);
   }
 
   /**
@@ -126,10 +131,28 @@ public class ClimbArmSubsystem extends SubsystemBase {
    * @apiNote this resets the encoder's position to 0 res
    */
   public void resetPosition() {
-    encoder.setPosition(0);
+    encoder.setZeroOffset(0.388);
   }
 
   public SparkPIDController getPid() {
     return this.sparkMax.getPIDController();
+  }
+
+  public void tick(boolean isOffline, boolean buttonState) {
+    try {
+      if (!isOffline) {
+        if (buttonState) {
+          setSpeed(35);
+        } else {
+          setSpeed(0);
+        }
+
+        return;
+      }
+
+      stopMotor();
+    } catch (LimitException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
