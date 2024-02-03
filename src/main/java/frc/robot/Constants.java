@@ -38,12 +38,12 @@ public final class Constants {
     public static final double kMaxOutput = 1;
 
     public static final double kEncoderOffset = 0;
-    public static final double kEncoderConversionFactor = 1;
+    public static final double kEncoderConversionFactor = 5.0 / 8.0;
 
     public static final double kMinPosition = 0;
     public static final double kMaxPosition = 0.5;
 
-    public static final double kArmWeight = 0;
+    public static final double kFFCoefficient = 0;
 
     public static final double kArmFlatPosition = 0;
     public static final double kArmDefaultPosition = 0; // TEMP

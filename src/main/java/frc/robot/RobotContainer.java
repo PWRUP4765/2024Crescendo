@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
@@ -36,6 +37,7 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
@@ -43,6 +45,7 @@ public class RobotContainer {
   final Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
   );
+
   final XboxController controller = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -60,6 +63,13 @@ public class RobotContainer {
             m_driverController.getRawAxis(2) * 1
           ),
         m_robotDrive
+      )
+    );
+
+    m_armSubsystem.setDefaultCommand(
+      new RunCommand(
+        () ->
+          m_armSubsystem.updateFF(), m_armSubsystem
       )
     );
 
@@ -84,6 +94,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+    //new JoystickButton(m_driverController, 1).onTrue(new );
+
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));

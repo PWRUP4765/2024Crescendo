@@ -69,7 +69,7 @@ public class ArmSubsystem extends SubsystemBase {
       currentSetPosition,
       CANSparkBase.ControlType.kPosition,
       0,
-      ArmConstants.kArmWeight * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+      ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
   }
 
   /**
@@ -82,8 +82,8 @@ public class ArmSubsystem extends SubsystemBase {
       position,
       CANSparkBase.ControlType.kPosition,
       0,
-      ArmConstants.kArmWeight * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
-    sb_setPosition.setDouble(position);
+      ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+    //sb_setPosition.setDouble(position);
   }
 
   public void createShuffleboardTab() {
