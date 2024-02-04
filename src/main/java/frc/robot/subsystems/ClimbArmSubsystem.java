@@ -132,7 +132,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void resetPosition() {
     encoder.setInverted(true);
-    encoder.setZeroOffset(0.608);
+    encoder.setZeroOffset(0.606);
   }
 
   public SparkPIDController getPid() {
