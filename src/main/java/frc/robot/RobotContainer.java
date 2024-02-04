@@ -39,7 +39,8 @@ public class RobotContainer {
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
+  private final double intakeSpeed = 0.5;
+  //private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
@@ -54,9 +55,12 @@ public class RobotContainer {
     /*configureBindings();
 
     m_intake.setDefaultCommand(
-      new RunCommand(() -> m_intake.isDetected(), m_intake)
-    );*/
-
+      new RunCommand(
+        () ->
+          //m_intake.getSensorValue(), m_intake
+          m_intake.setMotor(), m_intake
+      )
+    );
     /*m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
       new RunCommand(
@@ -109,8 +113,8 @@ public class RobotContainer {
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Intake Button TBD
-    new Trigger(controller::getBButton)
-      .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
+    //new Trigger(controller::getBButton)
+    //  .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
     // FIXME: test @this.
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));

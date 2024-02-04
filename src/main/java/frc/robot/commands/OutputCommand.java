@@ -30,12 +30,12 @@ public class OutputCommand extends Command {
 
   @Override
   public void execute() {
-    m_intakeSubsystem.setMotor(outputSpeed);
+    m_intakeSubsystem.setMotor();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_intakeSubsystem.setMotor(0);
+    m_intakeSubsystem.setMotor();
   }
 
   @Override
