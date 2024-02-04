@@ -52,8 +52,8 @@ public final class Constants {
 
   public static class ClimbArmConstants {
 
-    public static final int kClimbArmMotorPort = 0; // FIXME: will need to be changed!
-    public static final boolean kClimbArmMotorIsBrushless = true; // FIXME: will need to be changed!
+    public static final int kClimbArmMotorPort = 32;
+    public static final boolean kClimbArmMotorIsBrushless = false;
 
     public static final double kClimbArmLengthMeters = 1; // FIXME: will need to be changed!
     public static final double kClimbArmMinLengthMeters = 1; // FIXME: will need to be changed!

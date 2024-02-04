@@ -51,11 +51,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    /*configureBindings();
 
     m_intake.setDefaultCommand(
       new RunCommand(() -> m_intake.isDetected(), m_intake)
-    );
+    );*/
 
     /*m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
@@ -69,9 +69,9 @@ public class RobotContainer {
       )
     ); */
 
-    m_armSubsystem.setDefaultCommand(
+    /*m_armSubsystem.setDefaultCommand(
       new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
-    );
+    );*/
 
     try {
       climbArmSubsystem =
@@ -82,6 +82,13 @@ public class RobotContainer {
     } catch (NoChannelFoundException e) {
       e.printStackTrace();
     }
+
+    climbArmSubsystem.setDefaultCommand(
+      new RunCommand(
+        () -> climbArmSubsystem.tick(false, controller.getBButton()),
+        climbArmSubsystem
+      )
+    );
   }
 
   /**

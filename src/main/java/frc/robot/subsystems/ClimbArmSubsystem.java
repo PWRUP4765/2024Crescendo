@@ -45,6 +45,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
     this.encoder =
       sparkMax.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
     sparkMax.restoreFactoryDefaults();
+    resetPosition();
 
     pid = getPid();
     pid.setP(Constants.ClimbArmConstants.kProportionalGain);
@@ -56,7 +57,6 @@ public class ClimbArmSubsystem extends SubsystemBase {
     encoder.setPositionConversionFactor(
       Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
     );
-    encoder.setInverted(true);
   }
 
   /**
@@ -131,7 +131,8 @@ public class ClimbArmSubsystem extends SubsystemBase {
    * @apiNote this resets the encoder's position to 0 res
    */
   public void resetPosition() {
-    encoder.setZeroOffset(0.388);
+    encoder.setInverted(true);
+    encoder.setZeroOffset(0.608);
   }
 
   public SparkPIDController getPid() {
