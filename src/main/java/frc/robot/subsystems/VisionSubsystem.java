@@ -10,23 +10,25 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class Vision extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase {
 
   PhotonCamera m_camera;
   PhotonCamera m_result;
   PhotonPipelineResult m_pipline = new PhotonPipelineResult();
+
   private final PIDController m_fowardController = new PIDController(
     VisionConstants.ANGULAR_P,
     0,
     VisionConstants.ANGULAR_D
   );
+
   private final PIDController m_rotationController = new PIDController(
     VisionConstants.LINEAR_P,
     0,
     VisionConstants.ANGULAR_D
   );
 
-  public Vision(String cameraname) {
+  public VisionSubsystem(String cameraname) {
     m_camera = new PhotonCamera(cameraname);
   }
 

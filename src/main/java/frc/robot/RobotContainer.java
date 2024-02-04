@@ -15,7 +15,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,7 +28,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final Vision m_vision = new Vision("limelight");
+  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
 
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
 

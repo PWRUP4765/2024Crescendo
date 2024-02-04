@@ -2,14 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.VisionSubsystem;
 
 public class GoToAprilTag extends Command {
 
-  Vision m_vision;
+  VisionSubsystem m_vision;
   SwerveSubsystem m_swerveDrive;
 
-  public GoToAprilTag(SwerveSubsystem swerveDrive, Vision vision) {
+  public GoToAprilTag(SwerveSubsystem swerveDrive, VisionSubsystem vision) {
     m_vision = vision;
     m_swerveDrive = swerveDrive;
   }
