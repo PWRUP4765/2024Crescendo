@@ -24,6 +24,7 @@ import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.LogitechController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,10 +40,9 @@ public class RobotContainer {
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
-  final Joystick m_driverController = new Joystick(
+  final LogitechController m_driverController = new LogitechController(
     OperatorConstants.kDriverControllerPort
   );
 
@@ -95,7 +95,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    //new JoystickButton(m_driverController, 1).onTrue(new );
+    // Arm commands
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0), m_armSubsystem));
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.B.value)
+      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0.5), m_armSubsystem));
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
@@ -103,7 +107,7 @@ public class RobotContainer {
 
     // Intake Button TBD
     new Trigger(controller::getBButton) 
-      .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
+      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
 
     // FIXME: test @this.
     new Trigger(controller::getAButton)
