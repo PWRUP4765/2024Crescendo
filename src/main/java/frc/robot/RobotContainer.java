@@ -24,7 +24,7 @@ import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.util.LogitechController;
+import frc.robot.util.controller.LogitechController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
