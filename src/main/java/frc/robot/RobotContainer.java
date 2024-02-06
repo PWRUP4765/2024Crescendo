@@ -40,6 +40,8 @@ public class RobotContainer {
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final double intakeSpeed = 0.5;
+  //private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
   final LogitechController m_driverController = new LogitechController(
@@ -51,9 +53,16 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    /*configureBindings();
 
-    m_robotDrive.setDefaultCommand(
+    m_intake.setDefaultCommand(
+      new RunCommand(
+        () ->
+          //m_intake.getSensorValue(), m_intake
+          m_intake.setMotor(), m_intake
+      )
+    );
+    /*m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
       new RunCommand(
         () ->
@@ -61,17 +70,13 @@ public class RobotContainer {
             m_driverController.getRawAxis(0) * 1,
             m_driverController.getRawAxis(1) * -1,
             m_driverController.getRawAxis(2) * 1
-          ),
-        m_robotDrive
+          )
       )
-    );
+    ); */
 
-    m_armSubsystem.setDefaultCommand(
-      new RunCommand(
-        () ->
-          m_armSubsystem.updateFF(), m_armSubsystem
-      )
-    );
+    /*m_armSubsystem.setDefaultCommand(
+      new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
+    );*/
 
     try {
       climbArmSubsystem =
@@ -82,6 +87,13 @@ public class RobotContainer {
     } catch (NoChannelFoundException e) {
       e.printStackTrace();
     }
+
+    climbArmSubsystem.setDefaultCommand(
+      new RunCommand(
+        () -> climbArmSubsystem.tick(false, controller.getBButton()),
+        climbArmSubsystem
+      )
+    );
   }
 
   /**
@@ -102,6 +114,7 @@ public class RobotContainer {
       .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0.5), m_armSubsystem));
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
@@ -110,13 +123,13 @@ public class RobotContainer {
       .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
 
     // FIXME: test @this.
-    new Trigger(controller::getAButton)
-      .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
+    // new Trigger(controller::getAButton)
+    //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
-    m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+    //m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
   /**

@@ -42,12 +42,12 @@ public class IntakeCommand extends Command {
 
   @Override
   public void execute() {
-    m_intakeSubsystem.setMotor(intakeSpeed);
+    m_intakeSubsystem.setMotor();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_intakeSubsystem.setMotor(0);
+    m_intakeSubsystem.setMotor();
     m_armSubsystem.setPosition(ArmConstants.kArmDefaultPosition);
   }
 
