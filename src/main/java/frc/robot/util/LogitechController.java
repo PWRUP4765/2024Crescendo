@@ -79,10 +79,10 @@ public class LogitechController extends Joystick {
    * @param port the port of the controller
    * @throws NoChannelFoundException if the channel is invalid that means that some code upstairs is buggy and needs to be fixed
    */
-  public LogitechController(int port) throws NoChannelFoundException {
+  public LogitechController(final int port) /*throws NoChannelFoundException*/ {
     super(port);
-    if (port < 0) {
+    /*if (port < 0) {
       throw new NoChannelFoundException(port);
-    }
+    }*/
   }
 }

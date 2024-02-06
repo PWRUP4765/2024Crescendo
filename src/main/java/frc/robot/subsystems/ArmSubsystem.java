@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
+
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -21,7 +22,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   private ShuffleboardTab sb_tab;
   private String sb_name;
-
   private GenericEntry sb_kP, sb_kI, sb_kD, sb_kIZ, sb_kFF, sb_encoderPosition, sb_setPosition;
 
   /**
@@ -47,10 +47,6 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPIDController.setD(kD);
     m_armPIDController.setIZone(kIZ);
     m_armPIDController.setFF(kFF);
-    m_armPIDController.setOutputRange(
-      ArmConstants.kMinOutput,
-      ArmConstants.kMaxOutput
-    );
 
     m_armEncoder =
       m_armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -74,15 +70,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   /**
    * The arm will begin moving to the desired position. 0 means flat forwards, 0.5 means flat backwards.
-   * @param Position The position to move to. Domain: [0, 0.5]
+   * @param Position The position to move to. Domain: [0, 0.25]
    */
   public void setPosition(double position) {
     currentSetPosition = position;
-    m_armPIDController.setReference(
-      position,
-      CANSparkBase.ControlType.kPosition,
-      0,
-      ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+    updateFF();
     //sb_setPosition.setDouble(position);
   }
 
