@@ -139,9 +139,10 @@ public class SwerveModule {
   }
 
   public double[] optimize(double speed, double angle, double encoderAngle) {
+    encoderAngle = (encoderAngle  + 1.0/2.0) % 1 - (1.0/2.0);
     if (
-      Math.abs(angle - encoderAngle) < 90 ||
-      Math.abs(angle - encoderAngle) > 270
+      Math.abs(angle - encoderAngle) < 0.25 ||
+      Math.abs(angle - encoderAngle) > 0.75
     ) {
       return new double[] { speed, angle };
     }

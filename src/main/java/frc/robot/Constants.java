@@ -90,9 +90,9 @@ public final class Constants {
   public class SwerveConstants {
 
     //the driving motor ports
-    public static final int kFrontLeftDriveMotorPort = 10;
-    public static final int kFrontRightDriveMotorPort = 21;
-    public static final int kRearLeftDriveMotorPort = 12;
+    public static final int kFrontLeftDriveMotorPort = 22;
+    public static final int kFrontRightDriveMotorPort = 23;
+    public static final int kRearLeftDriveMotorPort = 25;
     public static final int kRearRightDriveMotorPort = 13;
 
     //whether the driving encoders are flipped
@@ -102,10 +102,10 @@ public final class Constants {
     public static final boolean kRearRightDriveMotorReversed = true;
 
     //the turning motor ports
-    public static final int kFrontLeftTurningMotorPort = 22;
-    public static final int kFrontRightTurningMotorPort = 20;
-    public static final int kRearLeftTurningMotorPort = 25;
-    public static final int kRearRightTurningMotorPort = 23;
+    public static final int kFrontLeftTurningMotorPort = 12;
+    public static final int kFrontRightTurningMotorPort = 21;
+    public static final int kRearLeftTurningMotorPort = 10;
+    public static final int kRearRightTurningMotorPort = 20;
 
     //whether the turning enoders are flipped
     public static final boolean kFrontLeftTurningMotorReversed = false;
@@ -113,11 +113,11 @@ public final class Constants {
     public static final boolean kRearLeftTurningMotorReversed = false;
     public static final boolean kRearRightTurningMotorReversed = false;
 
-    //the CANCoder turning encoder ports
-    public static final int kFrontLeftCANcoderPort = 3;
-    public static final int kFrontRightCANcoderPort = 4;
-    public static final int kRearLeftCANcoderPort = 2;
-    public static final int kRearRightCANcoderPort = 1;
+    //the CANCoder turning encoder ports - updated 2/6/24
+    public static final int kFrontLeftCANcoderPort = 1;
+    public static final int kFrontRightCANcoderPort = 2;
+    public static final int kRearLeftCANcoderPort = 4;
+    public static final int kRearRightCANcoderPort = 3;
 
     //whether the turning CANCoders are flipped
     public static final SensorDirectionValue kFrontLeftCANcoderDirection =
@@ -132,10 +132,10 @@ public final class Constants {
     //magnetic offset for the CANCoders
     //you can find these by connecting to the RoboRIO by USB on the drive station, opening the Phoenix Tuner app, and taking snapshots of
     //the rotational values of the CANCoders while in they are in the forward state
-    public static final double kFrontLeftCANcoderMagnetOffset = -0.403; //-0.403 rotations
-    public static final double kFrontRightCANcoderMagnetOffset = -0.250; //-0.250 rotations
-    public static final double kRearLeftCANcoderMagnetOffset = -0.422; //-0.422 rotations
-    public static final double kRearRightCANcoderMagnetOffset = 0.064; //0.064 rotations
+    public static final double kFrontLeftCANcoderMagnetOffset = -0.440; //-0.403 rotations
+    public static final double kFrontRightCANcoderMagnetOffset = 0.079; //-0.250 rotations
+    public static final double kRearLeftCANcoderMagnetOffset = 0.253; //-0.422 rotations
+    public static final double kRearRightCANcoderMagnetOffset = 0.097; //0.064 rotations
 
     //stats used by SwerveSubsystem for math
     public static final double kDriveBaseWidth = 0.47625;

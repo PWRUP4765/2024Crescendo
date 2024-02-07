@@ -38,11 +38,11 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final double intakeSpeed = 0.5;
+  //private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  //private final double intakeSpeed = 0.5;
   //private final ArmSubsystem m_arm = new ArmSubsystem();
-  private ClimbArmSubsystem climbArmSubsystem;
+  //private ClimbArmSubsystem climbArmSubsystem;
 
   final LogitechController m_driverController = new LogitechController(
     OperatorConstants.kDriverControllerPort
@@ -53,16 +53,16 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    /*configureBindings();
+    configureBindings();
 
-    m_intake.setDefaultCommand(
+    /*m_intake.setDefaultCommand(
       new RunCommand(
         () ->
           //m_intake.getSensorValue(), m_intake
           m_intake.setMotor(), m_intake
       )
-    );
-    /*m_robotDrive.setDefaultCommand(
+    );*/
+    m_robotDrive.setDefaultCommand(
       // 4765: Controller commands converted for various joysticks
       new RunCommand(
         () ->
@@ -70,15 +70,15 @@ public class RobotContainer {
             m_driverController.getRawAxis(0) * 1,
             m_driverController.getRawAxis(1) * -1,
             m_driverController.getRawAxis(2) * 1
-          )
+          ), m_robotDrive
       )
-    ); */
+    );
 
     /*m_armSubsystem.setDefaultCommand(
       new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
     );*/
 
-    try {
+    /*try {
       climbArmSubsystem =
         new ClimbArmSubsystem(
           Constants.ClimbArmConstants.kClimbArmMotorPort,
@@ -86,14 +86,14 @@ public class RobotContainer {
         );
     } catch (NoChannelFoundException e) {
       e.printStackTrace();
-    }
+    }*/
 
-    climbArmSubsystem.setDefaultCommand(
+    /*climbArmSubsystem.setDefaultCommand(
       new RunCommand(
         () -> climbArmSubsystem.tick(false, controller.getBButton()),
         climbArmSubsystem
       )
-    );
+    );*/
   }
 
   /**
@@ -107,11 +107,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
+    //drive commands
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
+      .onTrue(new RunCommand(() -> m_robotDrive.reset(), m_robotDrive));
+
     // Arm commands
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
-      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0), m_armSubsystem));
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.B.value)
-      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0.5), m_armSubsystem));
+    // new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+    //   .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0), m_armSubsystem));
+    // new JoystickButton(m_driverController, LogitechController.ButtonEnum.B.value)
+    //   .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0.5), m_armSubsystem));
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
@@ -119,8 +123,8 @@ public class RobotContainer {
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // Intake Button TBD
-    new Trigger(controller::getBButton) 
-      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    //new Trigger(controller::getBButton) 
+    //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
 
     // FIXME: test @this.
     // new Trigger(controller::getAButton)
