@@ -19,7 +19,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax m_shooterMotor1;
     private CANSparkMax m_shooterMotor2;
     private AnalogInput m_analog;
-    private double IntakeSpeed = 0.5;
+    
+    private double IntakeSpeed = IntakeConstants.kIntakeSpeed;
     
     // This is TBD depedning on what sensor hardware decides to use
     //private final m_intakeSensor;
@@ -31,21 +32,21 @@ public class IntakeSubsystem extends SubsystemBase {
     ? MotorType.kBrushless
     : MotorType.kBrushed;
 
-  /**
-   * @param speed will take a value between [-1, 1]
-   */
-  public void setMotor(int speed) {
-    m_intakeMotor.set(speed);
-  }
-
     public IntakeSubsystem(){
         System.out.println("IntakeSubsystem!");
 
-        m_intakeMotor = new CANSparkMax(IntakeConstants.kIntakePort, MotorType.kBrushed);
+        m_intakeMotor = new CANSparkMax(IntakeConstants.kIntakePort, IsBrushless);
 
         m_intakeMotor.setInverted(IntakeConstants.kIsIntakeReversed);
 
         m_analog = new AnalogInput(0);
+    }
+
+    /**
+     * @param speed will take a value between [-1, 1]
+     */
+    public void setMotor(int speed) {
+        m_intakeMotor.set(speed);
     }
 
     /**
@@ -61,6 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
             m_intakeMotor.set(IntakeSpeed);
         }
     }
+
     public int getSensorValue() {
         /*if (m_analog == null)
         {
@@ -71,6 +73,7 @@ public class IntakeSubsystem extends SubsystemBase {
         System.out.println(value);
         return value;
     }
+
     /** 
      * @return returns whether the sensor detects an object 
      */

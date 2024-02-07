@@ -38,8 +38,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-  //private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   //private final double intakeSpeed = 0.5;
   //private final ArmSubsystem m_arm = new ArmSubsystem();
   //private ClimbArmSubsystem climbArmSubsystem;
