@@ -38,7 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor = new CANSparkMax(IntakeConstants.kIntakePort, IsBrushless);
 
         m_intakeMotor.setInverted(IntakeConstants.kIsIntakeReversed);
-
+        
         m_analog = new AnalogInput(0);
     }
 

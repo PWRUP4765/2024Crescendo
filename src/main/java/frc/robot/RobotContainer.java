@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimbArmCommand;
 import frc.robot.commands.ExampleCommand;
@@ -24,6 +25,8 @@ import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.dummySubsystems.ArmSubsystemDummy;
+import frc.robot.subsystems.dummySubsystems.SwerveSubsystemDummy;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 
@@ -38,11 +41,10 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private final SwerveSubsystem m_robotDrive;
+  private final ArmSubsystem m_armSubsystem;
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final double intakeSpeed = 0.5;
-  //private final ArmSubsystem m_arm = new ArmSubsystem();
   private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
@@ -58,30 +60,41 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    /*configureBindings();
+    configureBindings();
 
-    m_intake.setDefaultCommand(
+    /*m_intake.setDefaultCommand(
       new RunCommand(
         () ->
           //m_intake.getSensorValue(), m_intake
           m_intake.setMotor(), m_intake
       )
-    );
-    /*m_robotDrive.setDefaultCommand(
-      // 4765: Controller commands converted for various joysticks
-      new RunCommand(
-        () ->
-          m_robotDrive.joystickDrive(
-            m_driverController.getRawAxis(0) * 1,
-            m_driverController.getRawAxis(1) * -1,
-            m_driverController.getRawAxis(2) * 1
-          )
-      )
-    ); */
-
-    /*m_armSubsystem.setDefaultCommand(
-      new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
     );*/
+    if (RobotContainerConstants.kSwerveEnabled) {
+      m_robotDrive = new SwerveSubsystem();
+      m_robotDrive.setDefaultCommand(
+        // 4765: Controller commands converted for various joysticks
+        new RunCommand(
+          () ->
+            m_robotDrive.joystickDrive(
+              m_driverController.getRawAxis(0) * 1,
+              m_driverController.getRawAxis(1) * -1,
+              m_driverController.getRawAxis(2) * 1
+            ), m_robotDrive
+        )
+      );
+    } else {
+      m_robotDrive = new SwerveSubsystemDummy();
+    }
+
+    
+    if (RobotContainerConstants.kArmEnabled) {
+      m_armSubsystem = new ArmSubsystem();
+      m_armSubsystem.setDefaultCommand(
+        new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
+      );
+    } else {
+      m_armSubsystem = new ArmSubsystemDummy();
+    }
 
     try {
       climbArmSubsystem =
@@ -111,7 +124,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //new JoystickButton(m_driverController, 1).onTrue(new );
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0), m_armSubsystem));
 
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
@@ -123,7 +137,7 @@ public class RobotContainer {
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
-    //  .toggleOnTrue(new IntakeCommand(m_intake, m_arm));
+    //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
     // FIXME: test @this.
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));

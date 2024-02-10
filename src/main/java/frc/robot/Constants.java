@@ -28,6 +28,11 @@ public final class Constants {
     public static final int kDriveTeamConstants2 = 1;
   }
 
+  public static class RobotContainerConstants {
+    public static final boolean kSwerveEnabled = true;
+    public static final boolean kArmEnabled = true;
+  }
+
   public static class ArmConstants {
 
     public static final int kArmMotorPort = 11;
