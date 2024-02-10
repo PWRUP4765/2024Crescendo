@@ -9,19 +9,49 @@ public class GoToAprilTag extends Command {
   VisionSubsystem m_vision;
   SwerveSubsystem m_swerveDrive;
 
-  public GoToAprilTag(SwerveSubsystem swerveDrive, VisionSubsystem vision) {
+  double m_desiredX, m_desiredY, m_desiredRot;
+
+  public GoToAprilTag(
+    SwerveSubsystem swerveDrive,
+    VisionSubsystem vision,
+    double x,
+    double y,
+    double rot
+  ) {
     m_vision = vision;
     m_swerveDrive = swerveDrive;
+
+    m_desiredX = x;
+    m_desiredY = y;
+    m_desiredRot = rot;
   }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
 
   @Override
   public void execute() {
     var target = m_vision.findBestTarget();
     if (target != null) {
-      var forwardSpeedX = m_vision.calculateForwardSpeedX(target);
-      var forwardSpeedSpeedY = m_vision.calculateForwardSpeedY(target);
-      var rotationSpeed = m_vision.calculateRotationSpeed(target);
+      double forwardSpeedX = m_vision.calculateForwardSpeedX(
+        target,
+        m_desiredX
+      );
+      double forwardSpeedSpeedY = m_vision.calculateForwardSpeedY(
+        target,
+        m_desiredY
+      );
+      double rotationSpeed = m_vision.calculateRotationSpeed(
+        target,
+        m_desiredRot
+      );
       m_swerveDrive.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
     }
+  }
+
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }
