@@ -57,21 +57,23 @@ public class VisionSubsystem extends SubsystemBase {
     return target;
   }
 
-  public double calculateForwardSpeedX(VisionTarget target, double goal) {
+  public double calculateSidewaysSpeedX(VisionTarget target, double goal) {
     double axis = target.getX();
-    // -1.0 required to ensure positive PID controller effort _increases_ range
-    return -m_xController.calculate(axis, goal);
+    sb_x.setDouble(axis);
+    return m_xController.calculate(axis, goal);
   }
 
   public double calculateForwardSpeedY(VisionTarget target, double goal) {
     double axis = target.getY();
-    // -1.0 required to ensure positive PID controller effort _increases_ range
+    sb_y.setDouble(axis);
+    // -1.0 required to fit to swerveDrive standards
     return -m_yController.calculate(axis, goal);
   }
 
   public double calculateRotationSpeed(VisionTarget target, double goal) {
-    // -1.0 required to ensure positive PID controller effort _increases_ yaw
-    return -m_rotationController.calculate(target.getPitch(), goal);
+    double axis = target.getPitch();
+    sb_rot.setDouble(axis);
+    return m_rotationController.calculate(axis, goal);
   }
 
   // public double getRange(VisionTarget target) {
@@ -113,14 +115,16 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public double getX() {
-      return m_transform3d.getX();
-    }
-
-    public double getY() {
       return m_transform3d.getY();
     }
 
+    public double getY() {
+      return m_transform3d.getX();
+    }
+
     public double getPitch() {
+      double m_pitch = m_target.getPitch() / 360.0;
+      m_pitch = (m_pitch % 1.0) - 0.5;
       return m_pitch;
     }
 

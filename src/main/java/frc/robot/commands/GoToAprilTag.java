@@ -24,6 +24,8 @@ public class GoToAprilTag extends Command {
     m_desiredX = x;
     m_desiredY = y;
     m_desiredRot = rot;
+
+    addRequirements(swerveDrive);
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +36,7 @@ public class GoToAprilTag extends Command {
   public void execute() {
     var target = m_vision.findBestTarget();
     if (target != null) {
-      double forwardSpeedX = m_vision.calculateForwardSpeedX(
+      double forwardSpeedX = m_vision.calculateSidewaysSpeedX(
         target,
         m_desiredX
       );
