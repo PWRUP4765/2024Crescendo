@@ -21,14 +21,13 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.dummySubsystems.ArmSubsystemDummy;
-import frc.robot.subsystems.dummySubsystems.SwerveSubsystemDummy;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,8 +41,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final SwerveSubsystem m_robotDrive;
-  private final ArmSubsystem m_armSubsystem;
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private ArmSubsystem m_armSubsystem;
+  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
 
@@ -60,7 +59,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    
 
     /*m_intake.setDefaultCommand(
       new RunCommand(
@@ -69,6 +68,7 @@ public class RobotContainer {
           m_intake.setMotor(), m_intake
       )
     );*/
+    
     if (RobotContainerConstants.kSwerveEnabled) {
       m_robotDrive = new SwerveSubsystem();
       m_robotDrive.setDefaultCommand(
@@ -82,36 +82,32 @@ public class RobotContainer {
             ), m_robotDrive
         )
       );
-    } else {
-      m_robotDrive = new SwerveSubsystemDummy();
     }
-
     
     if (RobotContainerConstants.kArmEnabled) {
       m_armSubsystem = new ArmSubsystem();
       m_armSubsystem.setDefaultCommand(
         new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
       );
-    } else {
-      m_armSubsystem = new ArmSubsystemDummy();
     }
 
-    try {
-      climbArmSubsystem =
-        new ClimbArmSubsystem(
-          Constants.ClimbArmConstants.kClimbArmMotorPort,
-          Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
-        );
-    } catch (NoChannelFoundException e) {
-      e.printStackTrace();
-    }
+    // try {
+    //   climbArmSubsystem =
+    //     new ClimbArmSubsystem(
+    //       Constants.ClimbArmConstants.kClimbArmMotorPort,
+    //       Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
+    //     );
+    // } catch (NoChannelFoundException e) {
+    //   e.printStackTrace();
+    // }
 
-    climbArmSubsystem.setDefaultCommand(
-      new RunCommand(
-        () -> climbArmSubsystem.tick(false, controller.getBButton()),
-        climbArmSubsystem
-      )
-    );
+    // climbArmSubsystem.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> climbArmSubsystem.tick(false, controller.getBButton()),
+    //     climbArmSubsystem
+    //   )
+    // );
+    configureBindings();
   }
 
   /**
@@ -124,16 +120,23 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
-      .onTrue(new RunCommand(() -> m_armSubsystem.setPosition(0), m_armSubsystem));
-
+    if (RobotContainerConstants.kArmEnabled) {
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+        .onTrue(m_armSubsystem.setPositionCommand(0));
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.Y.value)
+        .onTrue(m_armSubsystem.setPositionCommand(0.25));
+    }
+    if (RobotContainerConstants.kSwerveEnabled) {
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
+        .onTrue(m_robotDrive.runOnce(() -> m_robotDrive.reset()));
+    }
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     new Trigger(m_exampleSubsystem::exampleCondition)
       .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
-      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
+    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)

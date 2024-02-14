@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.util.MathFunc;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -79,18 +80,18 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void joystickDrive(double x, double y, double r) {
     x =
-      deadband(
+      MathFunc.deadband(
         x,
         SwerveConstants.kXSpeedDeadband,
         SwerveConstants.kXSpeedMinValue
       );
     y =
-      deadband(
+      MathFunc.deadband(
         y,
         SwerveConstants.kYSpeedDeadband,
         SwerveConstants.kYSpeedMinValue
       );
-    r = deadband(r, SwerveConstants.kRotDeadband, SwerveConstants.kRotMinValue);
+    r = MathFunc.deadband(r, SwerveConstants.kRotDeadband, SwerveConstants.kRotMinValue);
 
     drive(x, y, r);
   }
@@ -134,7 +135,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     //Because wheel outputs should be from -1 to 1, desaturates all of the wheels speeds if any
     //of them exceed +-1, while maintaining the ratio between the wheels.
-    double denominator = max(
+    double denominator = MathFunc.max(
       Math.abs(frontLeftSpeed),
       Math.abs(frontRightSpeed),
       Math.abs(rearLeftSpeed),
@@ -179,7 +180,7 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearRightSwerveModule.reset();
   }
 
-  public void createShuffleboardTab() {
+  private void createShuffleboardTab() {
     //setting up the Shuffleboard tab
     sb_name = "SwerveSubsystem";
     sb_tab = Shuffleboard.getTab(sb_name);
@@ -199,7 +200,7 @@ public class SwerveSubsystem extends SubsystemBase {
     sb_NAVXRoll = sb_tab.add("NAVXAngle", 0).getEntry();
   }
 
-  public void updateShuffleboardTab(
+  private void updateShuffleboardTab(
     double frontLeftSpeed,
     double frontRightSpeed,
     double rearLeftSpeed,
@@ -222,29 +223,6 @@ public class SwerveSubsystem extends SubsystemBase {
     sb_NAVXPitch.setDouble(m_gyro.getPitch());
     sb_NAVXYaw.setDouble(m_gyro.getYaw());
     sb_NAVXRoll.setDouble(m_gyro.getRoll());
-  }
-
-  public double[] optimize(double speed, double angle, double encoderAngle) {
-    if (
-      Math.abs(angle - encoderAngle) < 90 ||
-      Math.abs(angle - encoderAngle) > 270
-    ) {
-      return new double[] { speed, angle };
-    }
-
-    return new double[] { -speed, ((angle + 1) % 1) - 0.5 };
-  }
-
-  public double max(double... values) {
-    double m = values[0];
-
-    for (double value : values) {
-      if (value > m) {
-        m = value;
-      }
-    }
-
-    return m;
   }
 
   public double deadband(double input, double deadband, double minValue) {

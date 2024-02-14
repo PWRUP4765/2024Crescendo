@@ -14,18 +14,19 @@ public class LogitechController extends Joystick {
    * @implNote the default button enum for the logitec controller
    */
   public enum ButtonEnum {
-    X(0),
-    A(1),
-    B(2),
-    Y(3),
-    LEFTBUTTON(4),
-    RIGHTBUTTON(5),
-    LEFTTRIGGER(6),
-    RIGHTTRIGGER(7),
-    BACKBUTTON(8),
-    STARTBUTTON(9),
-    LEFTJOYSTICKBUTTON(10),
-    RIGHTJOYSTICKBUTTON(11);
+    // button indexes begin at 1 for some reason
+    X(1),
+    A(2),
+    B(3),
+    Y(4),
+    LEFTBUTTON(5),
+    RIGHTBUTTON(6),
+    LEFTTRIGGER(7),
+    RIGHTTRIGGER(8),
+    BACKBUTTON(9),
+    STARTBUTTON(10),
+    LEFTJOYSTICKBUTTON(11),
+    RIGHTJOYSTICKBUTTON(12);
 
     public int value;
 

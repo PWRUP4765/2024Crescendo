@@ -100,16 +100,27 @@ public class SwerveModule {
       SwerveConstants.kTurnConversionFactor
     );
 
+
+    
     //custom function to set up the Shuffleboard tab
     createShuffleboardTab(abbreviation);
   }
 
   /**
-   * Sends the speed and angle commands to the swerve module.
+   * Sends the speed and angle commands to the swerve module with customizable speed.
    * @param speed The desired speed. Domain: [-1, 1]
    * @param angle The desired angle. Domain: (-0.5, 0.5]
    */
   public void drive(double speed, double angle) {
+    drive(speed, angle, SwerveConstants.kSpeedMultiplier);
+  }
+
+  /**
+   * Sends the speed and angle commands to the swerve module with customizable speed.
+   * @param speed The desired speed. Domain: [-1, 1]
+   * @param angle The desired angle. Domain: (-0.5, 0.5]
+   */
+  public void drive(double speed, double angle, double tempSpeedMultiplier) {
     //if the opposite direction is closer to the current angle, flip the angle and the speed
     double[] optimizedState = optimize(
       speed,
@@ -120,7 +131,7 @@ public class SwerveModule {
     angle = optimizedState[1];
 
     //sending the motor speed to the driving motor controller
-    m_driveMotor.set(speed * SwerveConstants.speedMultiplier);
+    m_driveMotor.set(speed * tempSpeedMultiplier);
 
     //sending the motor angle to the turning motor controller
     m_turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
@@ -133,12 +144,10 @@ public class SwerveModule {
 
   public void reset() {
     m_turnRelativeEncoder.setPosition(
-      turnCANcoder.getAbsolutePosition().getValueAsDouble() /
-      SwerveConstants.kTurnConversionFactor
-    );
+      turnCANcoder.getAbsolutePosition().getValueAsDouble());
   }
 
-  public double[] optimize(double speed, double angle, double encoderAngle) {
+  private double[] optimize(double speed, double angle, double encoderAngle) {
     encoderAngle = (encoderAngle  + 1.0/2.0) % 1 - (1.0/2.0);
     if (
       Math.abs(angle - encoderAngle) < 0.25 ||
@@ -150,7 +159,7 @@ public class SwerveModule {
     return new double[] { -speed, ((angle + 1) % 1) - 0.5 };
   }
 
-  public void createShuffleboardTab(String abbreviation) {
+  private void createShuffleboardTab(String abbreviation) {
     sb_abbreviation = abbreviation;
 
     //learn how to use shuffleboard here:
@@ -182,7 +191,7 @@ public class SwerveModule {
     sb_turnCANcoderAngle = sb_tab.add("turnCANcoderAngle", 0).getEntry();
   }
 
-  public void updateShuffleboardTab(double speed, double angle) {
+  private void updateShuffleboardTab(double speed, double angle) {
     sb_speed.setDouble(speed);
     sb_angle.setDouble(angle);
 
@@ -192,7 +201,7 @@ public class SwerveModule {
     );
   }
 
-  public void updatePIDFromShuffleboard() {
+  private void updatePIDFromShuffleboard() {
     //this method should only be used to tune PID; it should not be used during competition
 
     if (sb_kTurnP.getDouble(0) != kTurnP) {

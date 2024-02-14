@@ -9,6 +9,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
@@ -18,11 +19,11 @@ public class ArmSubsystem extends SubsystemBase {
   private SparkPIDController m_armPIDController;
   private SparkAbsoluteEncoder m_armEncoder;
 
-  private double currentSetPosition, kP, kI, kD, kIZ, kFF;
+  private double currentSetPosition = 0.0, kP, kI, kD, kIZ, kFF;
 
   private ShuffleboardTab sb_tab;
   private String sb_name;
-  private GenericEntry sb_kP, sb_kI, sb_kD, sb_kIZ, sb_kFF, sb_encoderPosition, sb_setPosition;
+  private GenericEntry sb_encoderPosition, sb_setPosition;
 
   /**
    * Constructor class for ArmSubsystem
@@ -33,6 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
     //setting up the arm motor
     m_armMotor =
       new CANSparkMax(ArmConstants.kArmMotorPort, MotorType.kBrushed);
+    m_armMotor.restoreFactoryDefaults();
     m_armMotor.setInverted(ArmConstants.kArmMotorReversed);
 
     kP = ArmConstants.kP;
@@ -51,6 +53,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_armEncoder =
       m_armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
     m_armEncoder.setZeroOffset(ArmConstants.kEncoderOffset);
+    m_armEncoder.setInverted(ArmConstants.kEncoderReversed);
     m_armEncoder.setPositionConversionFactor(
       ArmConstants.kEncoderConversionFactor
     );
@@ -75,18 +78,19 @@ public class ArmSubsystem extends SubsystemBase {
   public void setPosition(double position) {
     currentSetPosition = position;
     updateFF();
-    //sb_setPosition.setDouble(position);
+    sb_setPosition.setDouble(position);
+  }
+
+  public Command setPositionCommand(double position) {
+
+    return runOnce(
+      () -> {setPosition(position);}
+    );
   }
 
   public void createShuffleboardTab() {
     sb_name = "ArmSubsystem";
     sb_tab = Shuffleboard.getTab(sb_name);
-
-    sb_kP = sb_tab.add("kP", kP).getEntry();
-    sb_kI = sb_tab.add("kI", kI).getEntry();
-    sb_kD = sb_tab.add("kD", kD).getEntry();
-    sb_kIZ = sb_tab.add("kIZ", kIZ).getEntry();
-    sb_kFF = sb_tab.add("kFF", kFF).getEntry();
 
     sb_encoderPosition = sb_tab.add("encoderPosition", 0).getEntry();
     sb_setPosition = sb_tab.add("setPosition", 0).getEntry();
