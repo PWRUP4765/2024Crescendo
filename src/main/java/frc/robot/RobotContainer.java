@@ -69,7 +69,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(m_driverController, 2)
-      .toggleOnTrue(new GoToAprilTag(m_robotDrive, m_vision, 0, 0, 0));
+      .toggleOnTrue(new GoToAprilTag(m_robotDrive, m_vision, 0.0, 0.0, 0.0));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.

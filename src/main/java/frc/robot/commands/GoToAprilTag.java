@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -49,6 +50,8 @@ public class GoToAprilTag extends Command {
         m_desiredRot
       );
       m_swerveDrive.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
+    } else {
+      m_swerveDrive.joystickDrive(m_desiredX, m_desiredX, m_desiredRot); // CHANGE THIS
     }
   }
 
