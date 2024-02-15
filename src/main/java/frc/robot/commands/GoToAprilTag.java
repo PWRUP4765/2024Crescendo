@@ -8,7 +8,7 @@ import frc.robot.subsystems.VisionSubsystem;
 public class GoToAprilTag extends Command {
 
   VisionSubsystem m_vision;
-  SwerveSubsystem m_swerveDrive;
+  SwerveSubsystem m_swerveSubsystem;
 
   double m_desiredX, m_desiredY, m_desiredRot;
 
@@ -20,7 +20,7 @@ public class GoToAprilTag extends Command {
     double rot
   ) {
     m_vision = vision;
-    m_swerveDrive = swerveDrive;
+    m_swerveSubsystem = swerveDrive;
 
     m_desiredX = x;
     m_desiredY = y;
@@ -49,9 +49,9 @@ public class GoToAprilTag extends Command {
         target,
         m_desiredRot
       );
-      m_swerveDrive.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
+      m_swerveSubsystem.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
     } else {
-      m_swerveDrive.joystickDrive(m_desiredX, m_desiredX, m_desiredRot); // CHANGE THIS
+      m_swerveSubsystem.joystickDrive(m_desiredX, m_desiredX, m_desiredRot); // CHANGE THIS
     }
   }
 

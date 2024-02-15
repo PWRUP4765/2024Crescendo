@@ -47,23 +47,14 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
-
-  private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
-
-  Joystick m_driverController = new Joystick(
-    OperatorConstants.kDriverControllerPort
-  );
-  private final SwerveSubsystem m_robotDrive;
+  private final SwerveSubsystem m_swerveSubsystem;
   private ArmSubsystem m_armSubsystem;
-  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
 
   final Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
-  );
-  final Joystick m_operatorController = new Joystick(
-    OperatorConstants.kDriveTeamConstants2
   );
 
   final XboxController controller = new XboxController(0);
@@ -71,36 +62,24 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     
-
-    /*m_intake.setDefaultCommand(
+    m_intake.setDefaultCommand(
       new RunCommand(
-        () ->
-          m_robotDrive.joystickDrive(
-            m_driverController.getRawAxis(0) * 1,
-            m_driverController.getRawAxis(1) * -1,
-            m_driverController.getRawAxis(2) * 1
-          ),
-        m_robotDrive
+          () -> m_intake.setMotor(), m_intake
       )
     );
-          //m_intake.getSensorValue(), m_intake
-          m_intake.setMotor(), m_intake
-      )
-    );*/
     
     if (RobotContainerConstants.kSwerveEnabled) {
-      m_robotDrive = new SwerveSubsystem();
-      m_robotDrive.setDefaultCommand(
+      m_swerveSubsystem = new SwerveSubsystem();
+      m_swerveSubsystem.setDefaultCommand(
         // 4765: Controller commands converted for various joysticks
         new RunCommand(
           () ->
-            m_robotDrive.joystickDrive(
+            m_swerveSubsystem.joystickDrive(
               m_driverController.getRawAxis(0) * 1,
               m_driverController.getRawAxis(1) * -1,
               m_driverController.getRawAxis(2) * 1
-            ), m_robotDrive
+            ), m_swerveSubsystem
         )
       );
     }
@@ -128,6 +107,8 @@ public class RobotContainer {
     //     climbArmSubsystem
     //   )
     // );
+
+    // Configure the trigger bindings
     configureBindings();
   }
 
@@ -142,16 +123,19 @@ public class RobotContainer {
    */
   private void configureBindings() {
     new JoystickButton(m_driverController, 2)
-      .toggleOnTrue(new GoToAprilTag(m_robotDrive, m_vision, 0.0, 0.0, 0.0));
+      .toggleOnTrue(new GoToAprilTag(m_swerveSubsystem, m_vision, 0.0, 0.0, 0.0));
+    
+
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
         .onTrue(m_armSubsystem.setPositionCommand(0));
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.Y.value)
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
     }
+
     if (RobotContainerConstants.kSwerveEnabled) {
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
-        .onTrue(m_robotDrive.runOnce(() -> m_robotDrive.reset()));
+        .onTrue(m_swerveSubsystem.runOnce(() -> m_swerveSubsystem.reset()));
     }
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
@@ -168,11 +152,7 @@ public class RobotContainer {
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-
     m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
-    //m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
   /**
