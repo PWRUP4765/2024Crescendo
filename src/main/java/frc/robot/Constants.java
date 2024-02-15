@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkMax;
 
@@ -185,5 +186,33 @@ public final class Constants {
     //because the turn gearing ratio is not 1:1, we need to spin the motor many times to equal one spin of the module
     //this constant is used for the position conversion factor. (every 150 turns of motors is 7 rotations of the module)
     public static final double kTurnConversionFactor = 7.0 / 150.0;
+  }
+
+  public static class VisionConstants {
+
+    // All units are in meters
+
+    // Constants such as camera and target height stored. Change per robot and goal!
+    public static final double kCAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
+
+    public static final double kTARGET_HEIGHT_METERS = Units.feetToMeters(5);
+    // Angle between horizontal and the camera.
+    public static final double kCAMERA_PITCH_RADIANS = Units.degreesToRadians(
+      0
+    );
+
+    // How far from the target we want to be
+
+    public static final double kAmpXGoal = 1;
+    public static final double kAmpYGoal = 1;
+    public static final double kAmpRotGoal = 0;
+
+    public static final double kLINEAR_P = 1;
+
+    public static final double kLINEAR_D = 0.0;
+
+    public static final double kANGULAR_P = 0.02;
+
+    public static final double kANGULAR_D = 0.0;
   }
 }

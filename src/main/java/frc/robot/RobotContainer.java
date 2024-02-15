@@ -13,6 +13,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GoToAprilTag;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimbArmCommand;
@@ -40,6 +46,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+
+  private final SwerveSubsystem m_robotDrive = new SwerveSubsystem();
+
+  Joystick m_driverController = new Joystick(
+    OperatorConstants.kDriverControllerPort
+  );
   private final SwerveSubsystem m_robotDrive;
   private ArmSubsystem m_armSubsystem;
   //private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -64,6 +77,14 @@ public class RobotContainer {
     /*m_intake.setDefaultCommand(
       new RunCommand(
         () ->
+          m_robotDrive.joystickDrive(
+            m_driverController.getRawAxis(0) * 1,
+            m_driverController.getRawAxis(1) * -1,
+            m_driverController.getRawAxis(2) * 1
+          ),
+        m_robotDrive
+      )
+    );
           //m_intake.getSensorValue(), m_intake
           m_intake.setMotor(), m_intake
       )
@@ -120,6 +141,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    new JoystickButton(m_driverController, 2)
+      .toggleOnTrue(new GoToAprilTag(m_robotDrive, m_vision, 0.0, 0.0, 0.0));
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
         .onTrue(m_armSubsystem.setPositionCommand(0));
@@ -148,6 +171,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
+    m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
     //m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
