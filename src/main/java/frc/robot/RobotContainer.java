@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -18,6 +19,21 @@ import frc.robot.commands.GoToAprilTag;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.Constants.RobotContainerConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.ClimbArmCommand;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.error.LimitException;
+import frc.robot.error.NoChannelFoundException;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ClimbArmSubsystem;
+import frc.robot.util.controller.LogitechController;
+import frc.robot.util.controller.LogitechController.ButtonEnum;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,14 +53,28 @@ public class RobotContainer {
   Joystick m_driverController = new Joystick(
     OperatorConstants.kDriverControllerPort
   );
+  private final SwerveSubsystem m_robotDrive;
+  private ArmSubsystem m_armSubsystem;
+  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final double intakeSpeed = 0.5;
+  private ClimbArmSubsystem climbArmSubsystem;
+
+  final Joystick m_driverController = new Joystick(
+    OperatorConstants.kDriverControllerPort
+  );
+  final Joystick m_operatorController = new Joystick(
+    OperatorConstants.kDriveTeamConstants2
+  );
+
+  final XboxController controller = new XboxController(0);
+  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    configureBindings();
+    
 
-    m_robotDrive.setDefaultCommand(
-      // 4765: Controller commands converted for various joysticks
+    /*m_intake.setDefaultCommand(
       new RunCommand(
         () ->
           m_robotDrive.joystickDrive(
@@ -55,6 +85,50 @@ public class RobotContainer {
         m_robotDrive
       )
     );
+          //m_intake.getSensorValue(), m_intake
+          m_intake.setMotor(), m_intake
+      )
+    );*/
+    
+    if (RobotContainerConstants.kSwerveEnabled) {
+      m_robotDrive = new SwerveSubsystem();
+      m_robotDrive.setDefaultCommand(
+        // 4765: Controller commands converted for various joysticks
+        new RunCommand(
+          () ->
+            m_robotDrive.joystickDrive(
+              m_driverController.getRawAxis(0) * 1,
+              m_driverController.getRawAxis(1) * -1,
+              m_driverController.getRawAxis(2) * 1
+            ), m_robotDrive
+        )
+      );
+    }
+    
+    if (RobotContainerConstants.kArmEnabled) {
+      m_armSubsystem = new ArmSubsystem();
+      m_armSubsystem.setDefaultCommand(
+        new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
+      );
+    }
+
+    // try {
+    //   climbArmSubsystem =
+    //     new ClimbArmSubsystem(
+    //       Constants.ClimbArmConstants.kClimbArmMotorPort,
+    //       Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
+    //     );
+    // } catch (NoChannelFoundException e) {
+    //   e.printStackTrace();
+    // }
+
+    // climbArmSubsystem.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> climbArmSubsystem.tick(false, controller.getBButton()),
+    //     climbArmSubsystem
+    //   )
+    // );
+    configureBindings();
   }
 
   /**
@@ -69,11 +143,36 @@ public class RobotContainer {
   private void configureBindings() {
     new JoystickButton(m_driverController, 2)
       .toggleOnTrue(new GoToAprilTag(m_robotDrive, m_vision, 0.0, 0.0, 0.0));
+    if (RobotContainerConstants.kArmEnabled) {
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+        .onTrue(m_armSubsystem.setPositionCommand(0));
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.Y.value)
+        .onTrue(m_armSubsystem.setPositionCommand(0.25));
+    }
+    if (RobotContainerConstants.kSwerveEnabled) {
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
+        .onTrue(m_robotDrive.runOnce(() -> m_robotDrive.reset()));
+    }
+    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+
+    new Trigger(m_exampleSubsystem::exampleCondition)
+      .onTrue(new ExampleCommand(m_exampleSubsystem));
+
+    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
+    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+
+    // Intake Button TBD
+    //new Trigger(controller::getBButton)
+    //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    // FIXME: test @this.
+    // new Trigger(controller::getAButton)
+    //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
     m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+    //m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
   /**

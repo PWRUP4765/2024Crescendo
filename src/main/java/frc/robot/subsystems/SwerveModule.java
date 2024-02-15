@@ -5,292 +5,224 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.SwerveConstants;
+import frc.robot.Constants.SwerveConstants;
 
 public class SwerveModule {
 
-    //the driving electronics
-    private final CANSparkMax driveMotor;
-    private SparkPIDController drivePIDController;
+  //the driving electronics
+  private CANSparkMax m_driveMotor;
 
-    //the turning electronics
-    private final CANSparkMax turnMotor;
-    private SparkPIDController turnPIDController;
-    private final RelativeEncoder turnRelativeEncoder;
+  //the turning electronics
+  private CANSparkMax m_turnMotor;
+  private SparkPIDController m_turnPIDController;
+  private RelativeEncoder m_turnRelativeEncoder;
 
-    private final CANcoder turnCANcoder;
+  private CANcoder turnCANcoder;
 
+  //the Shuffleboard tab and entries
+  private String sb_abbreviation;
+  private ShuffleboardTab sb_tab;
 
-    //the Shuffleboard tab and entries
-    private String sb_abbreviation;
-    private ShuffleboardTab sb_tab;
+  public double kDriveP, kDriveI, kDriveD, kDriveIZ, kDriveFF;
 
-    public double
-    kDriveP,
-    kDriveI,
-    kDriveD,
-    kDriveIZ,
-    kDriveFF;
+  public double kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnFF;
 
-    public double
-    kTurnP,
-    kTurnI,
-    kTurnD,
-    kTurnIZ,
-    kTurnFF;
+  public GenericEntry sb_kDriveP, sb_kDriveI, sb_kDriveD, sb_kDriveIZ, sb_kDriveFF, sb_kTurnP, sb_kTurnI, sb_kTurnD, sb_kTurnIZ, sb_kTurnFF, sb_speed, sb_angle, sb_m_turnRelativeEncoderAngle, sb_turnCANcoderAngle;
 
+  public SwerveModule(
+    int driveMotorChannel,
+    boolean driveMotorReversed,
+    int turnMotorChannel,
+    boolean turnMotorReversed,
+    int CANCoderEncoderChannel,
+    SensorDirectionValue CANCoderDirection,
+    double CANCoderMagnetOffset,
+    String abbreviation
+  ) {
+    //setting up the drive motor controller
+    m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
 
-    public GenericEntry
-    sb_kDriveP,
-    sb_kDriveI,
-    sb_kDriveD,
-    sb_kDriveIZ,
-    sb_kDriveFF,
-    sb_kTurnP,
-    sb_kTurnI,
-    sb_kTurnD,
-    sb_kTurnIZ,
-    sb_kTurnFF,
-    sb_speed,
-    sb_angle,
-    sb_turnRelativeEncoderAngle,
-    sb_turnCANcoderAngle;
+    //setting up the turning motor controller and encoders
+    m_turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
+    m_turnPIDController = m_turnMotor.getPIDController();
+    m_turnRelativeEncoder = m_turnMotor.getEncoder();
+
+    //setting up the CANCoder
+    turnCANcoder = new CANcoder(CANCoderEncoderChannel);
+    CANcoderConfiguration config = new CANcoderConfiguration();
+    config.MagnetSensor.MagnetOffset = -CANCoderMagnetOffset;
+    config.MagnetSensor.AbsoluteSensorRange =
+      AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    config.MagnetSensor.SensorDirection = CANCoderDirection;
+    turnCANcoder.getConfigurator().apply(config);
+
+    //for a full list of SparkMax commands, vist https://robotpy.readthedocs.io/projects/rev/en/latest/rev/RelativeEncoder.html
+
+    //creating the PID values from the SwerveConstants file
+    kTurnP = SwerveConstants.kTurnP;
+    kTurnI = SwerveConstants.kTurnI;
+    kTurnD = SwerveConstants.kTurnD;
+    kTurnIZ = SwerveConstants.kTurnIZ;
+    kTurnFF = SwerveConstants.kTurnFF;
+
+    //setting up the drive motor
+    m_driveMotor.restoreFactoryDefaults();
+    m_driveMotor.setInverted(driveMotorReversed);
+
+    //setting up the turn motor
+    m_turnMotor.restoreFactoryDefaults();
+    m_turnMotor.setInverted(turnMotorReversed);
+    m_turnMotor.setSmartCurrentLimit(40);
+    m_turnPIDController.setP(kTurnP);
+    m_turnPIDController.setI(kTurnI);
+    m_turnPIDController.setD(kTurnD);
+    m_turnPIDController.setIZone(kTurnIZ);
+    m_turnPIDController.setFF(kTurnFF);
+    m_turnPIDController.setPositionPIDWrappingEnabled(true);
+    m_turnPIDController.setPositionPIDWrappingMinInput(-1.0 / 2.0);
+    m_turnPIDController.setPositionPIDWrappingMaxInput(1.0 / 2.0);
+    m_turnPIDController.setOutputRange(
+      SwerveConstants.kTurnMinOutput,
+      SwerveConstants.kTurnMaxOutput
+    );
+    m_turnRelativeEncoder.setPosition(
+      turnCANcoder.getAbsolutePosition().getValueAsDouble() /
+      SwerveConstants.kTurnConversionFactor
+    );
+    m_turnRelativeEncoder.setPositionConversionFactor(
+      SwerveConstants.kTurnConversionFactor
+    );
 
 
     
-    
+    //custom function to set up the Shuffleboard tab
+    createShuffleboardTab(abbreviation);
+  }
 
+  /**
+   * Sends the speed and angle commands to the swerve module with customizable speed.
+   * @param speed The desired speed. Domain: [-1, 1]
+   * @param angle The desired angle. Domain: (-0.5, 0.5]
+   */
+  public void drive(double speed, double angle) {
+    drive(speed, angle, SwerveConstants.kSpeedMultiplier);
+  }
 
+  /**
+   * Sends the speed and angle commands to the swerve module with customizable speed.
+   * @param speed The desired speed. Domain: [-1, 1]
+   * @param angle The desired angle. Domain: (-0.5, 0.5]
+   */
+  public void drive(double speed, double angle, double tempSpeedMultiplier) {
+    //if the opposite direction is closer to the current angle, flip the angle and the speed
+    double[] optimizedState = optimize(
+      speed,
+      angle,
+      m_turnRelativeEncoder.getPosition()
+    );
+    speed = optimizedState[0];
+    angle = optimizedState[1];
 
+    //sending the motor speed to the driving motor controller
+    m_driveMotor.set(speed * tempSpeedMultiplier);
 
-    public SwerveModule(
-      int driveMotorChannel,
-      boolean driveMotorReversed,
-      int turnMotorChannel,
-      boolean turnMotorReversed,
-      int CANCoderEncoderChannel,
-      SensorDirectionValue CANCoderDirection,
-      double CANCoderMagnetOffset,
-      String abbreviation) {
+    //sending the motor angle to the turning motor controller
+    m_turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
 
-        //setting up the drive motor controller
-        driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
-        drivePIDController = driveMotor.getPIDController();
+    //updatePIDFromShuffleboard();
 
+    //updates the Shuffleboard tab
+    updateShuffleboardTab(speed, angle);
+  }
 
-        //setting up the turning motor controller and encoders
-        turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
-        turnPIDController = turnMotor.getPIDController();
-        turnRelativeEncoder = turnMotor.getEncoder();
-        
+  public void reset() {
+    m_turnRelativeEncoder.setPosition(
+      turnCANcoder.getAbsolutePosition().getValueAsDouble());
+  }
 
-        //setting up the CANCoder
-        turnCANcoder = new CANcoder(CANCoderEncoderChannel);
-
-        CANcoderConfiguration config = new CANcoderConfiguration();
-        config.MagnetSensor.MagnetOffset = -CANCoderMagnetOffset;
-        config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
-        config.MagnetSensor.SensorDirection = CANCoderDirection;
-
-        turnCANcoder.getConfigurator().apply(config);
-        
-
-
-        //for a full list of SparkMax commands, vist https://robotpy.readthedocs.io/projects/rev/en/latest/rev/RelativeEncoder.html
-
-        //creating the PID values from the SwerveConstants file
-        kDriveP = SwerveConstants.kDriveP;
-        kDriveI = SwerveConstants.kDriveI;
-        kDriveD = SwerveConstants.kDriveD;
-        kDriveIZ = SwerveConstants.kDriveIZ;
-        kDriveFF = SwerveConstants.kDriveFF;
-
-        kTurnP = SwerveConstants.kTurnP;
-        kTurnI = SwerveConstants.kTurnI;
-        kTurnD = SwerveConstants.kTurnD;
-        kTurnIZ = SwerveConstants.kTurnIZ;
-        kTurnFF = SwerveConstants.kTurnFF;
-
-        //setting up the drive motor
-        driveMotor.restoreFactoryDefaults();
-        driveMotor.setInverted(driveMotorReversed);
-        driveMotor.setIdleMode(SwerveConstants.kDriveIdleMode);
-        drivePIDController.setP(kDriveP);
-        drivePIDController.setI(kDriveI);
-        drivePIDController.setD(kDriveD);
-        drivePIDController.setIZone(kDriveIZ);
-        drivePIDController.setFF(kDriveFF);
-        drivePIDController.setOutputRange(SwerveConstants.kDriveMinOutput, SwerveConstants.kDriveMaxOutput);
-
-        //setting up the turn motor
-        turnMotor.restoreFactoryDefaults();
-        turnMotor.setInverted(turnMotorReversed);
-        turnMotor.setSmartCurrentLimit(40);
-        turnMotor.setIdleMode(SwerveConstants.kTurnIdleMode);
-        turnPIDController.setP(kTurnP);
-        turnPIDController.setI(kTurnI);
-        turnPIDController.setD(kTurnD);
-        turnPIDController.setIZone(kTurnIZ);
-        turnPIDController.setFF(kTurnFF);
-        turnPIDController.setPositionPIDWrappingEnabled(true);
-        turnPIDController.setPositionPIDWrappingMinInput(-1.0 / 2.0);
-        turnPIDController.setPositionPIDWrappingMaxInput(1.0 / 2.0);
-        turnPIDController.setOutputRange(SwerveConstants.kTurnMinOutput, SwerveConstants.kTurnMaxOutput);
-        turnRelativeEncoder.setPosition(turnCANcoder.getAbsolutePosition().getValueAsDouble() / SwerveConstants.kTurnConversionFactor);
-        turnRelativeEncoder.setPositionConversionFactor(SwerveConstants.kTurnConversionFactor);
-        
-        
-        //custom function to set up the Shuffleboard tab
-        createShuffleboardTab(abbreviation);
-
-       
-
-
+  private double[] optimize(double speed, double angle, double encoderAngle) {
+    encoderAngle = (encoderAngle  + 1.0/2.0) % 1 - (1.0/2.0);
+    if (
+      Math.abs(angle - encoderAngle) < 0.25 ||
+      Math.abs(angle - encoderAngle) > 0.75
+    ) {
+      return new double[] { speed, angle };
     }
 
-    /**
-     * Sends the speed and angle commands to the swerve module.
-     * @param speed The desired speed. Domain: [-1, 1]
-     * @param angle The desired angle. Domain: (-0.5, 0.5]
-     */
-    public void drive(double speed, double angle) {
-        //if the opposite direction is closer to the current angle, flip the angle and the speed
-        double[] optimizedState = optimize(speed, angle, turnRelativeEncoder.getPosition());
-        speed = optimizedState[0];
-        angle = optimizedState[1];
+    return new double[] { -speed, ((angle + 1) % 1) - 0.5 };
+  }
 
-        //sending the motor speed to the driving motor controller
-        driveMotor.set(speed * SwerveConstants.speedMultiplier);
+  private void createShuffleboardTab(String abbreviation) {
+    sb_abbreviation = abbreviation;
 
-        //sending the motor angle to the turning motor controller
-        turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
+    //learn how to use shuffleboard here:
+    //https://docs.wpilib.org/en/stable/docs/software/dashboards/shuffleboard/layouts-with-code/index.html
 
+    //creates the Shuffleboard tab
+    sb_tab = Shuffleboard.getTab(sb_abbreviation);
 
-        //updatePIDFromShuffleboard();
+    //creates the modifiable entries for the driving PID values
+    sb_kDriveP = sb_tab.add("kDriveP", kDriveP).getEntry();
+    sb_kDriveI = sb_tab.add("kDriveI", kDriveI).getEntry();
+    sb_kDriveD = sb_tab.add("kDriveD", kDriveD).getEntry();
+    sb_kDriveIZ = sb_tab.add("kDriveIZ", kDriveIZ).getEntry();
+    sb_kDriveFF = sb_tab.add("kDriveFF", kDriveFF).getEntry();
 
-        //updates the Shuffleboard tab
-        updateShuffleboardTab(speed, angle);
+    //creates the modifiable entries for the turning PID values
+    sb_kTurnP = sb_tab.add("kTurnP", kTurnP).getEntry();
+    sb_kTurnI = sb_tab.add("kTurnI", kTurnI).getEntry();
+    sb_kTurnD = sb_tab.add("kTurnD", kTurnD).getEntry();
+    sb_kTurnIZ = sb_tab.add("kTurnIZ", kTurnIZ).getEntry();
+    sb_kTurnFF = sb_tab.add("kTurnFF", kTurnFF).getEntry();
 
+    //for the calculated speed and angle of this swerve module on this iteration
+    sb_speed = sb_tab.add("speed", 0).getEntry();
+    sb_angle = sb_tab.add("angle", 0).getEntry();
 
+    //for the reported angles from the encoders with the sparkMax
+    sb_m_turnRelativeEncoderAngle = sb_tab.add("turnEncoderAngle", 0).getEntry();
+    sb_turnCANcoderAngle = sb_tab.add("turnCANcoderAngle", 0).getEntry();
+  }
 
+  private void updateShuffleboardTab(double speed, double angle) {
+    sb_speed.setDouble(speed);
+    sb_angle.setDouble(angle);
+
+    sb_m_turnRelativeEncoderAngle.setDouble(m_turnRelativeEncoder.getPosition());
+    sb_turnCANcoderAngle.setDouble(
+      turnCANcoder.getAbsolutePosition().getValueAsDouble()
+    );
+  }
+
+  private void updatePIDFromShuffleboard() {
+    //this method should only be used to tune PID; it should not be used during competition
+
+    if (sb_kTurnP.getDouble(0) != kTurnP) {
+      kTurnP = sb_kTurnP.getDouble(0);
+      m_turnPIDController.setP(kTurnP);
     }
- 
-    public void reset() {
-        turnRelativeEncoder.setPosition(turnCANcoder.getAbsolutePosition().getValueAsDouble() / SwerveConstants.kTurnConversionFactor);
+    if (sb_kTurnI.getDouble(0) != kTurnI) {
+      kTurnI = sb_kTurnI.getDouble(0);
+      m_turnPIDController.setP(kTurnI);
     }
-
-    public double[] optimize(double speed, double angle, double encoderAngle) {
- 
-        if (Math.abs(angle - encoderAngle) < 90 || Math.abs(angle - encoderAngle) > 270) {
-            return new double[]{speed, angle};
-        }
-        
-        return new double[]{-speed, ((angle + 1) % 1) - 0.5};        
+    if (sb_kTurnD.getDouble(0) != kTurnD) {
+      kTurnD = sb_kTurnD.getDouble(0);
+      m_turnPIDController.setD(kTurnD);
     }
-
-    public void createShuffleboardTab(String abbreviation) {
-        sb_abbreviation = abbreviation;
-
-        //learn how to use shuffleboard here:
-        //https://docs.wpilib.org/en/stable/docs/software/dashboards/shuffleboard/layouts-with-code/index.html
-
-        //creates the Shuffleboard tab
-        sb_tab = Shuffleboard.getTab(sb_abbreviation);
-
-        //creates the modifiable entries for the driving PID values
-        sb_kDriveP = sb_tab.add("kDriveP", kDriveP).getEntry();
-        sb_kDriveI = sb_tab.add("kDriveI", kDriveI).getEntry();
-        sb_kDriveD = sb_tab.add("kDriveD", kDriveD).getEntry();
-        sb_kDriveIZ = sb_tab.add("kDriveIZ", kDriveIZ).getEntry();
-        sb_kDriveFF = sb_tab.add("kDriveFF", kDriveFF).getEntry();
-
-        //creates the modifiable entries for the turning PID values
-        sb_kTurnP = sb_tab.add("kTurnP", kTurnP).getEntry();
-        sb_kTurnI = sb_tab.add("kTurnI", kTurnI).getEntry();
-        sb_kTurnD = sb_tab.add("kTurnD", kTurnD).getEntry();
-        sb_kTurnIZ = sb_tab.add("kTurnIZ", kTurnIZ).getEntry();
-        sb_kTurnFF = sb_tab.add("kTurnFF", kTurnFF).getEntry();
-
-        //for the calculated speed and angle of this swerve module on this iteration
-        sb_speed = sb_tab.add("speed", 0).getEntry();
-        sb_angle = sb_tab.add("angle", 0).getEntry();
-
-        //for the reported angles from the encoders with the sparkMax
-        sb_turnRelativeEncoderAngle = sb_tab.add("turnEncoderAngle", 0).getEntry();
-        sb_turnCANcoderAngle = sb_tab.add("turnCANcoderAngle", 0).getEntry();
-
+    if (sb_kTurnIZ.getDouble(0) != kTurnIZ) {
+      kTurnIZ = sb_kTurnIZ.getDouble(0);
+      m_turnPIDController.setIZone(kTurnIZ);
     }
-
-    public void updateShuffleboardTab(double speed, double angle) {
-
-        sb_speed.setDouble(speed);
-        sb_angle.setDouble(angle);
-
-        sb_turnRelativeEncoderAngle.setDouble(turnRelativeEncoder.getPosition());
-        sb_turnCANcoderAngle.setDouble(turnCANcoder.getAbsolutePosition().getValueAsDouble());
+    if (sb_kTurnFF.getDouble(0) != kTurnFF) {
+      kTurnFF = sb_kTurnFF.getDouble(0);
+      m_turnPIDController.setFF(kTurnFF);
     }
-
-
-    public void updatePID() {
-
-    }
-
-    public void updatePIDFromShuffleboard(){
-        //this method should only be used to iPID tuning; it should not be used during
-        
-        if (sb_kDriveP.getDouble(0) != kDriveP) {
-            kDriveP = sb_kDriveP.getDouble(0);
-            drivePIDController.setP(kDriveP);
-        }
-        if (sb_kDriveI.getDouble(0) != kDriveI) {
-            kDriveI = sb_kDriveI.getDouble(0);
-            drivePIDController.setI(kDriveI);
-        }
-        if (sb_kDriveD.getDouble(0) != kDriveD) {
-            kDriveD = sb_kDriveD.getDouble(0);
-            drivePIDController.setD(kDriveD);
-        }
-        if (sb_kDriveIZ.getDouble(0) != kDriveIZ) {
-            kDriveIZ = sb_kDriveIZ.getDouble(0);
-            drivePIDController.setIZone(kDriveIZ);
-        }
-        if (sb_kDriveFF.getDouble(0) != kDriveFF) {
-            kDriveFF = sb_kDriveFF.getDouble(0);
-            drivePIDController.setFF(kDriveFF);
-        }
-
-
-        if (sb_kTurnP.getDouble(0)!= kTurnP) {
-            kTurnP = sb_kTurnP.getDouble(0);
-            turnPIDController.setP(kTurnP);
-        }
-        if (sb_kTurnI.getDouble(0) != kTurnI) {
-            kTurnI = sb_kTurnI.getDouble(0);
-            turnPIDController.setP(kTurnI);
-        }
-        if (sb_kTurnD.getDouble(0) != kTurnD) {
-            kTurnD = sb_kTurnD.getDouble(0);
-            turnPIDController.setD(kTurnD);
-        }
-        if (sb_kTurnIZ.getDouble(0) != kTurnIZ) {
-            kTurnIZ = sb_kTurnIZ.getDouble(0);
-            turnPIDController.setIZone(kTurnIZ);
-        }
-        if (sb_kTurnFF.getDouble(0) != kTurnFF) {
-            kTurnFF = sb_kTurnFF.getDouble(0);
-            turnPIDController.setFF(kTurnFF);
-        }
-
-    }
-
-
+  }
 }
