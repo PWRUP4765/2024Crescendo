@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.inter.ReplayLoggerDevice;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class ReplayLoggerSubsystem extends SubsystemBase {
   final String fileName;
   final ReplayLoggerDevice[] devices;
   final int ticksPerUpdate;
-  final FileOutputStream writer;
+  final DataOutputStream writer;
 
   int currentTicks = 0;
   boolean state;
@@ -44,9 +45,12 @@ public class ReplayLoggerSubsystem extends SubsystemBase {
     File file = new File(fileName);
     if (!file.exists()) {
       file.createNewFile();
+    } else {
+      file.delete();
+      file.createNewFile();
     }
 
-    this.writer = new FileOutputStream(file);
+    this.writer = new DataOutputStream(new FileOutputStream(file));
   }
 
   /**
@@ -69,6 +73,20 @@ public class ReplayLoggerSubsystem extends SubsystemBase {
       return;
     }
 
+    log();
+  }
+
+  /**
+   * @apiNote force logs even if there is no info
+   */
+  public void forceLog() {
+    log();
+  }
+
+  /**
+   * @apiNote does the logging there so that forceLog can exist
+   */
+  void log() {
     for (int i = 0; i < devices.length; i++) {
       double[] dataInit = devices[i].getData();
       if (dataInit != null) {
@@ -90,14 +108,11 @@ public class ReplayLoggerSubsystem extends SubsystemBase {
     }
 
     try {
-      for (double[] i : deviceData) {
-        byte[] bytes = new byte[i.length];
-        for (int j = 0; j < i.length; j++) {
-          bytes[j] = (byte) i[j];
+      for (double[] scans : deviceData) {
+        writer.writeInt(scans.length);
+        for (int j = 0; j < scans.length; j++) {
+          writer.writeDouble(scans[j]);
         }
-
-        writer.write(bytes);
-        writer.write("\n".getBytes());
       }
     } catch (IOException e) {
       e.printStackTrace();

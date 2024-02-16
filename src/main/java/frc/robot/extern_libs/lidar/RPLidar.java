@@ -1,4 +1,4 @@
-package frc.robot.extern_libs;
+package frc.robot.extern_libs.lidar;
 
 import ev3dev.sensors.slamtec.RPLidarA1;
 import ev3dev.sensors.slamtec.RPLidarA1ServiceException;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 /**
  * @author godbrigero
- * @purpose to make an implementation of RPLidar into the robot (NOT USED FOR NOW JST SOME CODE FOR LATER)
+ * @purpose for now this has no use... but later...
  */
 public class RPLidar {
 
