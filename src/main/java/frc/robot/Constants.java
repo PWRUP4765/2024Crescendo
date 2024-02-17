@@ -81,8 +81,8 @@ public final class Constants {
     public static final String kCanbusAddress = ""; //TEMP
 
     // Motor Speeds
-    public static final float kIntakeSpeed = 0.2F; // TEMP
-    public static final float kShooterSpeed = 0.8F; // TEMP
+    public static final double kIntakeSpeed = 0.5; // TEMP
+    public static final double kShooterSpeed = 0.8; // TEMP
 
     // Intake Paramters
     public static final int kIntakePort = 30; // TEMP
