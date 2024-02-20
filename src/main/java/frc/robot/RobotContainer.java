@@ -46,7 +46,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  //private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   private final SwerveSubsystem m_swerveSubsystem;
   private ArmSubsystem m_armSubsystem;
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -63,11 +63,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     
-    m_intake.setDefaultCommand(
-      new RunCommand(
-          () -> m_intake.setMotor(), m_intake
-      )
-    );
+    // m_intake.setDefaultCommand(
+    //   new RunCommand(
+    //       () -> m_intake.setMotor(0), m_intake
+    //   )
+    // );
     
     if (RobotContainerConstants.kSwerveEnabled) {
       m_swerveSubsystem = new SwerveSubsystem();
@@ -122,8 +122,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(m_driverController, 2)
-      .toggleOnTrue(new GoToAprilTag(m_swerveSubsystem, m_vision, 0.0, 0.0, 0.0));
+    // new JoystickButton(m_driverController, 2)
+    //   .toggleOnTrue(new GoToAprilTag(m_swerveSubsystem, m_vision, 0.0, 0.0, 0.0));
     
 
     if (RobotContainerConstants.kArmEnabled) {
@@ -137,10 +137,19 @@ public class RobotContainer {
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
         .onTrue(m_swerveSubsystem.runOnce(() -> m_swerveSubsystem.reset()));
     }
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTBUTTON.value)
+      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0.8)));
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0)));
+    
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.BACKBUTTON.value)
+      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    new Trigger(m_exampleSubsystem::exampleCondition)
-      .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // new Trigger(m_exampleSubsystem::exampleCondition)
+    //   .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
     //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
@@ -152,7 +161,7 @@ public class RobotContainer {
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
-    m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+    // m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
   }
 
   /**

@@ -58,6 +58,8 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kEncoderConversionFactor
     );
     m_armPIDController.setFeedbackDevice(m_armEncoder);
+
+    m_armMotor.burnFlash();
   }
 
   /**
@@ -78,7 +80,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void setPosition(double position) {
     currentSetPosition = position;
     updateFF();
-    sb_setPosition.setDouble(position);
+    //sb_setPosition.setDouble(position);
   }
 
   public Command setPositionCommand(double position) {

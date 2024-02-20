@@ -40,15 +40,15 @@ public final class Constants {
     public static final boolean kArmMotorReversed = false;
 
     // Arm PID constants
-    public static final double kP = 5;
-    public static final double kI = 0.001;
-    public static final double kD = 0.2;
+    public static final double kP = 2.5; // 2
+    public static final double kI = 0; // 0.002
+    public static final double kD = 4; // 2
     public static final double kIZ = 0;
     public static final double kFF = 0;
-    public static final double kFFCoefficient = 0;
+    public static final double kFFCoefficient = 2.4;
 
     public static final boolean kEncoderReversed = false;
-    public static final double kEncoderOffset = 0.429;
+    public static final double kEncoderOffset = 0.258;
     public static final double kEncoderConversionFactor = 1.0;
 
     public static final double kMinPosition = 0;
@@ -79,6 +79,7 @@ public final class Constants {
   public static class IntakeConstants {
 
     public static final String kCanbusAddress = ""; //TEMP
+    public static final int kCurrentLimit = 40;
 
     // Motor Speeds
     public static final double kIntakeSpeed = 0.5; // TEMP
