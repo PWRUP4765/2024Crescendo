@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
+import java.lang.annotation.Target;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -23,21 +24,21 @@ public class VisionSubsystem extends SubsystemBase {
   private GenericEntry sb_x, sb_y, sb_rot;
 
   private final PIDController m_xController = new PIDController(
-    VisionConstants.kANGULAR_P,
+    VisionConstants.kXP,
     0,
-    VisionConstants.kANGULAR_D
+    VisionConstants.kXD
   );
 
   private final PIDController m_yController = new PIDController(
-    VisionConstants.kANGULAR_P,
+    VisionConstants.kYP,
     0,
-    VisionConstants.kANGULAR_D
+    VisionConstants.kYD
   );
 
   private final PIDController m_rotationController = new PIDController(
-    VisionConstants.kLINEAR_P,
+    VisionConstants.kRP,
     0,
-    VisionConstants.kANGULAR_D
+    VisionConstants.kRD
   );
 
   /**
@@ -45,7 +46,7 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public VisionSubsystem(String cameraname) {
     m_camera = new PhotonCamera(cameraname);
-    tabForShuffleboard();
+    // tabForShuffleboard();
   }
 
   public VisionTarget findBestTarget() {
@@ -71,7 +72,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public double calculateRotationSpeed(VisionTarget target, double goal) {
-    double axis = target.getPitch();
+    double axis = target.getYaw();
     sb_rot.setDouble(axis);
     return m_rotationController.calculate(axis, goal);
   }
@@ -87,18 +88,18 @@ public class VisionSubsystem extends SubsystemBase {
   //   return range;
   // }
 
-  public void tabForShuffleboard() {
-    m_tab = Shuffleboard.getTab(m_cameraname);
-    sb_x = m_tab.add("x", 0).getEntry();
-    sb_y = m_tab.add("y", 0).getEntry();
-    sb_rot = m_tab.add("rot", 0).getEntry();
-  }
+  // public void tabForShuffleboard() {
+  //   m_tab = Shuffleboard.getTab(m_cameraname);
+  //   sb_x = m_tab.add("x", 0).getEntry();
+  //   sb_y = m_tab.add("y", 0).getEntry();
+  //   sb_rot = m_tab.add("rot", 0).getEntry();
+  // }
 
-  public void updateShuffleboardTab(double x, double y, double rot) {
-    sb_x.setDouble(x);
-    sb_y.setDouble(y);
-    sb_rot.setDouble(rot);
-  }
+  // public void updateShuffleboardTab(double x, double y, double rot) {
+  //   sb_x.setDouble(x);
+  //   sb_y.setDouble(y);
+  //   sb_rot.setDouble(rot);
+  // }
 
   // Avoid exposing PhotonVision classes outside of this subsystem
   public class VisionTarget {
@@ -110,7 +111,7 @@ public class VisionSubsystem extends SubsystemBase {
     VisionTarget(PhotonTrackedTarget target) {
       m_target = target;
       m_transform3d = m_target.getBestCameraToTarget();
-      m_pitch = m_target.getPitch();
+      // m_pitch = m_target.getPitch();
       m_yaw = m_target.getYaw();
     }
 
@@ -122,13 +123,14 @@ public class VisionSubsystem extends SubsystemBase {
       return m_transform3d.getX();
     }
 
-    public double getPitch() {
-      double m_pitch = m_target.getPitch() / 360.0;
-      m_pitch = (m_pitch % 1.0) - 0.5;
-      return m_pitch;
-    }
+    // public double getPitch() {
+    //   double m_pitch = m_target.getPitch() / 360.0;
+    //   m_pitch = (m_pitch % 1.0) - 0.5;
+    //   return m_pitch;
+    // }
 
     public double getYaw() {
+      double m_yaw = -m_target.getYaw();
       return m_yaw;
     }
   }

@@ -13,27 +13,26 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.GoToAprilTag;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.Constants.RobotContainerConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimbArmCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GoToAprilTag;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ClimbArmSubsystem;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,9 +45,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  //private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
-  private final SwerveSubsystem m_swerveSubsystem;
-  private ArmSubsystem m_armSubsystem;
+  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
@@ -58,19 +57,16 @@ public class RobotContainer {
   );
 
   final XboxController controller = new XboxController(0);
-  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    
     // m_intake.setDefaultCommand(
     //   new RunCommand(
     //       () -> m_intake.setMotor(0), m_intake
     //   )
     // );
-    
+
     if (RobotContainerConstants.kSwerveEnabled) {
-      m_swerveSubsystem = new SwerveSubsystem();
       m_swerveSubsystem.setDefaultCommand(
         // 4765: Controller commands converted for various joysticks
         new RunCommand(
@@ -79,13 +75,13 @@ public class RobotContainer {
               m_driverController.getRawAxis(0) * 1,
               m_driverController.getRawAxis(1) * -1,
               m_driverController.getRawAxis(2) * 1
-            ), m_swerveSubsystem
+            ),
+          m_swerveSubsystem
         )
       );
     }
-    
+
     if (RobotContainerConstants.kArmEnabled) {
-      m_armSubsystem = new ArmSubsystem();
       m_armSubsystem.setDefaultCommand(
         new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
       );
@@ -122,29 +118,58 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // new JoystickButton(m_driverController, 2)
-    //   .toggleOnTrue(new GoToAprilTag(m_swerveSubsystem, m_vision, 0.0, 0.0, 0.0));
-    
+    new JoystickButton(
+      m_driverController,
+      LogitechController.ButtonEnum.A.value
+    )
+      .toggleOnTrue(
+        new GoToAprilTag(
+          m_driverController,
+          m_swerveSubsystem,
+          m_vision,
+          0.0,
+          0.0,
+          0.0
+        )
+      );
 
     if (RobotContainerConstants.kArmEnabled) {
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.X.value)
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.X.value
+      )
         .onTrue(m_armSubsystem.setPositionCommand(0));
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.Y.value)
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.Y.value
+      )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
     }
 
     if (RobotContainerConstants.kSwerveEnabled) {
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.STARTBUTTON.value)
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.STARTBUTTON.value
+      )
         .onTrue(m_swerveSubsystem.runOnce(() -> m_swerveSubsystem.reset()));
     }
 
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTBUTTON.value)
+    new JoystickButton(
+      m_driverController,
+      LogitechController.ButtonEnum.LEFTBUTTON.value
+    )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0.8)));
 
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+    new JoystickButton(
+      m_driverController,
+      LogitechController.ButtonEnum.RIGHTBUTTON.value
+    )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0)));
-    
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.BACKBUTTON.value)
+
+    new JoystickButton(
+      m_driverController,
+      LogitechController.ButtonEnum.BACKBUTTON.value
+    )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 

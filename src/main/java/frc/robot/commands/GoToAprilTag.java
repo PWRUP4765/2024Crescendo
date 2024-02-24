@@ -11,8 +11,10 @@ public class GoToAprilTag extends Command {
   SwerveSubsystem m_swerveSubsystem;
 
   double m_desiredX, m_desiredY, m_desiredRot;
+  Joystick m_controller;
 
   public GoToAprilTag(
+    Joystick controller,
     SwerveSubsystem swerveDrive,
     VisionSubsystem vision,
     double x,
@@ -21,6 +23,7 @@ public class GoToAprilTag extends Command {
   ) {
     m_vision = vision;
     m_swerveSubsystem = swerveDrive;
+    m_controller = controller;
 
     m_desiredX = x;
     m_desiredY = y;
@@ -51,7 +54,10 @@ public class GoToAprilTag extends Command {
       );
       m_swerveSubsystem.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
     } else {
-      m_swerveSubsystem.joystickDrive(m_desiredX, m_desiredX, m_desiredRot); // CHANGE THIS
+      double x = m_controller.getX();
+      double y = m_controller.getY();
+      double z = m_controller.getZ();
+      m_swerveSubsystem.joystickDrive(x, y, z);
     }
   }
 

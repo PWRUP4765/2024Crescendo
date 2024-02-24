@@ -4,9 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -30,8 +30,9 @@ public final class Constants {
   }
 
   public static class RobotContainerConstants {
+
     public static final boolean kSwerveEnabled = true;
-    public static final boolean kArmEnabled = true;
+    public static final boolean kArmEnabled = false;
   }
 
   public static class ArmConstants {
@@ -207,13 +208,18 @@ public final class Constants {
     public static final double kAmpXGoal = 1;
     public static final double kAmpYGoal = 1;
     public static final double kAmpRotGoal = 0;
+    public static final double kXP = 0.2;
+    public static final double kXD = 0.0;
+    public static final double kYP = 0.2;
+    public static final double kYD = 0.0;
+    public static final double kRP = 0.2;
+    public static final double kRD = 0.0;
+    // public static final double kLINEAR_P = 0.2;
 
-    public static final double kLINEAR_P = 1;
+    // public static final double kLINEAR_D = 0.0;
 
-    public static final double kLINEAR_D = 0.0;
+    // public static final double kANGULAR_P = 0.2;
 
-    public static final double kANGULAR_P = 0.02;
-
-    public static final double kANGULAR_D = 0.0;
+    // public static final double kANGULAR_D = 0.0;
   }
 }
