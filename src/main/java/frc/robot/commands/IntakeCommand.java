@@ -37,7 +37,7 @@ public class IntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    m_armSubsystem.setPosition(ArmConstants.kArmFlatPosition);
+    //m_armSubsystem.setPosition(ArmConstants.kArmFlatPosition);
   }
 
   @Override
@@ -48,7 +48,7 @@ public class IntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_intakeSubsystem.setMotor(0);
-    m_armSubsystem.setPosition(ArmConstants.kArmDefaultPosition);
+    //m_armSubsystem.setPosition(ArmConstants.kArmDefaultPosition);
   }
 
   @Override

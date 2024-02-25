@@ -14,7 +14,7 @@ public class OutputCommand extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final IntakeSubsystem m_intakeSubsystem;
 
-  private final int outputSpeed = - (int) IntakeConstants.kIntakeSpeed;
+  private final double outputSpeed = IntakeConstants.kOutputSpeed;
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
@@ -30,16 +30,16 @@ public class OutputCommand extends Command {
 
   @Override
   public void execute() {
-    m_intakeSubsystem.setMotor();
+    m_intakeSubsystem.setMotor(outputSpeed);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_intakeSubsystem.setMotor();
+    m_intakeSubsystem.setMotor(0);
   }
 
   @Override
   public boolean isFinished() {
-    return m_intakeSubsystem.isDetected(); // TODO: idk how we should stop the code
+    return false;
   }
 }

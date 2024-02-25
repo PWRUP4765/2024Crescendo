@@ -84,7 +84,7 @@ public final class Constants {
 
     // Motor Speeds
     public static final double kIntakeSpeed = 0.5; // TEMP
-    public static final double kShooterSpeed = 0.8; // TEMP
+    public static final double kOutputSpeed = 0.7; //TEMP
 
     // Intake Paramters
     public static final int kIntakePort = 30; // TEMP

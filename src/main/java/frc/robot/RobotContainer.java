@@ -21,6 +21,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.GoToAprilTag;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.OutputCommand;
 import frc.robot.error.LimitException;
 import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ArmSubsystem;
@@ -45,7 +46,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -60,11 +61,11 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // m_intake.setDefaultCommand(
-    //   new RunCommand(
-    //       () -> m_intake.setMotor(0), m_intake
-    //   )
-    // );
+    m_intake.setDefaultCommand(
+      new RunCommand(
+          () -> m_intake.setMotor(0), m_intake
+      )
+    );
 
     if (RobotContainerConstants.kSwerveEnabled) {
       m_swerveSubsystem.setDefaultCommand(
@@ -118,20 +119,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(
-      m_driverController,
-      LogitechController.ButtonEnum.A.value
-    )
-      .toggleOnTrue(
-        new GoToAprilTag(
-          m_driverController,
-          m_swerveSubsystem,
-          m_vision,
-          0.0,
-          0.0,
-          0.0
-        )
-      );
+    // new JoystickButton(
+    //   m_driverController,
+    //   LogitechController.ButtonEnum.A.value
+    // )
+    //   .toggleOnTrue(
+    //     new GoToAprilTag(
+    //       m_driverController,
+    //       m_swerveSubsystem,
+    //       m_vision,
+    //       0.0,
+    //       0.0,
+    //       0.0
+    //     )
+    //   );
 
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(
@@ -176,8 +177,11 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //   .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
-    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
+      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
