@@ -15,24 +15,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ClimbArmCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.GoToAprilTag;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
-import frc.robot.error.NoChannelFoundException;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
+import frc.robot.util.identity.Identity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,7 +36,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -60,11 +51,19 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    try {
+      Identity identity = new Identity();
+      this.getClass().getMethod(identity + "Bindings").invoke(this);
+      //if (Objects.equals(identity.getIdentity(), "godbrigero")) return;
+    } catch (Exception e) {
+      // nothing bc some people may not want to use this
+    }
+
     // m_intake.setDefaultCommand(
     //   new RunCommand(
     //       () -> m_intake.setMotor(0), m_intake
     //   )
-    // );
+    // };
 
     if (RobotContainerConstants.kSwerveEnabled) {
       m_swerveSubsystem.setDefaultCommand(
@@ -118,7 +117,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(
+    /*new JoystickButton(
       m_driverController,
       LogitechController.ButtonEnum.A.value
     )
@@ -132,6 +131,9 @@ public class RobotContainer {
           0.0
         )
       );
+
+
+     */
 
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(
@@ -151,7 +153,7 @@ public class RobotContainer {
         m_driverController,
         LogitechController.ButtonEnum.STARTBUTTON.value
       )
-        .onTrue(m_swerveSubsystem.runOnce(() -> m_swerveSubsystem.reset()));
+        .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
 
     new JoystickButton(
@@ -182,11 +184,31 @@ public class RobotContainer {
     // Intake Button TBD
     //new Trigger(controller::getBButton)
     //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
-    // FIXME: test @this.
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+  }
+
+  void godbrigeroBindings() {
+    /*climbArmSubsystem =
+            new ClimbArmSubsystem(Constants.ClimbArmConstants.kClimbArmMotorPort);
+
+      new JoystickButton(m_driverController, ButtonEnum.A.value).whileTrue(new RunCommand(() -> {
+        try {
+          climbArmSubsystem.setSpeed(50);
+        } catch (LimitException e) {
+          throw new RuntimeException(e);
+        }
+      })).whileFalse(new RunCommand(() -> {
+        try {
+          climbArmSubsystem.setSpeed(-50);
+        } catch (LimitException e) {
+          throw new RuntimeException(e);
+        }
+    }));*/
+
+    System.out.println("!!!!!!!!");
   }
 
   /**
