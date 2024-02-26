@@ -15,6 +15,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.Autos;
+import frc.robot.commands.ClimbArmCommand;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GoToAprilTag;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbArmSubsystem;
@@ -51,19 +57,11 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    try {
-      Identity identity = new Identity();
-      this.getClass().getMethod(identity + "Bindings").invoke(this);
-      //if (Objects.equals(identity.getIdentity(), "godbrigero")) return;
-    } catch (Exception e) {
-      // nothing bc some people may not want to use this
-    }
-
     // m_intake.setDefaultCommand(
     //   new RunCommand(
     //       () -> m_intake.setMotor(0), m_intake
     //   )
-    // };
+    // );
 
     if (RobotContainerConstants.kSwerveEnabled) {
       m_swerveSubsystem.setDefaultCommand(
@@ -117,7 +115,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    /*new JoystickButton(
+    new JoystickButton(
       m_driverController,
       LogitechController.ButtonEnum.A.value
     )
@@ -178,8 +176,11 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //   .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
-    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
+      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
