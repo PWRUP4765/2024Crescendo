@@ -26,7 +26,9 @@ public final class Constants {
 
     public static final int kDriverControllerPort = 0;
 
-    public static final int kDriveTeamConstants2 = 1;
+    //  public static final int kDriveTeamConstants2 = 1;
+
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static class RobotContainerConstants {

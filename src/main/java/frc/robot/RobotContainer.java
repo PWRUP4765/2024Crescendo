@@ -47,16 +47,21 @@ public class RobotContainer {
     OperatorConstants.kDriverControllerPort
   );
 
+  final Joystick m_operatorControler = new Joystick(
+    Constants.OperatorConstants.kOperatorControllerPort
+  );
+
   final XboxController controller = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    godbrigeroBindings();
     try {
       Identity identity = new Identity();
       this.getClass().getMethod(identity + "Bindings").invoke(this);
       //if (Objects.equals(identity.getIdentity(), "godbrigero")) return;
     } catch (Exception e) {
-      // nothing bc some people may not want to use this
+      e.printStackTrace();
     }
 
     // m_intake.setDefaultCommand(
@@ -194,24 +199,35 @@ public class RobotContainer {
     climbArmSubsystem =
       new ClimbArmSubsystem(Constants.ClimbArmConstants.kClimbArmMotorPort);
 
-    new JoystickButton(m_driverController, ButtonEnum.A.value)
+    new JoystickButton(m_operatorControler, ButtonEnum.A.value)
       .whileTrue(
-        new RunCommand(() -> {
-          try {
-            climbArmSubsystem.setSpeed(50);
-          } catch (LimitException e) {
-            throw new RuntimeException(e);
-          }
-        })
+        new RunCommand(
+          () -> {
+            try {
+              // Account for some error
+              climbArmSubsystem.setSpeed(
+                m_armSubsystem.getCurPosition() > 0.02 ? 0 : 50
+              );
+            } catch (LimitException e) {
+              throw new RuntimeException(e);
+            }
+          },
+          climbArmSubsystem
+        )
       )
       .whileFalse(
-        new RunCommand(() -> {
-          try {
-            climbArmSubsystem.setSpeed(-50);
-          } catch (LimitException e) {
-            throw new RuntimeException(e);
-          }
-        })
+        new RunCommand(
+          () -> {
+            try {
+              climbArmSubsystem.setSpeed(
+                m_operatorControler.getRawButton(ButtonEnum.B.value) ? -50 : 0
+              );
+            } catch (LimitException e) {
+              throw new RuntimeException(e);
+            }
+          },
+          climbArmSubsystem
+        )
       );
   }
 
