@@ -53,7 +53,11 @@ public class VisionSubsystem extends SubsystemBase {
     VisionTarget target = null;
     PhotonPipelineResult pipelineResult = m_camera.getLatestResult();
     if (pipelineResult != null) {
-      target = new VisionTarget(pipelineResult.getBestTarget());
+      if (!isTargetBroken(pipelineResult.getBestTarget())) {
+        target = new VisionTarget(pipelineResult.getBestTarget());
+      } else {
+        System.out.println("!!!");
+      }
     }
     return target;
   }
@@ -75,6 +79,10 @@ public class VisionSubsystem extends SubsystemBase {
     double axis = target.getYaw();
     sb_rot.setDouble(axis);
     return m_rotationController.calculate(axis, goal);
+  }
+
+  public boolean isTargetBroken(PhotonTrackedTarget target) {
+    return target == null || target.getBestCameraToTarget() == null;
   }
 
   // public double getRange(VisionTarget target) {
@@ -109,10 +117,9 @@ public class VisionSubsystem extends SubsystemBase {
     double m_pitch, m_yaw;
 
     VisionTarget(PhotonTrackedTarget target) {
-      m_target = target;
-      m_transform3d = m_target.getBestCameraToTarget();
-      // m_pitch = m_target.getPitch();
-      m_yaw = m_target.getYaw();
+      m_transform3d = target.getBestCameraToTarget();
+      m_yaw = target.getYaw();
+      this.m_target = target;
     }
 
     public double getX() {
