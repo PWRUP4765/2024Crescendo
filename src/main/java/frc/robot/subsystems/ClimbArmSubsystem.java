@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
@@ -21,7 +23,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
   CANSparkMax sparkMax;
   AbsoluteEncoder encoder;
   SparkPIDController pid;
-  final PWMTalonSRX talon;
+  final TalonSRX talon;
 
   /**
    * @param channel     the motor channel this is FOR DEBUG PURPOSES
@@ -33,7 +35,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
     //
     // so.
 
-    talon = new PWMTalonSRX(channel);
+    talon = new TalonSRX(channel);
 
     /*sparkMax =
       new CANSparkMax(
@@ -74,7 +76,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
 
     this.sparkMax.set(speed);
     */
-    this.talon.set(speed);
+    this.talon.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   /**
@@ -102,8 +104,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
    * @apinote stops the motor.
    */
   public void stopMotor() {
-    this.talon.stopMotor();
-    this.talon.set(0);
+    this.talon.set(TalonSRXControlMode.PercentOutput, 0);
   }
 
   /**
