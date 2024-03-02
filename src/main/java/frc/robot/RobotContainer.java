@@ -36,7 +36,6 @@ public class RobotContainer {
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
 
   final LogitechController m_driverController = new LogitechController(
@@ -137,23 +136,26 @@ public class RobotContainer {
      */
 
     if (RobotContainerConstants.kArmEnabled) {
+      // When the x button on the LogitechController is pressed, we reset the position of the arm
       new JoystickButton(
         m_driverController,
         LogitechController.ButtonEnum.X.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0));
+      // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
       new JoystickButton(
         m_driverController,
         LogitechController.ButtonEnum.LEFTTRIGGER.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.125));
+      // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25 
       new JoystickButton(
         m_driverController,
         LogitechController.ButtonEnum.Y.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
     }
-
+    // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     if (RobotContainerConstants.kSwerveEnabled) {
       new JoystickButton(
         m_driverController,
@@ -161,21 +163,18 @@ public class RobotContainer {
       )
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
-
+    // We should make it so that the back button of the logitech controller the intake runs once
     new JoystickButton(
       m_driverController,
       LogitechController.ButtonEnum.BACKBUTTON.value
     )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    // new Trigger(m_exampleSubsystem::exampleCondition)
-    //   .onTrue(new ExampleCommand(m_exampleSubsystem));
-
+    // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
     new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
       .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
 
-
+    // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
     new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
       .toggleOnTrue(new OutputCommand(m_intake));
 

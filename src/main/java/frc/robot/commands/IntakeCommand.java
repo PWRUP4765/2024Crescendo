@@ -10,6 +10,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Constants.SwerveConstants;
 
 /**
  * @author seankusu
@@ -41,7 +42,7 @@ public class IntakeCommand extends Command {
   @Override
   public void initialize() {
     m_armSubsystem.setPosition(ArmConstants.kArmFlatPosition);
-    m_swerveSubsystem.setSpeedMultiplier(0.2);
+    m_swerveSubsystem.setSpeedMultiplier(SwerveConstants.kIntakeSpeedMultiplier);
   }
 
   @Override
@@ -53,7 +54,7 @@ public class IntakeCommand extends Command {
   public void end(boolean interrupted) {
     m_intakeSubsystem.setMotor(0);
     m_armSubsystem.setPosition(ArmConstants.kArmDrivingPosition);
-    m_swerveSubsystem.setSpeedMultiplier(0.5);
+    m_swerveSubsystem.setSpeedMultiplier(SwerveConstants.kDefaultSpeedMultiplier);
   }
 
   @Override

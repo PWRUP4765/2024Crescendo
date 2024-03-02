@@ -32,7 +32,6 @@ public final class Constants {
   }
 
   public static class RobotContainerConstants {
-
     public static final boolean kSwerveEnabled = true;
     public static final boolean kArmEnabled = true;
   }
@@ -177,6 +176,7 @@ public final class Constants {
     public static final double kDriveMaxOutput = 1;
     //multiplies the output speed of all of the drive motors, ALWAYS (0, 1).
     public static final double kDefaultSpeedMultiplier = 0.5;
+    public static final double kIntakeSpeedMultiplier = 0.5;
     //the way that the drive motor controller sends power when not receiving a signal from the code. (kBrake or kCoast)
     public static final CANSparkMax.IdleMode kDriveIdleMode =
       CANSparkMax.IdleMode.kBrake;
