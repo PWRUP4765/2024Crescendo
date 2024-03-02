@@ -150,6 +150,7 @@ public final class Constants {
     public static final double kRearRightCANcoderMagnetOffset = -0.441;
 
     //stats used by SwerveSubsystem for math
+    public static final double kWheelDiameterMeters = 0.15;
     public static final double kDriveBaseWidth = 0.47625;
     public static final double kDriveBaseLength = 0.47625;
 
@@ -223,5 +224,13 @@ public final class Constants {
     // public static final double kANGULAR_P = 0.2;
 
     // public static final double kANGULAR_D = 0.0;
+  }
+
+  public static class FieldConstants{
+    public static final double kRedAmpXPosition = 0; //TEMP WE NEED TO FIND THIS IN METERS
+    public static final double kRedAmpYPosition = 0;
+
+    public static final double kBlueAmpXPosition = 0; //TEMP WE NEED TO FIND THIS IN METERS
+    public static final double kBlueAmpYPosition = 0;
   }
 }

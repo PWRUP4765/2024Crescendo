@@ -9,6 +9,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -18,6 +22,7 @@ public class SwerveModule {
 
   //the driving electronics
   private CANSparkMax m_driveMotor;
+  private RelativeEncoder m_driveRelativeEncoder;
 
   //the turning electronics
   private CANSparkMax m_turnMotor;
@@ -48,6 +53,7 @@ public class SwerveModule {
   ) {
     //setting up the drive motor controller
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
+    m_driveRelativeEncoder = m_driveMotor.getEncoder();
 
     //setting up the turning motor controller and encoders
     m_turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
@@ -140,6 +146,14 @@ public class SwerveModule {
 
     //updates the Shuffleboard tab
     updateShuffleboardTab(speed, angle);
+  }
+
+  /**
+   * @return The current position of the module and angle in meters and radians.
+   */
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(
+        m_driveRelativeEncoder.getPosition() * SwerveConstants.kWheelDiameterMeters, new Rotation2d(m_turnRelativeEncoder.getPosition() * 2 * Math.PI));
   }
 
   public void reset() {

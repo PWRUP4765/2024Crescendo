@@ -39,6 +39,9 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intakeMotor.set(speed);
     }
 
+    /**
+     * @return returns an integer array of all the average values of each analog input from the sensor 
+     */
     public int[] getSensorValue() {
         return m_sensor.getSensorValue();
     }
@@ -62,7 +65,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         /**
-         * @return The average values of all the sensors in an integer array
+         * @return the average values of all the sensors in an integer array
          */
         public int[] getSensorValue(){
             int[] AverageValues = {m_analog1.getAverageValue(), m_analog2.getAverageValue(), m_analog3.getAverageValue(), m_analog4.getAverageValue()};
@@ -70,7 +73,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         /**
-         * @return Whether any of the four analog inputs detects something in the intake
+         * @return whether any of the four analog inputs detects something in the intake
          */
         public boolean isDetected(){ 
             int[] AverageValues = getSensorValue();
@@ -81,7 +84,5 @@ public class IntakeSubsystem extends SubsystemBase {
             return false;
         }
     }
-
-
 }
 
