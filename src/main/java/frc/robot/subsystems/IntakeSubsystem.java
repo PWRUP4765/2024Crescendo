@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.lang.reflect.Array;
+
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -17,9 +19,7 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
 
     private PWMTalonSRX m_intakeMotor;
-    private AnalogInput m_analog;
-    
-    private double IntakeSpeed = IntakeConstants.kIntakeSpeed;
+    private IntakeSensor m_sensor;
 
     private final MotorType IsBrushless = IntakeConstants.kIsBrushless
         ? MotorType.kBrushless
@@ -28,40 +28,61 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(){
         m_intakeMotor = new PWMTalonSRX(9);
         m_intakeMotor.setInverted(IntakeConstants.kIsIntakeReversed);
-        
-        
-        
-        
-        m_analog = new AnalogInput(0);
+
+        m_sensor = new IntakeSensor();
     }
 
     /**
      * @param speed will take a value between [-1, 1]
      */
     public void setMotor(double speed) {
-
         m_intakeMotor.set(speed);
     }
 
-    public int getSensorValue() {
-        return m_analog.getAverageValue();
+    /**
+     * @return returns an integer array of all the average values of each analog input from the sensor 
+     */
+    public int[] getSensorValue() {
+        return m_sensor.getSensorValue();
     }
 
     /** 
      * @return returns whether the sensor detects an object 
      */
     public boolean isDetected(){
-       return m_analog.getAverageValue() < 2500 ? true : false; 
+       return m_sensor.isDetected();
     }
 
-    
-    public void setMotor(){
-        if (!isDetected()) {
-            m_intakeMotor.set(IntakeSpeed);
+    public class IntakeSensor { 
+
+        private AnalogInput m_analog1, m_analog2, m_analog3, m_analog4;
+
+        public IntakeSensor() {
+            m_analog1 = new AnalogInput(0);
+            m_analog2 = new AnalogInput(1);
+            m_analog3 = new AnalogInput(2);
+            m_analog4 = new AnalogInput(3);
         }
-        else {
-            IntakeSpeed = 0;
-            m_intakeMotor.set(IntakeSpeed);
+
+        /**
+         * @return the average values of all the sensors in an integer array
+         */
+        public int[] getSensorValue(){
+            int[] AverageValues = {m_analog1.getAverageValue(), m_analog2.getAverageValue(), m_analog3.getAverageValue(), m_analog4.getAverageValue()};
+            return AverageValues;
+        }
+
+        /**
+         * @return whether any of the four analog inputs detects something in the intake
+         */
+        public boolean isDetected(){ 
+            int[] AverageValues = getSensorValue();
+
+            for (int analogValue : AverageValues){
+                if (analogValue < 2500) { return true; }
+            }
+            return false;
         }
     }
 }
+

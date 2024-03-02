@@ -56,6 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
   AHRS m_gyro;
 
   double desiredAngle;
+  double currentSpeedMultiplier = SwerveConstants.kDefaultSpeedMultiplier;
 
   //the Shuffleboard tab and entries
   private String sb_name;
@@ -96,14 +97,26 @@ public class SwerveSubsystem extends SubsystemBase {
     drive(x, y, r);
   }
 
+/**
+ * Calculates the angles and speeds for the swerve modules, based on x, y, and z. Then it sends the commands to the modules.
+ * 
+ * @param x The left to right translation of the robot. Domain: [-1, 1]
+ * @param y The backward to forward translation of the robot. Domain: [-1, 1]
+ * @param r The rotational movement of the robot. Domain: [-1, 1]
+ */
+public void drive(double x, double y, double r) {
+  drive(x, y, r, currentSpeedMultiplier);
+}
+  
   /**
    * Calculates the angles and speeds for the swerve modules, based on x, y, and z. Then it sends the commands to the modules.
-   *
+   * Also has customizable speed multiplier.
    * @param x The left to right translation of the robot. Domain: [-1, 1]
    * @param y The backward to forward translation of the robot. Domain: [-1, 1]
    * @param r The rotational movement of the robot. Domain: [-1, 1]
+   * @param tempSpeedMultiplier The final speed to multiply all of the outputs by
    */
-  public void drive(double x, double y, double r) {
+  public void drive(double x, double y, double r, double tempSpeedMultiplier) {
     //adjusting for field relativity if necessary
     if (SwerveConstants.kFieldRelative) {
       double gyroAngle = m_gyro.getAngle() / 360; //this gets the angle and puts it from -1/2 to 1/2
@@ -154,10 +167,10 @@ public class SwerveSubsystem extends SubsystemBase {
     double rearRightAngle = Math.atan2(a, c) / Math.PI / 2;
 
     //sending the wheel and angle speeds to the motor controllers
-    m_frontLeftSwerveModule.drive(frontLeftSpeed, frontLeftAngle);
-    m_frontRightSwerveModule.drive(frontRightSpeed, frontRightAngle);
-    m_rearLeftSwerveModule.drive(rearLeftSpeed, rearLeftAngle);
-    m_rearRightSwerveModule.drive(rearRightSpeed, rearRightAngle);
+    m_frontLeftSwerveModule.drive(frontLeftSpeed, frontLeftAngle, tempSpeedMultiplier);
+    m_frontRightSwerveModule.drive(frontRightSpeed, frontRightAngle, tempSpeedMultiplier);
+    m_rearLeftSwerveModule.drive(rearLeftSpeed, rearLeftAngle, tempSpeedMultiplier);
+    m_rearRightSwerveModule.drive(rearRightSpeed, rearRightAngle, tempSpeedMultiplier);
 
     updateShuffleboardTab(
       frontLeftSpeed,
@@ -169,6 +182,10 @@ public class SwerveSubsystem extends SubsystemBase {
       rearLeftAngle,
       rearRightAngle
     );
+  }
+
+  public void setSpeedMultiplier(double speedMultiplier) {
+    currentSpeedMultiplier = speedMultiplier;
   }
 
   public void reset() {
@@ -225,18 +242,4 @@ public class SwerveSubsystem extends SubsystemBase {
     sb_NAVXRoll.setDouble(m_gyro.getRoll());
   }
 
-  public double deadband(double input, double deadband, double minValue) {
-    double output;
-    double m = (1.0 - minValue) / (1.0 - deadband);
-
-    if (Math.abs(input) < deadband) {
-      output = 0;
-    } else if (input > 0) {
-      output = m * (input - deadband) + minValue;
-    } else {
-      output = m * (input + deadband) - minValue;
-    }
-
-    return output;
-  }
 }

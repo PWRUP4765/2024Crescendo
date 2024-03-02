@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkBase;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -66,11 +65,20 @@ public class ArmSubsystem extends SubsystemBase {
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    m_armPIDController.setReference(
-      currentSetPosition,
-      CANSparkBase.ControlType.kPosition,
-      0,
-      ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.005) {
+      m_armPIDController.setReference(
+        currentSetPosition,
+        CANSparkBase.ControlType.kPosition,
+        0,
+        0);
+      m_armPIDController.setIAccum(0);
+    } else {
+      m_armPIDController.setReference(
+        currentSetPosition,
+        CANSparkBase.ControlType.kPosition,
+        0,
+        ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+    }
   }
 
   /**
@@ -83,11 +91,14 @@ public class ArmSubsystem extends SubsystemBase {
     //sb_setPosition.setDouble(position);
   }
 
-  public Command setPositionCommand(double position) {
+  public double getCurrentPosition() {
+    return m_armEncoder.getPosition();
+  }
 
-    return runOnce(
-      () -> {setPosition(position);}
-    );
+  public Command setPositionCommand(double position) {
+    return runOnce(() -> {
+      setPosition(position);
+    });
   }
 
   public void createShuffleboardTab() {
@@ -100,5 +111,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void updateShuffleboardTab() {
     sb_encoderPosition.setDouble(m_armEncoder.getPosition());
+  }
+
+  /**
+   * @return The position of the arm to. Domain: [0, 0.25]
+   * @author godbrigero
+   */
+  public double getCurPosition() {
+    return currentSetPosition;
   }
 }

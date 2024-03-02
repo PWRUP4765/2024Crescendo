@@ -14,25 +14,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ClimbArmCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.GoToAprilTag;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.*;
 import frc.robot.error.LimitException;
-import frc.robot.error.NoChannelFoundException;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimbArmSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.*;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
+import frc.robot.util.identity.Identity;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -45,26 +32,39 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
 
-  final Joystick m_driverController = new Joystick(
+  final LogitechController m_driverController = new LogitechController(
     OperatorConstants.kDriverControllerPort
+  );
+
+  final LogitechController m_operatorController = new LogitechController(
+    Constants.OperatorConstants.kOperatorControllerPort
   );
 
   final XboxController controller = new XboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    godbrigeroBindings();
+    try {
+      Identity identity = new Identity();
+      this.getClass().getMethod(identity + "Bindings").invoke(this);
+      //if (Objects.equals(identity.getIdentity(), "godbrigero")) return;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     // m_intake.setDefaultCommand(
     //   new RunCommand(
     //       () -> m_intake.setMotor(0), m_intake
     //   )
-    // );
+    // };
 
     if (RobotContainerConstants.kSwerveEnabled) {
       m_swerveSubsystem.setDefaultCommand(
@@ -118,7 +118,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(
+    /*new JoystickButton(
       m_driverController,
       LogitechController.ButtonEnum.A.value
     )
@@ -133,12 +133,20 @@ public class RobotContainer {
         )
       );
 
+
+     */
+
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(
         m_driverController,
         LogitechController.ButtonEnum.X.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0));
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.LEFTTRIGGER.value
+      )
+        .onTrue(m_armSubsystem.setPositionCommand(0.125));
       new JoystickButton(
         m_driverController,
         LogitechController.ButtonEnum.Y.value
@@ -151,20 +159,8 @@ public class RobotContainer {
         m_driverController,
         LogitechController.ButtonEnum.STARTBUTTON.value
       )
-        .onTrue(m_swerveSubsystem.runOnce(() -> m_swerveSubsystem.reset()));
+        .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
-
-    new JoystickButton(
-      m_driverController,
-      LogitechController.ButtonEnum.LEFTBUTTON.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0.8)));
-
-    new JoystickButton(
-      m_driverController,
-      LogitechController.ButtonEnum.RIGHTBUTTON.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0)));
 
     new JoystickButton(
       m_driverController,
@@ -176,17 +172,56 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //   .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
-    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
+      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
+
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
     //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
-    // FIXME: test @this.
     // new Trigger(controller::getAButton)
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+  }
+
+  void godbrigeroBindings() {
+    climbArmSubsystem =
+      new ClimbArmSubsystem(Constants.ClimbArmConstants.kClimbArmMotorPort);
+
+    new JoystickButton(m_operatorController, ButtonEnum.A.value)
+      .whileTrue(
+        new RunCommand(
+          () -> {
+            try {
+              // Account for some error
+              climbArmSubsystem.setSpeed(
+                m_armSubsystem.getCurPosition() > 0.02 ? 0 : 50
+              );
+            } catch (LimitException e) {
+              throw new RuntimeException(e);
+            }
+          },
+          climbArmSubsystem
+        )
+      )
+      .whileFalse(
+        new RunCommand(
+          () -> {
+            try {
+              climbArmSubsystem.setSpeed(
+                m_operatorController.getRawButton(ButtonEnum.B.value) ? -50 : 0
+              );
+            } catch (LimitException e) {
+              throw new RuntimeException(e);
+            }
+          },
+          climbArmSubsystem
+        )
+      );
   }
 
   /**

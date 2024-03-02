@@ -9,6 +9,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -18,6 +22,7 @@ public class SwerveModule {
 
   //the driving electronics
   private CANSparkMax m_driveMotor;
+  private RelativeEncoder m_driveRelativeEncoder;
 
   //the turning electronics
   private CANSparkMax m_turnMotor;
@@ -48,6 +53,7 @@ public class SwerveModule {
   ) {
     //setting up the drive motor controller
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
+    m_driveRelativeEncoder = m_driveMotor.getEncoder();
 
     //setting up the turning motor controller and encoders
     m_turnMotor = new CANSparkMax(turnMotorChannel, MotorType.kBrushless);
@@ -74,12 +80,13 @@ public class SwerveModule {
 
     //setting up the drive motor
     m_driveMotor.restoreFactoryDefaults();
+    m_driveMotor.setSmartCurrentLimit(SwerveConstants.kDriveCurrentLimit);
     m_driveMotor.setInverted(driveMotorReversed);
 
     //setting up the turn motor
     m_turnMotor.restoreFactoryDefaults();
     m_turnMotor.setInverted(turnMotorReversed);
-    m_turnMotor.setSmartCurrentLimit(40);
+    m_turnMotor.setSmartCurrentLimit(20);
     m_turnPIDController.setP(kTurnP);
     m_turnPIDController.setI(kTurnI);
     m_turnPIDController.setD(kTurnD);
@@ -112,7 +119,7 @@ public class SwerveModule {
    * @param angle The desired angle. Domain: (-0.5, 0.5]
    */
   public void drive(double speed, double angle) {
-    drive(speed, angle, SwerveConstants.kSpeedMultiplier);
+    drive(speed, angle, SwerveConstants.kDefaultSpeedMultiplier);
   }
 
   /**
@@ -121,14 +128,16 @@ public class SwerveModule {
    * @param angle The desired angle. Domain: (-0.5, 0.5]
    */
   public void drive(double speed, double angle, double tempSpeedMultiplier) {
-    //if the opposite direction is closer to the current angle, flip the angle and the speed
-    double[] optimizedState = optimize(
-      speed,
-      angle,
-      m_turnRelativeEncoder.getPosition()
-    );
-    speed = optimizedState[0];
-    angle = optimizedState[1];
+    if (SwerveConstants.kOptimizeAngles) {
+      //if the opposite direction is closer to the current angle, flip the angle and the speed
+      double[] optimizedState = optimize(
+        speed,
+        angle,
+        m_turnRelativeEncoder.getPosition()
+      );
+      speed = optimizedState[0];
+      angle = optimizedState[1];
+    }
 
     //sending the motor speed to the driving motor controller
     m_driveMotor.set(speed * tempSpeedMultiplier);
@@ -136,10 +145,16 @@ public class SwerveModule {
     //sending the motor angle to the turning motor controller
     m_turnPIDController.setReference(angle, CANSparkMax.ControlType.kPosition);
 
-    //updatePIDFromShuffleboard();
-
     //updates the Shuffleboard tab
     updateShuffleboardTab(speed, angle);
+  }
+
+  /**
+   * @return The current position of the module and angle in meters and radians.
+   */
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(
+        m_driveRelativeEncoder.getPosition() * SwerveConstants.kWheelDiameterMeters, new Rotation2d(m_turnRelativeEncoder.getPosition() * 2 * Math.PI));
   }
 
   public void reset() {
@@ -148,7 +163,7 @@ public class SwerveModule {
   }
 
   private double[] optimize(double speed, double angle, double encoderAngle) {
-    encoderAngle = (encoderAngle  + 1.0/2.0) % 1 - (1.0/2.0);
+    encoderAngle = (encoderAngle  + 0.5) % 1 - 0.5;
     if (
       Math.abs(angle - encoderAngle) < 0.25 ||
       Math.abs(angle - encoderAngle) > 0.75

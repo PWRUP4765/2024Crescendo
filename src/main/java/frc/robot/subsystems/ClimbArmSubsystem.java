@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimbArmConstants;
@@ -17,24 +20,24 @@ import frc.robot.error.NoChannelFoundException;
  */
 public class ClimbArmSubsystem extends SubsystemBase {
 
-  final CANSparkMax sparkMax;
-  final AbsoluteEncoder encoder;
-  final SparkPIDController pid;
+  CANSparkMax sparkMax;
+  AbsoluteEncoder encoder;
+  SparkPIDController pid;
+  final TalonSRX talon;
 
   /**
    * @param channel     the motor channel this is FOR DEBUG PURPOSES
-   * @param isBrushless not sure what this is but it will set the
-   *                    MotorType.kBrushed if "isBrushless == false" and
-   *                    MotorType.kBrushless if "isBrushless == true"
    * @throws NoChannelFoundException if the channel is below the min threshhold 0
    *                                 for now it will throw this
    */
-  public ClimbArmSubsystem(int channel, boolean isBrushless)
-    throws NoChannelFoundException {
-    // @this might have to be re-worked since the channels may be > also.
-    if (channel < 0) throw new NoChannelFoundException(channel);
+  public ClimbArmSubsystem(int channel) {
+    // @this might have to be re-worked since the channels may be > al
+    //
+    // so.
 
-    sparkMax =
+    talon = new TalonSRX(channel);
+
+    /*sparkMax =
       new CANSparkMax(
         ClimbArmConstants.kClimbArmMotorPort,
         ClimbArmConstants.kClimbArmMotorIsBrushless
@@ -56,7 +59,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
 
     encoder.setPositionConversionFactor(
       Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
-    );
+    );*/
   }
 
   /**
@@ -66,12 +69,14 @@ public class ClimbArmSubsystem extends SubsystemBase {
    */
   public void setSpeed(double speedPerc) throws LimitException {
     double speed = speedPerc / 100;
-    if (checkSpeed(speed)) throw new LimitException(
+    /*if (checkSpeed(speed)) throw new LimitException(
       speedPerc,
       this.getClass().getName()
     );
 
     this.sparkMax.set(speed);
+    */
+    this.talon.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   /**
@@ -99,7 +104,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
    * @apinote stops the motor.
    */
   public void stopMotor() {
-    this.sparkMax.stopMotor();
+    this.talon.set(TalonSRXControlMode.PercentOutput, 0);
   }
 
   /**
@@ -139,11 +144,14 @@ public class ClimbArmSubsystem extends SubsystemBase {
     return this.sparkMax.getPIDController();
   }
 
+  /**
+   * @apiNote (+) = up, (-) = down, 15 speed is minimum it can go up or it will stay in same spot
+   */
   public void tick(boolean isOffline, boolean buttonState) {
     try {
       if (!isOffline) {
         if (buttonState) {
-          setSpeed(35);
+          setSpeed(-20);
         } else {
           setSpeed(0);
         }
