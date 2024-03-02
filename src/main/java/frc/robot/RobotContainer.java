@@ -14,13 +14,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
-import frc.robot.commands.Autos;
+import frc.robot.commands.*;
 import frc.robot.error.LimitException;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimbArmSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.*;
 import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 import frc.robot.util.identity.Identity;
@@ -43,11 +39,11 @@ public class RobotContainer {
   private final double intakeSpeed = 0.5;
   private ClimbArmSubsystem climbArmSubsystem;
 
-  final Joystick m_driverController = new Joystick(
+  final LogitechController m_driverController = new LogitechController(
     OperatorConstants.kDriverControllerPort
   );
 
-  final Joystick m_operatorControler = new Joystick(
+  final LogitechController m_operatorController = new LogitechController(
     Constants.OperatorConstants.kOperatorControllerPort
   );
 
@@ -148,6 +144,11 @@ public class RobotContainer {
         .onTrue(m_armSubsystem.setPositionCommand(0));
       new JoystickButton(
         m_driverController,
+        LogitechController.ButtonEnum.LEFTTRIGGER.value
+      )
+        .onTrue(m_armSubsystem.setPositionCommand(0.125));
+      new JoystickButton(
+        m_driverController,
         LogitechController.ButtonEnum.Y.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
@@ -163,18 +164,6 @@ public class RobotContainer {
 
     new JoystickButton(
       m_driverController,
-      LogitechController.ButtonEnum.LEFTBUTTON.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0.8)));
-
-    new JoystickButton(
-      m_driverController,
-      LogitechController.ButtonEnum.RIGHTBUTTON.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(0)));
-
-    new JoystickButton(
-      m_driverController,
       LogitechController.ButtonEnum.BACKBUTTON.value
     )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
@@ -183,8 +172,12 @@ public class RobotContainer {
     // new Trigger(m_exampleSubsystem::exampleCondition)
     //   .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
-    //   .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
+      .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
+
+
+    new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
@@ -199,7 +192,7 @@ public class RobotContainer {
     climbArmSubsystem =
       new ClimbArmSubsystem(Constants.ClimbArmConstants.kClimbArmMotorPort);
 
-    new JoystickButton(m_operatorControler, ButtonEnum.A.value)
+    new JoystickButton(m_operatorController, ButtonEnum.A.value)
       .whileTrue(
         new RunCommand(
           () -> {
@@ -220,7 +213,7 @@ public class RobotContainer {
           () -> {
             try {
               climbArmSubsystem.setSpeed(
-                m_operatorControler.getRawButton(ButtonEnum.B.value) ? -50 : 0
+                m_operatorController.getRawButton(ButtonEnum.B.value) ? -50 : 0
               );
             } catch (LimitException e) {
               throw new RuntimeException(e);

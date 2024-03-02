@@ -65,13 +65,20 @@ public class ArmSubsystem extends SubsystemBase {
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    m_armPIDController.setReference(
-      currentSetPosition,
-      CANSparkBase.ControlType.kPosition,
-      0,
-      ArmConstants.kFFCoefficient *
-      Math.cos(m_armEncoder.getPosition() * (2 * Math.PI))
-    );
+    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.005) {
+      m_armPIDController.setReference(
+        currentSetPosition,
+        CANSparkBase.ControlType.kPosition,
+        0,
+        0);
+      m_armPIDController.setIAccum(0);
+    } else {
+      m_armPIDController.setReference(
+        currentSetPosition,
+        CANSparkBase.ControlType.kPosition,
+        0,
+        ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+    }
   }
 
   /**
@@ -82,6 +89,10 @@ public class ArmSubsystem extends SubsystemBase {
     currentSetPosition = position;
     updateFF();
     //sb_setPosition.setDouble(position);
+  }
+
+  public double getCurrentPosition() {
+    return m_armEncoder.getPosition();
   }
 
   public Command setPositionCommand(double position) {

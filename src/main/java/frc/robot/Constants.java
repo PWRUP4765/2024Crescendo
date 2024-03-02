@@ -34,7 +34,7 @@ public final class Constants {
   public static class RobotContainerConstants {
 
     public static final boolean kSwerveEnabled = true;
-    public static final boolean kArmEnabled = false;
+    public static final boolean kArmEnabled = true;
   }
 
   public static class ArmConstants {
@@ -43,12 +43,12 @@ public final class Constants {
     public static final boolean kArmMotorReversed = false;
 
     // Arm PID constants
-    public static final double kP = 2.5; // 2
-    public static final double kI = 0; // 0.002
+    public static final double kP = 3; // 2
+    public static final double kI = 0.002; // 0.002
     public static final double kD = 4; // 2
     public static final double kIZ = 0;
     public static final double kFF = 0;
-    public static final double kFFCoefficient = 2.4;
+    public static final double kFFCoefficient = 2.4; // 2.4
 
     public static final boolean kEncoderReversed = false;
     public static final double kEncoderOffset = 0.258;
@@ -58,7 +58,7 @@ public final class Constants {
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDefaultPosition = 0; // TEMP
+    public static final double kArmDrivingPosition = 0.125; // TEMP
     public static final double kArmScoringPosition = 0.25; // TEMP
   }
 
@@ -108,10 +108,10 @@ public final class Constants {
     public static final int kRearRightDriveMotorPort = 22;
 
     //whether the driving encoders are flipped
-    public static final boolean kFrontLeftDriveMotorReversed = true;
-    public static final boolean kRearLeftDriveMotorReversed = true;
-    public static final boolean kFrontRightDriveMotorReversed = true;
-    public static final boolean kRearRightDriveMotorReversed = true;
+    public static final boolean kFrontLeftDriveMotorReversed = false;
+    public static final boolean kRearLeftDriveMotorReversed = false;
+    public static final boolean kFrontRightDriveMotorReversed = false;
+    public static final boolean kRearRightDriveMotorReversed = false;
 
     //the turning motor ports
     public static final int kFrontLeftTurningMotorPort = 20;
@@ -165,6 +165,8 @@ public final class Constants {
     //disable this if you want to try non-fieldRelative driving
     public static final boolean kFieldRelative = true;
 
+    public static final boolean kOptimizeAngles = true;
+
     //PID values for the driving
     public static final double kDriveP = 0.01;
     public static final double kDriveI = 0;
@@ -174,20 +176,22 @@ public final class Constants {
     public static final double kDriveMinOutput = -1;
     public static final double kDriveMaxOutput = 1;
     //multiplies the output speed of all of the drive motors, ALWAYS (0, 1).
-    public static final double kSpeedMultiplier = 0.25;
+    public static final double kDefaultSpeedMultiplier = 0.5;
     //the way that the drive motor controller sends power when not receiving a signal from the code. (kBrake or kCoast)
     public static final CANSparkMax.IdleMode kDriveIdleMode =
       CANSparkMax.IdleMode.kBrake;
     public static final double kDriveMaxRPM = 5700;
+    public static final int kDriveCurrentLimit = 35;
 
     //PID values for the turning
-    public static final double kTurnP = 2;
+    public static final double kTurnP = 1.5;
     public static final double kTurnI = 0.0015;
     public static final double kTurnD = 0.12;
     public static final double kTurnIZ = 0;
     public static final double kTurnFF = 0;
     public static final double kTurnMinOutput = -1;
     public static final double kTurnMaxOutput = 1;
+    public static final double kTurnCurrentLimit = 30;
     //because the turn gearing ratio is not 1:1, we need to spin the motor many times to equal one spin of the module
     //this constant is used for the position conversion factor. (every 150 turns of motors is 7 rotations of the module)
     public static final double kTurnConversionFactor = 7.0 / 150.0;
