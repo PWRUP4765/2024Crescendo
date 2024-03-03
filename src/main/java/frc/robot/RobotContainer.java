@@ -280,7 +280,7 @@ public class RobotContainer {
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
     new JoystickButton(m_operatorController, LogitechController.ButtonEnum.LEFTBUTTON.value)
-      .toggleOnTrue(new OutputCommand(m_intake));
+      .toggleOnTrue(new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
 
     // Intake Button TBD
     //new Trigger(controller::getBButton)
