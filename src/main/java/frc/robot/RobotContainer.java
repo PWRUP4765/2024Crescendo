@@ -231,7 +231,7 @@ public class RobotContainer {
       new JoystickButton(m_operatorController,LogitechController.ButtonEnum.RIGHTBUTTON.value)
       .whileTrue(new RunCommand(() -> {try {
             // Account for some error
-            m_climbArmSubsystem.setSpeed(m_armSubsystem.getCurrentPosition() > 0.02 ? 0 : 50);
+            m_climbArmSubsystem.setSpeed(0.5);
             } catch (LimitException e) {
               throw new RuntimeException(e);
             }
@@ -241,7 +241,7 @@ public class RobotContainer {
       new JoystickButton(m_operatorController,LogitechController.ButtonEnum.RIGHTTRIGGER.value)
       .whileTrue(new RunCommand(() -> {try {
             // Account for some error
-            m_climbArmSubsystem.setSpeed(-50);
+            m_climbArmSubsystem.setSpeed(-0.5);
             } catch (LimitException e) {
               throw new RuntimeException(e);
             }
