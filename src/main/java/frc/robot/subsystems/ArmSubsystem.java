@@ -112,12 +112,4 @@ public class ArmSubsystem extends SubsystemBase {
   public void updateShuffleboardTab() {
     sb_encoderPosition.setDouble(m_armEncoder.getPosition());
   }
-
-  /**
-   * @return The position of the arm to. Domain: [0, 0.25]
-   * @author godbrigero
-   */
-  public double getCurPosition() {
-    return currentSetPosition;
-  }
 }

@@ -231,7 +231,7 @@ public class RobotContainer {
       new JoystickButton(m_operatorController,LogitechController.ButtonEnum.RIGHTBUTTON.value)
       .whileTrue(new RunCommand(() -> {try {
             // Account for some error
-            m_climbArmSubsystem.setSpeed(m_armSubsystem.getCurPosition() > 0.02 ? 0 : 50);
+            m_climbArmSubsystem.setSpeed(m_armSubsystem.getCurrentPosition() > 0.02 ? 0 : 50);
             } catch (LimitException e) {
               throw new RuntimeException(e);
             }
@@ -250,7 +250,7 @@ public class RobotContainer {
       // When the x button on the LogitechController is pressed, we reset the position of the arm
       new JoystickButton(
         m_driverController,
-        FlightStick.ButtonEnum.Y.value
+        LogitechController.ButtonEnum.Y.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
@@ -332,7 +332,7 @@ public class RobotContainer {
             try {
               // Account for some error
               m_climbArmSubsystem.setSpeed(
-                m_armSubsystem.getCurPosition() > 0.02 ? 0 : 50
+                m_armSubsystem.getCurrentPosition() > 0.02 ? 0 : 50
               );
             } catch (LimitException e) {
               throw new RuntimeException(e);
