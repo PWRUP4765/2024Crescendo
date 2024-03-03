@@ -307,11 +307,11 @@ public class RobotContainer {
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
-        .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
+        .whileTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
 
       // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
-        .toggleOnTrue(new OutputCommand(m_intake));
+        .whileTrue(new OutputCommand(m_intake));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     if (RobotContainerConstants.kSwerveEnabled) {
