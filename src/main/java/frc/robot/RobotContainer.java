@@ -165,7 +165,7 @@ public class RobotContainer {
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
     new JoystickButton(m_driverController, FlightStick.ButtonEnum.B8.value)
-      .toggleOnTrue(new OutputCommand(m_intake));
+      .toggleOnTrue(new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
   }
   private void configureFlightStickRight() {
     if (RobotContainerConstants.kArmEnabled) {
@@ -208,7 +208,7 @@ public class RobotContainer {
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
     new JoystickButton(m_driverController, FlightStick.ButtonEnum.B8.value)
-      .toggleOnTrue(new OutputCommand(m_intake));
+      .toggleOnTrue(new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
   }
   private void configureOperatorLogitech() {
     /*new JoystickButton(
@@ -249,19 +249,19 @@ public class RobotContainer {
       ));
       // When the x button on the LogitechController is pressed, we reset the position of the arm
       new JoystickButton(
-        m_driverController,
+        m_operatorController,
         LogitechController.ButtonEnum.Y.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
       new JoystickButton(
-        m_driverController,
+        m_operatorController,
         FlightStick.ButtonEnum.B.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.125));
       // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25 
       new JoystickButton(
-        m_driverController,
+        m_operatorController,
         FlightStick.ButtonEnum.A.value
       )
         .onTrue(m_armSubsystem.setPositionCommand(0));
@@ -269,17 +269,17 @@ public class RobotContainer {
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     // We should make it so that the back button of the logitech controller the intake runs once
     new JoystickButton(
-      m_driverController,
+      m_operatorController,
       LogitechController.ButtonEnum.Y.value
     )
       .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
 
     // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
+    new JoystickButton(m_operatorController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
       .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-    new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTBUTTON.value)
+    new JoystickButton(m_operatorController, LogitechController.ButtonEnum.LEFTBUTTON.value)
       .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
@@ -293,25 +293,13 @@ public class RobotContainer {
 
   private void configureDriverLogitech() {
     if (RobotContainerConstants.kArmEnabled) {
-      // When the Left shoulder button on the LogitechController is pressed, we reset the position of the arm
-      new JoystickButton(
-        m_driverController,
-        LogitechController.ButtonEnum.LEFTBUTTON.value
-      )
-        .onTrue(m_armSubsystem.setPositionCommand(0));
-      // When the Right shoulder button is pressed on the logitech controller, lets set the position of the arm to 0.25 
-      new JoystickButton(
-        m_driverController,
-        LogitechController.ButtonEnum.RIGHTBUTTON.value
-      )
-        .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
         .whileTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
 
       // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
       new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
-        .whileTrue(new OutputCommand(m_intake));
+        .whileTrue(new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     if (RobotContainerConstants.kSwerveEnabled) {
