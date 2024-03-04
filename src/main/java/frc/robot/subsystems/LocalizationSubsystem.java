@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.VisionSubsystem.VisionTarget;
 import org.photonvision.PhotonUtils;
 
-public class LocalizationSubsystem {
+public class LocalizationSubsystem extends SubsystemBase {
 
   private Pose2d position;
   private AHRS m_gyro;
@@ -152,7 +153,7 @@ public class LocalizationSubsystem {
   /**
    * @apiNote this is needed bc according to the docs, "...you need to update the odometry position periodically..."
    */
-  public void updateOdomPosition() {
+  private void updateOdomPosition() {
     this.m_odometry.update(this.m_gyro.getRotation2d(), gModulePositions());
   }
 
@@ -165,23 +166,34 @@ public class LocalizationSubsystem {
 
   // WIP - this should update the position of the robot by averaging all of the positions of the NavX, Odometry, and Vision into one
   public void updatePosition() {
+    updateOdomPosition();
+
     Pose2d odom = this.getOdometryPosition();
     // Not sure what to put for color since I don't really understand what that is used for
-    Pose2d vision = this.getVistionPosition("red");
     Pose2d gyro = this.getGyroPosition();
 
-    this.position =
-      new Pose2d(
-        (odom.getX() + vision.getX() + gyro.getX()) / 3,
-        (odom.getY() + vision.getY() + gyro.getY()) / 3,
-        new Rotation2d(
-          (
-            odom.getRotation().getRadians() +
-            vision.getRotation().getRadians() +
-            gyro.getRotation().getRadians()
-          ) /
-          3
-        )
-      );
+    Pose2d vision = this.getVistionPosition("red");
+
+    double x = 0;
+    double y = 0;
+    double rotRad = 0;
+    if (vision == null) {
+      x = (odom.getX() + gyro.getX()) / 2;
+      y = (odom.getY() + gyro.getY()) / 2;
+      rotRad =
+        (odom.getRotation().getRadians() + gyro.getRotation().getRadians()) / 2;
+    } else {
+      x = (odom.getX() + vision.getX() + gyro.getX()) / 3;
+      y = (odom.getY() + vision.getY() + gyro.getY()) / 3;
+      rotRad =
+        (
+          odom.getRotation().getRadians() +
+          vision.getRotation().getRadians() +
+          gyro.getRotation().getRadians()
+        ) /
+        3;
+    }
+
+    this.position = new Pose2d(x, y, new Rotation2d(rotRad));
   }
 }
