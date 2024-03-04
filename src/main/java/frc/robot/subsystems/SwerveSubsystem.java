@@ -12,7 +12,7 @@ import frc.robot.util.MathFunc;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  public final SwerveModule m_frontLeftSwerveModule = new SwerveModule(
+  private final SwerveModule m_frontLeftSwerveModule = new SwerveModule(
     SwerveConstants.kFrontLeftDriveMotorPort,
     SwerveConstants.kFrontLeftDriveMotorReversed,
     SwerveConstants.kFrontLeftTurningMotorPort,
@@ -22,7 +22,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kFrontLeftCANcoderMagnetOffset,
     "FL"
   );
-  public final SwerveModule m_frontRightSwerveModule = new SwerveModule(
+  private final SwerveModule m_frontRightSwerveModule = new SwerveModule(
     SwerveConstants.kFrontRightDriveMotorPort,
     SwerveConstants.kFrontRightDriveMotorReversed,
     SwerveConstants.kFrontRightTurningMotorPort,
@@ -32,7 +32,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kFrontRightCANcoderMagnetOffset,
     "FR"
   );
-  public final SwerveModule m_rearLeftSwerveModule = new SwerveModule(
+  private final SwerveModule m_rearLeftSwerveModule = new SwerveModule(
     SwerveConstants.kRearLeftDriveMotorPort,
     SwerveConstants.kRearLeftDriveMotorReversed,
     SwerveConstants.kRearLeftTurningMotorPort,
@@ -42,7 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kRearLeftCANcoderMagnetOffset,
     "RL"
   );
-  public final SwerveModule m_rearRightSwerveModule = new SwerveModule(
+  private final SwerveModule m_rearRightSwerveModule = new SwerveModule(
     SwerveConstants.kRearRightDriveMotorPort,
     SwerveConstants.kRearRightDriveMotorReversed,
     SwerveConstants.kRearRightTurningMotorPort,
