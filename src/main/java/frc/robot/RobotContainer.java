@@ -59,8 +59,6 @@ public class RobotContainer {
     OperatorConstants.kFlightPortRight
   );
 
-  final XboxController controller = new XboxController(0);
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     try {
@@ -165,6 +163,9 @@ public class RobotContainer {
     }
     if (RobotContainerConstants.kSwerveEnabled) {
       new JoystickButton(m_FlightStickDriverRight, FlightStick.ButtonEnum.B5.value)
+        .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
+      new JoystickButton(m_FlightStickDriverRight, FlightStick.ButtonEnum.X.value)
+        // JARED, you need to make a xconfig, which makes the wheels into a x shape to prevent being pushed by other robots.
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
   }
