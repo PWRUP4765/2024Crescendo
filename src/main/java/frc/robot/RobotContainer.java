@@ -333,7 +333,10 @@ public class RobotContainer {
             try {
               // Account for some error
               m_climbArmSubsystem.setSpeed(
-                m_armSubsystem.getCurrentPosition() > 0.02 ? 0 : 50
+                m_armSubsystem.getCurrentPosition() > 0.01 ||
+                  m_armSubsystem.getCurrentPosition() < -0.01
+                  ? 0
+                  : 50
               );
             } catch (LimitException e) {
               throw new RuntimeException(e);

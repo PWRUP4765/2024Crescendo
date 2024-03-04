@@ -70,14 +70,17 @@ public class ArmSubsystem extends SubsystemBase {
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
         0,
-        0);
+        0
+      );
       m_armPIDController.setIAccum(0);
     } else {
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
         0,
-        ArmConstants.kFFCoefficient * Math.cos(m_armEncoder.getPosition() * (2 * Math.PI)));
+        ArmConstants.kFFCoefficient *
+        Math.cos(m_armEncoder.getPosition() * (2 * Math.PI))
+      );
     }
   }
 
