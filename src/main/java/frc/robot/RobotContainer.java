@@ -293,6 +293,19 @@ public class RobotContainer {
     //  .toggleOnTrue(new ClimbArmCommand(climbArmSubsystem, 10, 0, "Climb Arm"));
 
     // m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
+
+    localizationSubsystem.setDefaultCommand(
+      new RunCommand(
+        () -> {
+          localizationSubsystem.updatePosition();
+          Pose2d pos = localizationSubsystem.getPosition();
+          System.out.println(
+            pos.getX() + " | " + pos.getY() + " | " + pos.getRotation()
+          );
+        },
+        localizationSubsystem
+      )
+    );
   }
 
   private void configureDriverLogitech() {
@@ -359,19 +372,6 @@ public class RobotContainer {
           m_climbArmSubsystem
         )
       );
-
-    localizationSubsystem.setDefaultCommand(
-      new RunCommand(
-        () -> {
-          localizationSubsystem.updatePosition();
-          Pose2d pos = localizationSubsystem.getPosition();
-          System.out.println(
-            pos.getX() + " | " + pos.getY() + " | " + pos.getRotation()
-          );
-        },
-        localizationSubsystem
-      )
-    );
   }
 
   /**
