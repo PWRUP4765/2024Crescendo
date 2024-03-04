@@ -34,9 +34,9 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
-  private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
-    null
-  );
+  // private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
+  //   null
+  // );
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -132,10 +132,10 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     //godbrigeroBindings();
-    configureOperatorLogitech();
-    configureDriverLogitech();
-    //configureFlightStickLeft();
-    //configureFlightStickRight();
+    //configureOperatorLogitech();
+    //configureDriverLogitech();
+    configureFlightStickLeft();
+    configureFlightStickRight();
   }
 
   /**
@@ -149,40 +149,24 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureFlightStickLeft() {
-    if (RobotContainerConstants.kSwerveEnabled) {
-      new JoystickButton(
-        m_driverController,
-        FlightStick.AxisEnum.JOYSTICKROTATION.value
-      )
-        .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
+    if (RobotContainerConstants.kArmEnabled) {
+      new JoystickButton(m_FlightStickDriverLeft, FlightStick.ButtonEnum.B16.value)
+        .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
+      new JoystickButton(m_FlightStickDriverLeft, FlightStick.ButtonEnum.TRIGGER.value)
+        .whileTrue(new OutputCommand(m_intake));
     }
   }
 
   private void configureFlightStickRight() {
     if (RobotContainerConstants.kArmEnabled) {
       // When the x button on the LogitechController is pressed, we reset the position of the arm
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.X.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0));
-      // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.B5.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.125));
-      // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.Y.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.25));
+      new JoystickButton(m_FlightStickDriverRight, FlightStick.ButtonEnum.TRIGGER.value)
+        .whileTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)); 
     }
     if (RobotContainerConstants.kSwerveEnabled) {
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.XBOX.value)
+      new JoystickButton(m_FlightStickDriverRight, FlightStick.ButtonEnum.B5.value)
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
-    // We should make it so that the back button of the logitech controller the intake runs once
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B6.value)
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
-
-    // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B7.value)
-      .toggleOnTrue(
-        new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-      );
   }
 
   private void configureOperatorLogitech() {
@@ -280,18 +264,18 @@ public class RobotContainer {
 
     // m_chooser.addOption("Auton", new ExampleCommand(m_exampleSubsystem));
 
-    localizationSubsystem.setDefaultCommand(
-      new RunCommand(
-        () -> {
-          localizationSubsystem.updatePosition();
-          Pose2d pos = localizationSubsystem.getPosition();
-          System.out.println(
-            pos.getX() + " | " + pos.getY() + " | " + pos.getRotation()
-          );
-        },
-        localizationSubsystem
-      )
-    );
+    // localizationSubsystem.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> {
+    //       localizationSubsystem.updatePosition();
+    //       Pose2d pos = localizationSubsystem.getPosition();
+    //       System.out.println(
+    //         pos.getX() + " | " + pos.getY() + " | " + pos.getRotation()
+    //       );
+    //     },
+    //     localizationSubsystem
+    //   )
+    // );
   }
   private void configureDriverLogitech() {
     if (RobotContainerConstants.kArmEnabled) {
