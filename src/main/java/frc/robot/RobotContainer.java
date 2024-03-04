@@ -20,6 +20,7 @@ import frc.robot.error.LimitException;
 import frc.robot.subsystems.*;
 import frc.robot.util.controller.FlightStick;
 import frc.robot.util.controller.LogitechController;
+import frc.robot.util.controller.FlightStick.AxisEnum;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 import frc.robot.util.identity.Identity;
 
@@ -32,8 +33,6 @@ import frc.robot.util.identity.Identity;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
   // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
     null
@@ -51,6 +50,13 @@ public class RobotContainer {
 
   final LogitechController m_operatorController = new LogitechController(
     OperatorConstants.kOperatorControllerPort
+  );
+
+  final FlightStick m_FlightStickDriverLeft = new FlightStick(
+    OperatorConstants.kFlightPortLeft
+  );
+  final FlightStick m_FlightStickDriverRight = new FlightStick(
+    OperatorConstants.kFlightPortRight
   );
 
   final XboxController controller = new XboxController(0);
@@ -74,6 +80,7 @@ public class RobotContainer {
     // if the Swerve is enabled, lets set the default command that the scheduler runs to a RunCommand, that depends on the
     // driver controllers joysticks
     if (RobotContainerConstants.kSwerveEnabled) {
+      /*
       m_swerveSubsystem.setDefaultCommand(
         // 4765: Controller commands converted for various joysticks
         new RunCommand(
@@ -82,6 +89,18 @@ public class RobotContainer {
               m_driverController.getRawAxis(0) * 1,
               m_driverController.getRawAxis(1) * -1,
               m_driverController.getRawAxis(2) * 1
+            ),
+          m_swerveSubsystem
+        )
+      ); */
+      m_swerveSubsystem.setDefaultCommand(
+        // 4765: Controller commands converted for various joysticks
+        new RunCommand(
+          () ->
+            m_swerveSubsystem.joystickDrive(
+              m_FlightStickDriverRight.getRawAxis(FlightStick.AxisEnum.JOYSTICKX.value) * 1,
+              m_FlightStickDriverRight.getRawAxis(FlightStick.AxisEnum.JOYSTICKY.value) * -1,
+              m_FlightStickDriverLeft.getRawAxis(FlightStick.AxisEnum.JOYSTICKROTATION.value) * 1
             ),
           m_swerveSubsystem
         )
@@ -130,36 +149,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureFlightStickLeft() {
-    if (RobotContainerConstants.kArmEnabled) {
-      // When the x button on the LogitechController is pressed, we reset the position of the arm
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.X.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0));
-      // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.B5.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.125));
-      // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.Y.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.25));
-    }
     if (RobotContainerConstants.kSwerveEnabled) {
-      new JoystickButton(m_driverController, FlightStick.ButtonEnum.XBOX.value)
+      new JoystickButton(
+        m_driverController,
+        FlightStick.AxisEnum.JOYSTICKROTATION.value
+      )
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
-    // We should make it so that the back button of the logitech controller the intake runs once
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B6.value)
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
-
-    // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B7.value)
-      .toggleOnTrue(
-        new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-      );
-
-    // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B8.value)
-      .toggleOnTrue(
-        new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-      );
   }
 
   private void configureFlightStickRight() {
@@ -186,12 +182,6 @@ public class RobotContainer {
     new JoystickButton(m_driverController, FlightStick.ButtonEnum.B7.value)
       .toggleOnTrue(
         new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-      );
-
-    // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-    new JoystickButton(m_driverController, FlightStick.ButtonEnum.B8.value)
-      .toggleOnTrue(
-        new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
       );
   }
 
@@ -279,13 +269,9 @@ public class RobotContainer {
       );
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-    new JoystickButton(
-      m_operatorController,
-      LogitechController.ButtonEnum.LEFTBUTTON.value
-    )
-      .toggleOnTrue(
-        new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-      );
+    new JoystickButton(m_operatorController, LogitechController.ButtonEnum.LEFTBUTTON.value)
+      .toggleOnTrue(new OutputCommand(m_intake));
+
     // Intake Button TBD
     //new Trigger(controller::getBButton)
     //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
@@ -307,26 +293,18 @@ public class RobotContainer {
       )
     );
   }
-
   private void configureDriverLogitech() {
     if (RobotContainerConstants.kArmEnabled) {
       // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
-      new JoystickButton(
-        m_driverController,
-        LogitechController.ButtonEnum.LEFTTRIGGER.value
-      )
-        .whileTrue(
-          new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-        );
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
+        .whileTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));  
+
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
+      .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
 
       // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-      new JoystickButton(
-        m_driverController,
-        LogitechController.ButtonEnum.RIGHTTRIGGER.value
-      )
-        .whileTrue(
-          new OutputCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
-        );
+      new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
+        .whileTrue(new OutputCommand(m_intake));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     if (RobotContainerConstants.kSwerveEnabled) {
@@ -381,6 +359,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return new ScoreAuton(m_armSubsystem, m_intake, m_swerveSubsystem);
   }
 }

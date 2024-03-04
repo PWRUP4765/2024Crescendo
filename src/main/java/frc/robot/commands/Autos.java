@@ -13,8 +13,7 @@ public final class Autos {
   /** Example static factory for an autonomous command. */
   public static Command exampleAuto(ExampleSubsystem subsystem) {
     return Commands.sequence(
-      subsystem.exampleMethodCommand(),
-      new ExampleCommand(subsystem)
+      subsystem.exampleMethodCommand()
     );
   }
 
