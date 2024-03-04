@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -92,22 +93,27 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveConstants.kYSpeedDeadband,
         SwerveConstants.kYSpeedMinValue
       );
-    r = MathFunc.deadband(r, SwerveConstants.kRotDeadband, SwerveConstants.kRotMinValue);
+    r =
+      MathFunc.deadband(
+        r,
+        SwerveConstants.kRotDeadband,
+        SwerveConstants.kRotMinValue
+      );
 
     drive(x, y, r);
   }
 
-/**
- * Calculates the angles and speeds for the swerve modules, based on x, y, and z. Then it sends the commands to the modules.
- * 
- * @param x The left to right translation of the robot. Domain: [-1, 1]
- * @param y The backward to forward translation of the robot. Domain: [-1, 1]
- * @param r The rotational movement of the robot. Domain: [-1, 1]
- */
-public void drive(double x, double y, double r) {
-  drive(x, y, r, currentSpeedMultiplier);
-}
-  
+  /**
+   * Calculates the angles and speeds for the swerve modules, based on x, y, and z. Then it sends the commands to the modules.
+   *
+   * @param x The left to right translation of the robot. Domain: [-1, 1]
+   * @param y The backward to forward translation of the robot. Domain: [-1, 1]
+   * @param r The rotational movement of the robot. Domain: [-1, 1]
+   */
+  public void drive(double x, double y, double r) {
+    drive(x, y, r, currentSpeedMultiplier);
+  }
+
   /**
    * Calculates the angles and speeds for the swerve modules, based on x, y, and z. Then it sends the commands to the modules.
    * Also has customizable speed multiplier.
@@ -167,10 +173,26 @@ public void drive(double x, double y, double r) {
     double rearRightAngle = Math.atan2(a, c) / Math.PI / 2;
 
     //sending the wheel and angle speeds to the motor controllers
-    m_frontLeftSwerveModule.drive(frontLeftSpeed, frontLeftAngle, tempSpeedMultiplier);
-    m_frontRightSwerveModule.drive(frontRightSpeed, frontRightAngle, tempSpeedMultiplier);
-    m_rearLeftSwerveModule.drive(rearLeftSpeed, rearLeftAngle, tempSpeedMultiplier);
-    m_rearRightSwerveModule.drive(rearRightSpeed, rearRightAngle, tempSpeedMultiplier);
+    m_frontLeftSwerveModule.drive(
+      frontLeftSpeed,
+      frontLeftAngle,
+      tempSpeedMultiplier
+    );
+    m_frontRightSwerveModule.drive(
+      frontRightSpeed,
+      frontRightAngle,
+      tempSpeedMultiplier
+    );
+    m_rearLeftSwerveModule.drive(
+      rearLeftSpeed,
+      rearLeftAngle,
+      tempSpeedMultiplier
+    );
+    m_rearRightSwerveModule.drive(
+      rearRightSpeed,
+      rearRightAngle,
+      tempSpeedMultiplier
+    );
 
     updateShuffleboardTab(
       frontLeftSpeed,
@@ -242,4 +264,12 @@ public void drive(double x, double y, double r) {
     sb_NAVXRoll.setDouble(m_gyro.getRoll());
   }
 
+  public SwerveModulePosition[] getSwerveModulePositions() {
+    return new SwerveModulePosition[] {
+      m_frontLeftSwerveModule.getPosition(),
+      m_frontRightSwerveModule.getPosition(),
+      m_rearLeftSwerveModule.getPosition(),
+      m_rearRightSwerveModule.getPosition(),
+    };
+  }
 }
