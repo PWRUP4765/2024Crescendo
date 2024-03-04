@@ -19,8 +19,8 @@ import frc.robot.commands.*;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.*;
 import frc.robot.util.controller.FlightStick;
-import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.FlightStick.AxisEnum;
+import frc.robot.util.controller.LogitechController;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 import frc.robot.util.identity.Identity;
 
@@ -34,10 +34,17 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
-  private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
-    null
-  );
+
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
+  private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
+    null,
+    new SwerveModule[] {
+      m_swerveSubsystem.m_frontLeftSwerveModule,
+      m_swerveSubsystem.m_frontRightSwerveModule,
+      m_swerveSubsystem.m_rearLeftSwerveModule,
+      m_swerveSubsystem.m_rearRightSwerveModule,
+    }
+  );
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private ClimbArmSubsystem m_climbArmSubsystem = new ClimbArmSubsystem(
@@ -98,9 +105,18 @@ public class RobotContainer {
         new RunCommand(
           () ->
             m_swerveSubsystem.joystickDrive(
-              m_FlightStickDriverRight.getRawAxis(FlightStick.AxisEnum.JOYSTICKX.value) * 1,
-              m_FlightStickDriverRight.getRawAxis(FlightStick.AxisEnum.JOYSTICKY.value) * -1,
-              m_FlightStickDriverLeft.getRawAxis(FlightStick.AxisEnum.JOYSTICKROTATION.value) * 1
+              m_FlightStickDriverRight.getRawAxis(
+                FlightStick.AxisEnum.JOYSTICKX.value
+              ) *
+              1,
+              m_FlightStickDriverRight.getRawAxis(
+                FlightStick.AxisEnum.JOYSTICKY.value
+              ) *
+              -1,
+              m_FlightStickDriverLeft.getRawAxis(
+                FlightStick.AxisEnum.JOYSTICKROTATION.value
+              ) *
+              1
             ),
           m_swerveSubsystem
         )
@@ -269,7 +285,10 @@ public class RobotContainer {
       );
 
     // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-    new JoystickButton(m_operatorController, LogitechController.ButtonEnum.LEFTBUTTON.value)
+    new JoystickButton(
+      m_operatorController,
+      LogitechController.ButtonEnum.LEFTBUTTON.value
+    )
       .toggleOnTrue(new OutputCommand(m_intake));
 
     // Intake Button TBD
@@ -293,17 +312,29 @@ public class RobotContainer {
       )
     );
   }
+
   private void configureDriverLogitech() {
     if (RobotContainerConstants.kArmEnabled) {
       // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTTRIGGER.value)
-        .whileTrue(new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem));  
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.RIGHTTRIGGER.value
+      )
+        .whileTrue(
+          new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
+        );
 
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.RIGHTBUTTON.value)
-      .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.RIGHTBUTTON.value
+      )
+        .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
 
       // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-      new JoystickButton(m_driverController, LogitechController.ButtonEnum.LEFTTRIGGER.value)
+      new JoystickButton(
+        m_driverController,
+        LogitechController.ButtonEnum.LEFTTRIGGER.value
+      )
         .whileTrue(new OutputCommand(m_intake));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy

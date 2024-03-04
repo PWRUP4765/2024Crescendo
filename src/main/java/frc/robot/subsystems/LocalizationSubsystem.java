@@ -25,50 +25,19 @@ public class LocalizationSubsystem extends SubsystemBase {
   VisionSubsystem m_vision;
   SwerveDriveOdometry m_odometry;
 
-  private final SwerveModule m_frontLeftModule = new SwerveModule(
-    SwerveConstants.kFrontLeftDriveMotorPort,
-    SwerveConstants.kFrontLeftDriveMotorReversed,
-    SwerveConstants.kFrontLeftTurningMotorPort,
-    SwerveConstants.kFrontLeftTurningMotorReversed,
-    SwerveConstants.kFrontLeftCANcoderPort,
-    SwerveConstants.kFrontLeftCANcoderDirection,
-    SwerveConstants.kFrontLeftCANcoderMagnetOffset,
-    "FL"
-  );
-  private final SwerveModule m_frontRightModule = new SwerveModule(
-    SwerveConstants.kFrontRightDriveMotorPort,
-    SwerveConstants.kFrontRightDriveMotorReversed,
-    SwerveConstants.kFrontRightTurningMotorPort,
-    SwerveConstants.kFrontRightTurningMotorReversed,
-    SwerveConstants.kFrontRightCANcoderPort,
-    SwerveConstants.kFrontRightCANcoderDirection,
-    SwerveConstants.kFrontRightCANcoderMagnetOffset,
-    "FR"
-  );
-  private final SwerveModule m_rearLeftModule = new SwerveModule(
-    SwerveConstants.kRearLeftDriveMotorPort,
-    SwerveConstants.kRearLeftDriveMotorReversed,
-    SwerveConstants.kRearLeftTurningMotorPort,
-    SwerveConstants.kRearLeftTurningMotorReversed,
-    SwerveConstants.kRearLeftCANcoderPort,
-    SwerveConstants.kRearLeftCANcoderDirection,
-    SwerveConstants.kRearLeftCANcoderMagnetOffset,
-    "RL"
-  );
-  private final SwerveModule m_rearRightModule = new SwerveModule(
-    SwerveConstants.kRearRightDriveMotorPort,
-    SwerveConstants.kRearRightDriveMotorReversed,
-    SwerveConstants.kRearRightTurningMotorPort,
-    SwerveConstants.kRearRightTurningMotorReversed,
-    SwerveConstants.kRearRightCANcoderPort,
-    SwerveConstants.kRearRightCANcoderDirection,
-    SwerveConstants.kRearRightCANcoderMagnetOffset,
-    "RR"
-  );
+  private final SwerveModule m_frontLeftModule;
+  private final SwerveModule m_frontRightModule;
+  private final SwerveModule m_rearLeftModule;
+  private final SwerveModule m_rearRightModule;
 
-  public LocalizationSubsystem(VisionSubsystem vision) {
+  public LocalizationSubsystem(VisionSubsystem vision, SwerveModule[] modules) {
     m_gyro = new AHRS(I2C.Port.kMXP);
     m_vision = vision;
+
+    m_frontLeftModule = modules[0];
+    m_frontRightModule = modules[1];
+    m_rearLeftModule = modules[2];
+    m_rearRightModule = modules[3];
 
     // Locations for the swerve drive modules relative to the robot center.
     // THESE VALUES ARE NOT CORRECT AND NEED TO BE FOUND IN METERS
