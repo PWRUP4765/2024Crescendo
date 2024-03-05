@@ -230,6 +230,7 @@ public final class Constants {
   }
 
   public static class FieldConstants{
+
     public static final double kRedAmpXPosition = 0; //TEMP WE NEED TO FIND THIS IN METERS
     public static final double kRedAmpYPosition = 0;
 

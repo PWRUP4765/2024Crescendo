@@ -140,5 +140,9 @@ public class VisionSubsystem extends SubsystemBase {
       double m_yaw = -m_target.getYaw();
       return m_yaw;
     }
+
+    public int getID(){
+      return m_target.getFiducialId();
+    }
   }
 }
