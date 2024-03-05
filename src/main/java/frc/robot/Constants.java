@@ -56,13 +56,13 @@ public final class Constants {
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDrivingPosition = 0.125; // TEMP
+    public static final double kArmDrivingPosition = 0.09; // TEMP
     public static final double kArmScoringPosition = 0.25; // TEMP
   }
 
   public static class ClimbArmConstants {
 
-    public static final int kClimbArmMotorPort = 8;
+    public static final int kClimbArmMotorPort = 15;
     public static final boolean kClimbArmMotorIsBrushless = false;
 
     public static final double kClimbArmLengthMeters = 1; // FIXME: will need to be changed!
@@ -160,10 +160,13 @@ public final class Constants {
     public static final double kRotDeadband = 0.05;
     public static final double kRotMinValue = 0;
 
-    //disable this if you want to try non-fieldRelative driving
+    
     public static final boolean kFieldRelative = true;
-
     public static final boolean kOptimizeAngles = true;
+    public static final double kDirectionP = 1;
+    public static final double kDirectionI = 0;
+    public static final double kDirectionD = 1;
+    public static final double kDirectionMultiplier = 0.5;
 
     //PID values for the driving
     public static final double kDriveP = 0.01;
@@ -176,9 +179,6 @@ public final class Constants {
     //multiplies the output speed of all of the drive motors, ALWAYS (0, 1).
     public static final double kDefaultSpeedMultiplier = 0.5;
     public static final double kIntakeSpeedMultiplier = 0.5;
-    //the way that the drive motor controller sends power when not receiving a signal from the code. (kBrake or kCoast)
-    public static final CANSparkMax.IdleMode kDriveIdleMode =
-      CANSparkMax.IdleMode.kBrake;
     public static final double kDriveMaxRPM = 5700;
     public static final int kDriveCurrentLimit = 35;
 
@@ -190,7 +190,7 @@ public final class Constants {
     public static final double kTurnFF = 0;
     public static final double kTurnMinOutput = -1;
     public static final double kTurnMaxOutput = 1;
-    public static final double kTurnCurrentLimit = 30;
+    public static final int kTurnCurrentLimit = 20;
     //because the turn gearing ratio is not 1:1, we need to spin the motor many times to equal one spin of the module
     //this constant is used for the position conversion factor. (every 150 turns of motors is 7 rotations of the module)
     public static final double kTurnConversionFactor = 7.0 / 150.0;

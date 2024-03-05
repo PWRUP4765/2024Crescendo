@@ -130,7 +130,7 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     //godbrigeroBindings();
-    //configureOperatorLogitech();
+    configureOperatorLogitech();
     //configureDriverLogitech();
     configureFlightStickLeft();
     configureFlightStickRight();
@@ -230,19 +230,19 @@ public class RobotContainer {
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
-      new JoystickButton(m_operatorController, FlightStick.ButtonEnum.B.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.125));
+      new JoystickButton(m_operatorController, LogitechController.ButtonEnum.B.value)
+        .onTrue(m_armSubsystem.setPositionCommand(0.11));
       // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25
-      new JoystickButton(m_operatorController, FlightStick.ButtonEnum.A.value)
+      new JoystickButton(m_operatorController, LogitechController.ButtonEnum.A.value)
         .onTrue(m_armSubsystem.setPositionCommand(0));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     // We should make it so that the back button of the logitech controller the intake runs once
-    new JoystickButton(
-      m_operatorController,
-      LogitechController.ButtonEnum.Y.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
+    // new JoystickButton(
+    //   m_operatorController,
+    //   LogitechController.ButtonEnum.Y.value
+    // )
+    //   .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
 
     // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
     new JoystickButton(

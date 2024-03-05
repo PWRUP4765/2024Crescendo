@@ -70,4 +70,8 @@ public class MathFunc {
 
     return output;
   }
+
+  public static double putWithinHalfToHalf(double in) {
+    return ((in + 0.5) % 1) - 0.5;
+  }
 }
