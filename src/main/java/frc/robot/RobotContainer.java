@@ -215,11 +215,7 @@ public class RobotContainer {
         LogitechController.ButtonEnum.RIGHTBUTTON.value
       )
         .whileTrue(
-          new ClimberUp(
-            m_climbArmSubsystem,
-            Constants.ClimbArmConstants.kClimberArmMotorSpeed,
-            m_armSubsystem.getArmInterface()
-          )
+          new ClimberUp(m_climbArmSubsystem,Constants.ClimbArmConstants.kClimberArmMotorSpeed,m_armSubsystem.getArmInterface())
         );
 
       new JoystickButton(
@@ -308,17 +304,9 @@ public class RobotContainer {
         .whileTrue(
           new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem)
         );
-
       new JoystickButton(
         m_driverController,
-        LogitechController.ButtonEnum.RIGHTBUTTON.value
-      )
-        .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
-
-      // We should make it so that when the right button is pressed, the IntakeMotors shoot out the note
-      new JoystickButton(
-        m_driverController,
-        LogitechController.ButtonEnum.LEFTTRIGGER.value
+        LogitechController.ButtonEnum.RIGHTTRIGGER.value
       )
         .whileTrue(new OutputCommand(m_intake, m_armSubsystem));
     }
@@ -375,12 +363,21 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ScoreAuton(
-      m_armSubsystem,
-      m_intake,
-      m_swerveSubsystem,
-      m_vision,
-      m_operatorController
-    );
+    System.out.println(m_operatorController.getPOV());
+    switch(m_operatorController.getPOV()) {
+      case 0:
+        return new ClimberDown(m_climbArmSubsystem, 0, null);
+      case 45:
+        // code block
+      case 90:
+      case 135:
+      case 180:
+        return new ClimberUp(m_climbArmSubsystem, 0, null);
+      case 225:
+      case 270:
+      case 315:
+      default:
+        return new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem);   
+    }
   }
 }
