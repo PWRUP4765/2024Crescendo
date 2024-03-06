@@ -26,35 +26,7 @@ public class ClimbArmSubsystem extends SubsystemBase {
    *                                 for now it will throw this
    */
   public ClimbArmSubsystem(int channel) {
-    // @this might have to be re-worked since the channels may be > al
-    //
-    // so.
-
     talon = new TalonSRX(channel);
-
-    /*sparkMax =
-      new CANSparkMax(
-        ClimbArmConstants.kClimbArmMotorPort,
-        ClimbArmConstants.kClimbArmMotorIsBrushless
-          ? MotorType.kBrushless
-          : MotorType.kBrushed
-      );
-
-    this.encoder =
-      sparkMax.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-    sparkMax.restoreFactoryDefaults();
-    resetPosition();
-
-    pid = getPid();
-    pid.setP(Constants.ClimbArmConstants.kProportionalGain);
-    pid.setI(Constants.ClimbArmConstants.kIntegralGain);
-    pid.setD(Constants.ClimbArmConstants.kDerivativeGain);
-    pid.setIZone(Constants.ClimbArmConstants.kIZone);
-    pid.setFF(Constants.ClimbArmConstants.kFeedForward);
-
-    encoder.setPositionConversionFactor(
-      Constants.ClimbArmConstants.kClimbGearDiameterMeters * Math.PI
-    );*/
   }
 
   /**
@@ -62,27 +34,18 @@ public class ClimbArmSubsystem extends SubsystemBase {
    *                        the min threshhold
    */
   public void setSpeed(double speed) throws LimitException {
-    /*if (checkSpeed(speed)) throw new LimitException(
-      speedPerc,
-      this.getClass().getName()
-    );
-
-    this.sparkMax.set(speed);
-    */
     this.talon.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   /**
-   * @param pos position IN METERS
-   * @throws LimitException will be thrown if the pos exceeds the Min / Max possible postion
+   * @return will return the top limit switch state
    */
-  public void setReference(double pos) throws LimitException {
-    if (
-      pos < Constants.ClimbArmConstants.kClimbArmMinLengthMeters ||
-      pos > Constants.ClimbArmConstants.kClimbArmLengthMeters
-    ) throw new LimitException(pos, this.getClass().getName());
+  public boolean isArmOnTop() {
+    return talon.isFwdLimitSwitchClosed() == 1;
+  }
 
-    pid.setReference(pos, CANSparkMax.ControlType.kPosition);
+  public boolean isArmOnBottom() {
+    return talon.isRevLimitSwitchClosed() == 1;
   }
 
   /**

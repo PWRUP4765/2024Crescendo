@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.inter.ArmInterface;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -23,6 +25,8 @@ public class ArmSubsystem extends SubsystemBase {
   private ShuffleboardTab sb_tab;
   private String sb_name;
   private GenericEntry sb_encoderPosition, sb_setPosition;
+
+  private boolean isLocked;
 
   /**
    * Constructor class for ArmSubsystem
@@ -89,7 +93,10 @@ public class ArmSubsystem extends SubsystemBase {
    * @param Position The position to move to. Domain: [0, 0.25]
    */
   public void setPosition(double position) {
-    currentSetPosition = position;
+    if (isLocked) {
+      currentSetPosition = position;
+    }
+
     updateFF();
     //sb_setPosition.setDouble(position);
   }
@@ -114,5 +121,42 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void updateShuffleboardTab() {
     sb_encoderPosition.setDouble(m_armEncoder.getPosition());
+  }
+
+  /**
+   *
+   * @param isLocked the boolean of if arm is locked or not
+   */
+  public void setLocked(boolean isLocked) {
+    this.isLocked = isLocked;
+  }
+
+  /**
+   *
+   * @param isLocked the boolean of if arm is locked or not
+   * @param positionLocked the position at which the arm will end up (will go to here even though locked then stay there)
+   */
+  public void setLocked(boolean isLocked, double positionLocked) {
+    setPosition(positionLocked);
+    this.isLocked = isLocked;
+  }
+
+  public ArmInterface getArmInterface() {
+    return new ArmInterface() {
+      @Override
+      public double getCurArmPosition() {
+        return getCurrentPosition();
+      }
+
+      @Override
+      public void lockArm() {
+        setLocked(true, Constants.ArmConstants.kArmFlatPosition);
+      }
+
+      @Override
+      public void unlockArm() {
+        setLocked(false);
+      }
+    };
   }
 }

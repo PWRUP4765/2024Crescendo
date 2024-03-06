@@ -31,6 +31,7 @@ public final class Constants {
   }
 
   public static class RobotContainerConstants {
+
     public static final boolean kSwerveEnabled = true;
     public static final boolean kArmEnabled = true;
   }
@@ -64,17 +65,7 @@ public final class Constants {
 
     public static final int kClimbArmMotorPort = 8;
     public static final boolean kClimbArmMotorIsBrushless = false;
-
-    public static final double kClimbArmLengthMeters = 1; // FIXME: will need to be changed!
-    public static final double kClimbArmMinLengthMeters = 1; // FIXME: will need to be changed!
-    public static final double kClimbGearDiameterMeters = 0.2; // FIXME: will need to be changed!
-
-    public static final double kProportionalGain = 0; // FIXME: will need to be changed!
-    public static final double kIntegralGain = 0; // FIXME: will need to be changed!
-    public static final double kDerivativeGain = 0; // FIXME: will need to be changed!
-
-    public static final double kIZone = 0; // FIXME: will need to be changed!
-    public static final double kFeedForward = 0; // FIXME: will need to be changed!
+    public static final double kClimberArmMotorSpeed = 0.5;
   }
 
   public static class IntakeConstants {
@@ -229,7 +220,8 @@ public final class Constants {
     // public static final double kANGULAR_D = 0.0;
   }
 
-  public static class FieldConstants{
+  public static class FieldConstants {
+
     public static final double kRedAmpXPosition = 0; //TEMP WE NEED TO FIND THIS IN METERS
     public static final double kRedAmpYPosition = 0;
 
