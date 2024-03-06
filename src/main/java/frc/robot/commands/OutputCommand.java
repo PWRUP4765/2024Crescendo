@@ -17,14 +17,16 @@ public class OutputCommand extends Command {
 
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final IntakeSubsystem m_intakeSubsystem;
+  private final ArmSubsystem m_armSubsystem;
 
   private final double outputSpeed = IntakeConstants.kOutputSpeed;
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
    */
-  public OutputCommand(IntakeSubsystem intakeSubsystem) {
+  public OutputCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem) {
     this.m_intakeSubsystem = intakeSubsystem;
+    this.m_armSubsystem = armSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem);
   }
@@ -35,7 +37,9 @@ public class OutputCommand extends Command {
   @Override
   public void execute() {
     // setting the motor speed to outputSpeed
+    if (m_armSubsystem.getCurrentPosition() > 0.23) {
     m_intakeSubsystem.setMotor(outputSpeed);
+    }
   }
 
   @Override

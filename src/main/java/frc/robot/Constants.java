@@ -41,9 +41,9 @@ public final class Constants {
     public static final boolean kArmMotorReversed = false;
 
     // Arm PID constants
-    public static final double kP = 3; // 2
+    public static final double kP = 3; // 3
     public static final double kI = 0.002; // 0.002
-    public static final double kD = 4; // 2
+    public static final double kD = 8; // 8
     public static final double kIZ = 0;
     public static final double kFF = 0;
     public static final double kFFCoefficient = 2.4; // 2.4
@@ -56,8 +56,8 @@ public final class Constants {
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDrivingPosition = 0.09; // TEMP
-    public static final double kArmScoringPosition = 0.25; // TEMP
+    public static final double kArmDrivingPosition = 0.09; // 0.09
+    public static final double kArmScoringPosition = 0.25;
   }
 
   public static class ClimbArmConstants {
@@ -180,7 +180,7 @@ public final class Constants {
     public static final double kDefaultSpeedMultiplier = 0.5;
     public static final double kIntakeSpeedMultiplier = 0.5;
     public static final double kDriveMaxRPM = 5700;
-    public static final int kDriveCurrentLimit = 35;
+    public static final int kDriveCurrentLimit = 20;
 
     //PID values for the turning
     public static final double kTurnP = 1.5;
@@ -190,7 +190,7 @@ public final class Constants {
     public static final double kTurnFF = 0;
     public static final double kTurnMinOutput = -1;
     public static final double kTurnMaxOutput = 1;
-    public static final int kTurnCurrentLimit = 20;
+    public static final int kTurnCurrentLimit = 10;
     //because the turn gearing ratio is not 1:1, we need to spin the motor many times to equal one spin of the module
     //this constant is used for the position conversion factor. (every 150 turns of motors is 7 rotations of the module)
     public static final double kTurnConversionFactor = 7.0 / 150.0;

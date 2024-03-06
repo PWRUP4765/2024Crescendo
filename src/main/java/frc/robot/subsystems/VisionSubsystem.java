@@ -64,20 +64,20 @@ public class VisionSubsystem extends SubsystemBase {
 
   public double calculateSidewaysSpeedX(VisionTarget target, double goal) {
     double axis = target.getX();
-    sb_x.setDouble(axis);
+    
     return m_xController.calculate(axis, goal);
   }
 
   public double calculateForwardSpeedY(VisionTarget target, double goal) {
     double axis = target.getY();
-    sb_y.setDouble(axis);
+    
     // -1.0 required to fit to swerveDrive standards
     return -m_yController.calculate(axis, goal);
   }
 
   public double calculateRotationSpeed(VisionTarget target, double goal) {
     double axis = target.getYaw();
-    sb_rot.setDouble(axis);
+    
     return m_rotationController.calculate(axis, goal);
   }
 
