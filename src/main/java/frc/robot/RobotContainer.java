@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.*;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.*;
 import frc.robot.util.PinCommunication;
+import frc.robot.util.controller.FlightModule;
 import frc.robot.util.controller.FlightStick;
 import frc.robot.util.controller.FlightStick.AxisEnum;
 import frc.robot.util.controller.LogitechController;
@@ -36,7 +38,7 @@ import frc.robot.util.identity.Identity;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  // private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
+  private final VisionSubsystem m_vision = new VisionSubsystem("limelight");
   // private final LocalizationSubsystem localizationSubsystem = new LocalizationSubsystem(
   //   null
   // );
@@ -55,10 +57,8 @@ public class RobotContainer {
     OperatorConstants.kOperatorControllerPort
   );
 
-  final FlightStick m_FlightStickDriverLeft = new FlightStick(
-    OperatorConstants.kFlightPortLeft
-  );
-  final FlightStick m_FlightStickDriverRight = new FlightStick(
+  final FlightModule m_flightModule = new FlightModule(
+    OperatorConstants.kFlightPortLeft,
     OperatorConstants.kFlightPortRight
   );
 
@@ -72,7 +72,7 @@ public class RobotContainer {
       e.printStackTrace();
     }*/
 
-    PinCommunication.sendOnline();
+    //PinCommunication.sendOnline();
 
     // m_intake.setDefaultCommand(
     //   new RunCommand(
@@ -83,33 +83,20 @@ public class RobotContainer {
     // if the Swerve is enabled, lets set the default command that the scheduler runs to a RunCommand, that depends on the
     // driver controllers joysticks
     if (RobotContainerConstants.kSwerveEnabled) {
-      /*
       m_swerveSubsystem.setDefaultCommand(
         // 4765: Controller commands converted for various joysticks
         new RunCommand(
           () ->
             m_swerveSubsystem.joystickDrive(
-              m_driverController.getRawAxis(0) * 1,
-              m_driverController.getRawAxis(1) * -1,
-              m_driverController.getRawAxis(2) * 1
-            ),
-          m_swerveSubsystem
-        )
-      ); */
-      m_swerveSubsystem.setDefaultCommand(
-        // 4765: Controller commands converted for various joysticks
-        new RunCommand(
-          () ->
-            m_swerveSubsystem.joystickDrive(
-              m_FlightStickDriverRight.getRawAxis(
+              m_flightModule.rightFlightStick.getRawAxis(
                 FlightStick.AxisEnum.JOYSTICKX.value
               ) *
               1,
-              m_FlightStickDriverRight.getRawAxis(
+              m_flightModule.rightFlightStick.getRawAxis(
                 FlightStick.AxisEnum.JOYSTICKY.value
               ) *
               -1,
-              m_FlightStickDriverLeft.getRawAxis(
+              m_flightModule.leftFlightStick.getRawAxis(
                 FlightStick.AxisEnum.JOYSTICKROTATION.value
               ) *
               1
@@ -144,7 +131,7 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     //godbrigeroBindings();
-    //configureOperatorLogitech();
+    configureOperatorLogitech();
     //configureDriverLogitech();
     configureFlightStickLeft();
     configureFlightStickRight();
@@ -167,15 +154,15 @@ public class RobotContainer {
 
     if (RobotContainerConstants.kArmEnabled) {
       new JoystickButton(
-        m_FlightStickDriverLeft,
+        m_flightModule.leftFlightStick,
         FlightStick.ButtonEnum.B16.value
       )
         .whileTrue(new OutputPrepCommand(m_armSubsystem, m_swerveSubsystem));
       new JoystickButton(
-        m_FlightStickDriverLeft,
+        m_flightModule.leftFlightStick,
         FlightStick.ButtonEnum.TRIGGER.value
       )
-        .whileTrue(new OutputCommand(m_intake));
+        .whileTrue(new OutputCommand(m_intake, m_armSubsystem));
     }
   }
 
@@ -183,7 +170,7 @@ public class RobotContainer {
     if (RobotContainerConstants.kArmEnabled) {
       // When the x button on the LogitechController is pressed, we reset the position of the arm
       new JoystickButton(
-        m_FlightStickDriverRight,
+        m_flightModule.rightFlightStick,
         FlightStick.ButtonEnum.TRIGGER.value
       )
         .whileTrue(
@@ -192,12 +179,12 @@ public class RobotContainer {
     }
     if (RobotContainerConstants.kSwerveEnabled) {
       new JoystickButton(
-        m_FlightStickDriverRight,
+        m_flightModule.rightFlightStick,
         FlightStick.ButtonEnum.B5.value
       )
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
       new JoystickButton(
-        m_FlightStickDriverRight,
+        m_flightModule.rightFlightStick,
         FlightStick.ButtonEnum.X.value
       )
         // JARED, you need to make a xconfig, which makes the wheels into a x shape to prevent being pushed by other robots.
@@ -206,8 +193,8 @@ public class RobotContainer {
   }
 
   private void configureOperatorLogitech() {
-    /*new JoystickButton(
-      m_driverController,
+    new JoystickButton(
+      m_operatorController,
       LogitechController.ButtonEnum.A.value
     )
       .toggleOnTrue(
@@ -215,11 +202,11 @@ public class RobotContainer {
           m_driverController,
           m_swerveSubsystem,
           m_vision,
-          0.0,
-          0.0,
-          0.0
+          VisionConstants.kAmpXGoal,
+          VisionConstants.kAmpYGoal,
+          VisionConstants.kAmpRotGoal
         )
-      ); */
+      );
 
     if (RobotContainerConstants.kArmEnabled) {
       // When the x button on the LogitechController is pressed, we reset the position of the arm
@@ -254,19 +241,25 @@ public class RobotContainer {
       )
         .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
-      new JoystickButton(m_operatorController, FlightStick.ButtonEnum.B.value)
-        .onTrue(m_armSubsystem.setPositionCommand(0.125));
+      new JoystickButton(
+        m_operatorController,
+        LogitechController.ButtonEnum.B.value
+      )
+        .onTrue(m_armSubsystem.setPositionCommand(0.11));
       // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25
-      new JoystickButton(m_operatorController, FlightStick.ButtonEnum.A.value)
+      new JoystickButton(
+        m_operatorController,
+        LogitechController.ButtonEnum.A.value
+      )
         .onTrue(m_armSubsystem.setPositionCommand(0));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     // We should make it so that the back button of the logitech controller the intake runs once
-    new JoystickButton(
-      m_operatorController,
-      LogitechController.ButtonEnum.Y.value
-    )
-      .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
+    // new JoystickButton(
+    //   m_operatorController,
+    //   LogitechController.ButtonEnum.Y.value
+    // )
+    //   .whileTrue(m_intake.runOnce(() -> m_intake.setMotor(-0.5)));
 
     // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
     new JoystickButton(
@@ -282,7 +275,7 @@ public class RobotContainer {
       m_operatorController,
       LogitechController.ButtonEnum.LEFTBUTTON.value
     )
-      .toggleOnTrue(new OutputCommand(m_intake));
+      .toggleOnTrue(new OutputCommand(m_intake, m_armSubsystem));
     // Intake Button TBD
     //new Trigger(controller::getBButton)
     //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
@@ -327,7 +320,7 @@ public class RobotContainer {
         m_driverController,
         LogitechController.ButtonEnum.LEFTTRIGGER.value
       )
-        .whileTrue(new OutputCommand(m_intake));
+        .whileTrue(new OutputCommand(m_intake, m_armSubsystem));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     if (RobotContainerConstants.kSwerveEnabled) {
@@ -382,6 +375,12 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ScoreAuton(m_armSubsystem, m_intake, m_swerveSubsystem);
+    return new ScoreAuton(
+      m_armSubsystem,
+      m_intake,
+      m_swerveSubsystem,
+      m_vision,
+      m_operatorController
+    );
   }
 }

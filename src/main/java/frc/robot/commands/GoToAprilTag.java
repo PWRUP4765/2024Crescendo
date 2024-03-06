@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.controller.LogitechController;
 
 public class GoToAprilTag extends Command {
 
@@ -40,11 +41,11 @@ public class GoToAprilTag extends Command {
   public void execute() {
     var target = m_vision.findBestTarget();
     if (target != null) {
-      double forwardSpeedX = m_vision.calculateSidewaysSpeedX(
+      double sidewaysSpeedX = m_vision.calculateSidewaysSpeedX(
         target,
         m_desiredX
       );
-      double forwardSpeedSpeedY = m_vision.calculateForwardSpeedY(
+      double forwardSpeedY = m_vision.calculateForwardSpeedY(
         target,
         m_desiredY
       );
@@ -52,12 +53,13 @@ public class GoToAprilTag extends Command {
         target,
         m_desiredRot
       );
-      m_swerveSubsystem.drive(forwardSpeedX, forwardSpeedSpeedY, rotationSpeed);
+      System.out.print(sidewaysSpeedX);
+      m_swerveSubsystem.drive(sidewaysSpeedX, forwardSpeedY, rotationSpeed);
     } else {
       double x = m_controller.getX();
       double y = m_controller.getY();
       double z = m_controller.getZ();
-      m_swerveSubsystem.joystickDrive(x, y, z);
+      m_swerveSubsystem.joystickDrive(x, -y, z);
     }
   }
 

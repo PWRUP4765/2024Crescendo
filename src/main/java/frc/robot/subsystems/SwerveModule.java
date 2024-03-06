@@ -12,11 +12,11 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.util.MathFunc;
 
 public class SwerveModule {
 
@@ -35,9 +35,19 @@ public class SwerveModule {
   private String sb_abbreviation;
   private ShuffleboardTab sb_tab;
 
-  public double kDriveP, kDriveI, kDriveD, kDriveIZ, kDriveFF;
+  public double
+  kDriveP = SwerveConstants.kDriveP,
+  kDriveI = SwerveConstants.kDriveI,
+  kDriveD = SwerveConstants.kDriveD,
+  kDriveIZ = SwerveConstants.kDriveIZ,
+  kDriveFF = SwerveConstants.kDriveFF;
 
-  public double kTurnP, kTurnI, kTurnD, kTurnIZ, kTurnFF;
+  public double
+  kTurnP = SwerveConstants.kTurnP,
+  kTurnI = SwerveConstants.kTurnI,
+  kTurnD = SwerveConstants.kTurnD,
+  kTurnIZ = SwerveConstants.kTurnIZ,
+  kTurnFF = SwerveConstants.kTurnFF;
 
   public GenericEntry sb_kDriveP, sb_kDriveI, sb_kDriveD, sb_kDriveIZ, sb_kDriveFF, sb_kTurnP, sb_kTurnI, sb_kTurnD, sb_kTurnIZ, sb_kTurnFF, sb_speed, sb_angle, sb_m_turnRelativeEncoderAngle, sb_turnCANcoderAngle;
 
@@ -71,13 +81,6 @@ public class SwerveModule {
 
     //for a full list of SparkMax commands, vist https://robotpy.readthedocs.io/projects/rev/en/latest/rev/RelativeEncoder.html
 
-    //creating the PID values from the SwerveConstants file
-    kTurnP = SwerveConstants.kTurnP;
-    kTurnI = SwerveConstants.kTurnI;
-    kTurnD = SwerveConstants.kTurnD;
-    kTurnIZ = SwerveConstants.kTurnIZ;
-    kTurnFF = SwerveConstants.kTurnFF;
-
     //setting up the drive motor
     m_driveMotor.restoreFactoryDefaults();
     m_driveMotor.setSmartCurrentLimit(SwerveConstants.kDriveCurrentLimit);
@@ -86,15 +89,15 @@ public class SwerveModule {
     //setting up the turn motor
     m_turnMotor.restoreFactoryDefaults();
     m_turnMotor.setInverted(turnMotorReversed);
-    m_turnMotor.setSmartCurrentLimit(20);
+    m_turnMotor.setSmartCurrentLimit(SwerveConstants.kTurnCurrentLimit);
     m_turnPIDController.setP(kTurnP);
     m_turnPIDController.setI(kTurnI);
     m_turnPIDController.setD(kTurnD);
     m_turnPIDController.setIZone(kTurnIZ);
     m_turnPIDController.setFF(kTurnFF);
     m_turnPIDController.setPositionPIDWrappingEnabled(true);
-    m_turnPIDController.setPositionPIDWrappingMinInput(-1.0 / 2.0);
-    m_turnPIDController.setPositionPIDWrappingMaxInput(1.0 / 2.0);
+    m_turnPIDController.setPositionPIDWrappingMinInput(-0.5);
+    m_turnPIDController.setPositionPIDWrappingMaxInput(0.5);
     m_turnPIDController.setOutputRange(
       SwerveConstants.kTurnMinOutput,
       SwerveConstants.kTurnMaxOutput
@@ -162,8 +165,16 @@ public class SwerveModule {
       turnCANcoder.getAbsolutePosition().getValueAsDouble());
   }
 
+  /**
+   * If the opposite angle is closer to the desired one, returns a reversed speed and a flipped angle.
+   * 
+   * @param speed the speed the drive motor should be running at
+   * @param angle the angle the turn motor should reach
+   * @param encoderAngle the current turn encoder's angle
+   * @return [The optimized speed, The optimized angle]
+   */
   private double[] optimize(double speed, double angle, double encoderAngle) {
-    encoderAngle = (encoderAngle  + 0.5) % 1 - 0.5;
+    encoderAngle = MathFunc.putWithinHalfToHalf(encoderAngle);
     if (
       Math.abs(angle - encoderAngle) < 0.25 ||
       Math.abs(angle - encoderAngle) > 0.75
@@ -171,7 +182,7 @@ public class SwerveModule {
       return new double[] { speed, angle };
     }
 
-    return new double[] { -speed, ((angle + 1) % 1) - 0.5 };
+    return new double[] { -speed, MathFunc.putWithinHalfToHalf(angle + 0.5) };
   }
 
   private void createShuffleboardTab(String abbreviation) {

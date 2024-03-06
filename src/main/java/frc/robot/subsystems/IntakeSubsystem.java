@@ -21,10 +21,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private PWMTalonSRX m_intakeMotor;
     private IntakeSensor m_sensor;
 
-    private final MotorType IsBrushless = IntakeConstants.kIsBrushless
-        ? MotorType.kBrushless
-        : MotorType.kBrushed;
-
     public IntakeSubsystem(){
         m_intakeMotor = new PWMTalonSRX(9);
         m_intakeMotor.setInverted(IntakeConstants.kIsIntakeReversed);

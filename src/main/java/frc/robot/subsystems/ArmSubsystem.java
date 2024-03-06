@@ -69,7 +69,7 @@ public class ArmSubsystem extends SubsystemBase {
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.005) {
+    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.008) {
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
