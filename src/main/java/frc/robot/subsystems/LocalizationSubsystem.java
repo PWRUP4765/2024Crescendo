@@ -46,11 +46,12 @@ public class LocalizationSubsystem extends SubsystemBase {
     m_rearRightModule = modules[3];
 
     // Locations for the swerve drive modules relative to the robot center.
-    // THESE VALUES ARE NOT CORRECT AND NEED TO BE FOUND IN METERS
-    Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-    Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-    Translation2d m_rearLeftLocation = new Translation2d(-0.381, 0.381);
-    Translation2d m_rearRightLocation = new Translation2d(-0.381, -0.381);
+    // X is equal to the Y, and the Y is inverted
+    //0.2413 meters on each axis from the center of the robot these should be correct
+    Translation2d m_frontLeftLocation = new Translation2d(0.2413, 0.2413); 
+    Translation2d m_frontRightLocation = new Translation2d(0.2413, -0.2413);
+    Translation2d m_rearLeftLocation = new Translation2d(-0.2413, 0.2413);
+    Translation2d m_rearRightLocation = new Translation2d(-0.2413, -0.2413);
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
@@ -68,7 +69,7 @@ public class LocalizationSubsystem extends SubsystemBase {
         m_kinematics,
         m_gyro.getRotation2d(),
         getModulePositions(),
-        new Pose2d(0, 0, new Rotation2d())
+        new Pose2d(0, 0, new Rotation2d()) //THIS VALUE ALSO NEEDS TO BE CORRECTED
       );
   }
 
@@ -93,7 +94,8 @@ public class LocalizationSubsystem extends SubsystemBase {
   }
 
   /**
-   * WIP - this function is suppposed to find the position of the robot when the lime light detects and april tag
+   * @apiNote this checks if the limelight detects a target, if it does it gets the position of the robot relative to the april tag
+   * @return the robot position
    */
   private Pose2d getVistionPosition() {
     VisionTarget target = m_vision.findBestTarget();
@@ -109,18 +111,19 @@ public class LocalizationSubsystem extends SubsystemBase {
     double targetPitch = targetPos.getRotation().getAngle();
     Pose2d targetPose = targetPos.toPose2d();
 
-    Transform2d cameraToRobot = new Transform2d(); // WIP - this needs to be found out 
+    Transform2d cameraToRobot = new Transform2d(0.2892, 0, new Rotation2d()); 
     // the position of the camera from the ground and the center of the robot
+    // 0.2892 meters behind the robot this also should be correct
 
     Pose2d robotPos = PhotonUtils.estimateFieldToRobot(
          VisionConstants.kCAMERA_HEIGHT_METERS, 
          targetHeight, 
-         VisionConstants.kCAMERA_PITCH_RADIANS, 
+         VisionConstants.kCAMERA_PITCH, 
          targetPitch, 
          Rotation2d.fromDegrees(-target.getYaw()), 
          m_gyro.getRotation2d(), 
          targetPose, 
-         cameraToRobot);
+         cameraToRobot); 
 
     return robotPos;
   }

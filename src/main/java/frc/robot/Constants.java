@@ -196,8 +196,8 @@ public final class Constants {
     public static final double kTARGET_HEIGHT_METERS = Units.feetToMeters(5);
     // Angle between horizontal and the camera.
     public static final double kCAMERA_PITCH_RADIANS = Units.degreesToRadians(
-      0
-    );
+      0);
+    public static final double kCAMERA_PITCH = Units.degreesToRadians(35);
 
     // How far from the target we want to be
 
