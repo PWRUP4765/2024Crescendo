@@ -10,7 +10,6 @@ public class ClimberDown extends Command {
   private final ClimbArmSubsystem sub;
   private final double speed;
   private final ArmInterface armInterface;
-  private boolean isOnline;
 
   public ClimberDown(
     ClimbArmSubsystem sub,
@@ -24,6 +23,10 @@ public class ClimberDown extends Command {
 
   @Override
   public void execute() {
+    if (sub.isArmOnBottom()) {
+      armInterface.unlockArm();
+    }
+
     try {
       sub.setSpeed(-speed);
     } catch (LimitException e) {
@@ -33,12 +36,16 @@ public class ClimberDown extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    isOnline = false;
-    if (sub.isArmOnBottom()) armInterface.unlockArm();
+    try {
+      sub.setSpeed(0);
+    } catch (LimitException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return !isOnline;
+    return false;
   }
 }

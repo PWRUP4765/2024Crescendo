@@ -10,7 +10,6 @@ public class ClimberUp extends Command {
   private final ClimbArmSubsystem sub;
   private final double speed;
   private final ArmInterface armInterface;
-  private boolean isOnline;
 
   public ClimberUp(
     ClimbArmSubsystem sub,
@@ -38,11 +37,16 @@ public class ClimberUp extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    isOnline = false;
+    try {
+      sub.setSpeed(0);
+    } catch (LimitException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return !isOnline;
+    return false;
   }
 }

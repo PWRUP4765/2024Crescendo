@@ -93,7 +93,7 @@ public class ArmSubsystem extends SubsystemBase {
    * @param Position The position to move to. Domain: [0, 0.25]
    */
   public void setPosition(double position) {
-    if (isLocked) {
+    if (!isLocked) {
       currentSetPosition = position;
     }
 
