@@ -230,6 +230,14 @@ public class RobotContainer {
           )
         );
 
+      new JoystickButton(
+        m_operatorController,
+        LogitechController.ButtonEnum.LEFTTRIGGER.value
+      )
+        .whileTrue(
+          new Flush(m_intake, m_armSubsystem)
+        );
+
       // When the x button on the LogitechController is pressed, we reset the position of the arm
       new JoystickButton(
         m_operatorController,
