@@ -22,26 +22,22 @@ public class VisionSubsystem extends SubsystemBase {
   PhotonPipelineResult m_pipline = new PhotonPipelineResult();
   private ShuffleboardTab m_tab;
   private GenericEntry sb_x, sb_y, sb_rot;
-  private double
-  m_xCalculation = 0,
-  m_yCalculation = 0,
-  m_rotCalculation = 0;
 
   private final PIDController m_xController = new PIDController(
     VisionConstants.kXP,
-    VisionConstants.kXI,
+    0,
     VisionConstants.kXD
   );
 
   private final PIDController m_yController = new PIDController(
     VisionConstants.kYP,
-    VisionConstants.kYI,
+    0,
     VisionConstants.kYD
   );
 
   private final PIDController m_rotationController = new PIDController(
     VisionConstants.kRP,
-    VisionConstants.kRI,
+    0,
     VisionConstants.kRD
   );
 
@@ -66,28 +62,6 @@ public class VisionSubsystem extends SubsystemBase {
     return target;
   }
 
-  public void updateCalculations(VisionTarget target, double xGoal, double yGoal, double rotGoal) {
-    m_xCalculation = calculateSidewaysSpeedX(target, xGoal);
-    m_yCalculation = calculateForwardSpeedY(target, yGoal);
-    m_rotCalculation = calculateRotationSpeed(target, rotGoal);
-  }
-  
-  public boolean isAtTarget() {
-    return m_xCalculation < 0.01 && m_yCalculation < 0.01 && m_rotCalculation < 0.01;
-  }
-
-  public double getSidewaysSpeedX() {
-    return m_xCalculation;
-  }
-
-  public double getForwardSpeedY() {
-    return m_yCalculation;
-  }
-
-  public double getRotationSpeed() {
-    return m_rotCalculation;
-  }
-
   public double calculateSidewaysSpeedX(VisionTarget target, double goal) {
     double axis = target.getX();
     
@@ -102,9 +76,9 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public double calculateRotationSpeed(VisionTarget target, double goal) {
-    double axis = target.getZRotation();
+    double axis = target.getYaw();
     
-    return -m_rotationController.calculate(axis, goal);
+    return m_rotationController.calculate(axis, goal);
   }
 
   public boolean isTargetBroken(PhotonTrackedTarget target) {
@@ -156,13 +130,6 @@ public class VisionSubsystem extends SubsystemBase {
       return m_transform3d.getX();
     }
 
-    public double getZRotation() {
-      double i = m_transform3d.getRotation().getZ() / -(2 * Math.PI);
-      i = (i + 1) % 1;
-      i -= 0.5;
-      return i;
-    }
-
     // public double getPitch() {
     //   double m_pitch = m_target.getPitch() / 360.0;
     //   m_pitch = (m_pitch % 1.0) - 0.5;
@@ -173,8 +140,6 @@ public class VisionSubsystem extends SubsystemBase {
       double m_yaw = -m_target.getYaw();
       return m_yaw;
     }
-
-    
 
     public int getID(){
       return m_target.getFiducialId();

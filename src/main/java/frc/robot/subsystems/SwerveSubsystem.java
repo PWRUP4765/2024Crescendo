@@ -108,21 +108,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveConstants.kRotMinValue
       );
 
-    //adjusting for field relativity if necessary
-    if (SwerveConstants.kFieldRelative) {
-      double gyroAngle = m_gyro.getAngle() / 360.0; //this gets the angle and puts it from -1/2 to 1/2
-      double nonFieldRelativeAngle = Math.atan2(x, y) / (2 * Math.PI); //again, the return value is from -1/2 to 1/2
-      double fieldRelativeAngle = nonFieldRelativeAngle - gyroAngle;
-
-      double magnitude = Math.sqrt((x * x) + (y * y));
-
-      x = Math.sin(fieldRelativeAngle * 2 * Math.PI) * magnitude;
-      y = Math.cos(fieldRelativeAngle * 2 * Math.PI) * magnitude;
-    }
-
     //desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
     //r = m_directionPIDController.calculate(m_gyro.getYaw() / 360.0, desiredDirection);
-
     drive(x, y, r);
   }
 
@@ -146,6 +133,17 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param tempSpeedMultiplier The final speed to multiply all of the outputs by
    */
   public void drive(double x, double y, double r, double tempSpeedMultiplier) {
+    //adjusting for field relativity if necessary
+    if (SwerveConstants.kFieldRelative) {
+      double gyroAngle = m_gyro.getAngle() / 360.0; //this gets the angle and puts it from -1/2 to 1/2
+      double nonFieldRelativeAngle = Math.atan2(x, y) / (2 * Math.PI); //again, the return value is from -1/2 to 1/2
+      double fieldRelativeAngle = nonFieldRelativeAngle - gyroAngle;
+
+      double magnitude = Math.sqrt((x * x) + (y * y));
+
+      x = Math.sin(fieldRelativeAngle * 2 * Math.PI) * magnitude;
+      y = Math.cos(fieldRelativeAngle * 2 * Math.PI) * magnitude;
+    }
 
     //dimensions required for doing math
     final double L = SwerveConstants.kDriveBaseLength / 2;
@@ -224,8 +222,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void reset() {
     m_gyro.reset();
-    
-    m_gyro.getDisplacementX();
+
     m_frontLeftSwerveModule.reset();
     m_frontRightSwerveModule.reset();
     m_rearLeftSwerveModule.reset();

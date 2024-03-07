@@ -36,7 +36,6 @@ public class OutputCommand extends Command {
 
   @Override
   public void execute() {
-
     // setting the motor speed to outputSpeed
     if (m_armSubsystem.getCurrentPosition() > 0.23) {
     m_intakeSubsystem.setMotor(outputSpeed);

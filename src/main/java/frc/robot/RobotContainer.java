@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.VisionConstants;
@@ -27,7 +26,6 @@ import frc.robot.util.controller.FlightModule;
 import frc.robot.util.controller.FlightStick;
 import frc.robot.util.controller.FlightStick.AxisEnum;
 import frc.robot.util.controller.LogitechController;
-import frc.robot.util.controller.OperatorPanel;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 import frc.robot.util.identity.Identity;
 
@@ -57,10 +55,6 @@ public class RobotContainer {
 
   final LogitechController m_operatorController = new LogitechController(
     OperatorConstants.kOperatorControllerPort
-  );
-
-  final OperatorPanel m_operatorPanel = new OperatorPanel(
-    OperatorConstants.kOperatorPanelPort
   );
 
   final FlightModule m_flightModule = new FlightModule(
@@ -141,7 +135,6 @@ public class RobotContainer {
     //configureDriverLogitech();
     configureFlightStickLeft();
     configureFlightStickRight();
-    //configureOperatorPanel();
   }
 
   /**
@@ -202,15 +195,16 @@ public class RobotContainer {
   private void configureOperatorLogitech() {
     new JoystickButton(
       m_operatorController,
-      LogitechController.ButtonEnum.X.value
+      LogitechController.ButtonEnum.A.value
     )
       .toggleOnTrue(
-        new TeleScoreInAmp(
+        new GoToAprilTag(
+          m_driverController,
           m_swerveSubsystem,
-          m_flightModule,
           m_vision,
-          m_armSubsystem,
-          m_intake
+          VisionConstants.kAmpXGoal,
+          VisionConstants.kAmpYGoal,
+          VisionConstants.kAmpRotGoal
         )
       );
 
@@ -249,19 +243,19 @@ public class RobotContainer {
         m_operatorController,
         LogitechController.ButtonEnum.Y.value
       )
-        .onTrue(m_armSubsystem.setPositionCommand(ArmConstants.kArmScoringPosition));
+        .onTrue(m_armSubsystem.setPositionCommand(0.25));
       // when the left trigger on the logitech controller is pressed, lets set the position of the arm to 0.125
       new JoystickButton(
         m_operatorController,
         LogitechController.ButtonEnum.B.value
       )
-        .onTrue(m_armSubsystem.setPositionCommand(ArmConstants.kArmDrivingPosition));
+        .onTrue(m_armSubsystem.setPositionCommand(0.11));
       // When the y button is pressed on the logitech controller, lets set the position of the arm to 0.25
       new JoystickButton(
         m_operatorController,
         LogitechController.ButtonEnum.A.value
       )
-        .onTrue(m_armSubsystem.setPositionCommand(ArmConstants.kArmFlatPosition));
+        .onTrue(m_armSubsystem.setPositionCommand(0));
     }
     // If the swerve drive is enabled, we should make it so that the start button resets the swerveSubsystem if it's getting buggy
     // We should make it so that the back button of the logitech controller the intake runs once
@@ -306,50 +300,6 @@ public class RobotContainer {
     //     localizationSubsystem
     //   )
     // );
-  }
-
-  private void configureOperatorPanel() {
-    // new JoystickButton(
-    //   m_operatorController,
-    //   LogitechController.ButtonEnum.X.value
-    // )
-    //   .toggleOnTrue(
-    //     new TeleScoreInAmp(
-    //       m_swerveSubsystem,
-    //       m_flightModule,
-    //       m_vision,
-    //       m_armSubsystem,
-    //       m_intake
-    //     )
-    //   );
-
-    if (RobotContainerConstants.kArmEnabled) {
-      // When the x button on the LogitechController is pressed, we reset the position of the arm
-      new JoystickButton(
-        m_operatorPanel,
-        OperatorPanel.ButtonEnum.STICKUP.value
-      )
-        .whileTrue(
-          new ClimberUp(m_climbArmSubsystem,Constants.ClimbArmConstants.kClimberArmMotorSpeed,m_armSubsystem.getArmInterface())
-        );
-
-      new JoystickButton(
-        m_operatorPanel,
-        OperatorPanel.ButtonEnum.STICKDOWN.value
-      )
-        .whileTrue(
-          new ClimberDown(
-            m_climbArmSubsystem,
-            Constants.ClimbArmConstants.kClimberArmMotorSpeed,
-            m_armSubsystem.getArmInterface()
-          )
-        );
-      
-    }
-
-
-
-
   }
 
   private void configureDriverLogitech() {
