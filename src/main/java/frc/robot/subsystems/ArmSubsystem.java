@@ -20,38 +20,39 @@ public class ArmSubsystem extends SubsystemBase {
   private SparkPIDController m_armPIDController;
   private SparkAbsoluteEncoder m_armEncoder;
 
-  private double currentSetPosition = 0.0, kP, kI, kD, kIZ, kFF;
+  private double currentSetPosition = ArmConstants.kArmDrivingPosition,
+  kP = ArmConstants.kP,
+  kI = ArmConstants.kI,
+  kD = ArmConstants.kD,
+  kIZ = ArmConstants.kIZ;
 
   private ShuffleboardTab sb_tab;
   private String sb_name;
   private GenericEntry sb_encoderPosition, sb_setPosition;
 
-  private boolean isLocked;
+  private boolean isLocked = false;
 
   /**
    * Constructor class for ArmSubsystem
    */
   public ArmSubsystem() {
     //example code for REVrobotics parts: https://github.com/REVrobotics/SPARK-MAX-Examples/tree/master/Java
-
+    
     //setting up the arm motor
     m_armMotor =
       new CANSparkMax(ArmConstants.kArmMotorPort, MotorType.kBrushed);
     m_armMotor.restoreFactoryDefaults();
     m_armMotor.setInverted(ArmConstants.kArmMotorReversed);
-
-    kP = ArmConstants.kP;
-    kI = ArmConstants.kI;
-    kD = ArmConstants.kD;
-    kIZ = ArmConstants.kIZ;
-    kFF = ArmConstants.kFF;
+    m_armMotor.setSmartCurrentLimit(ArmConstants.kArmCurrentLimit);
 
     m_armPIDController = m_armMotor.getPIDController();
     m_armPIDController.setP(kP);
     m_armPIDController.setI(kI);
     m_armPIDController.setD(kD);
     m_armPIDController.setIZone(kIZ);
-    m_armPIDController.setFF(kFF);
+    m_armPIDController.setIZone(ArmConstants.kIZone);
+    m_armPIDController.setIMaxAccum(ArmConstants.kIMaxAccum, 0);
+    
 
     m_armEncoder =
       m_armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -69,7 +70,8 @@ public class ArmSubsystem extends SubsystemBase {
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.008) {
+    System.out.println(currentSetPosition);
+    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.006) {
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
