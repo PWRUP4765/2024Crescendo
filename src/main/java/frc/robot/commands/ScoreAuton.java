@@ -10,6 +10,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.controller.FlightModule;
 import frc.robot.util.controller.FlightStick;
 import frc.robot.util.controller.LogitechController;
 
@@ -27,11 +28,11 @@ public class ScoreAuton extends SequentialCommandGroup {
     IntakeSubsystem intakeSubsystem,
     SwerveSubsystem swerveSubsystem,
     VisionSubsystem visionSubsystem,
-    LogitechController m_controller
+    FlightModule m_controller
   ) {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      new GoToAprilTag(
+      new TeleGoToAprilTag(
         m_controller,
         swerveSubsystem,
         visionSubsystem,

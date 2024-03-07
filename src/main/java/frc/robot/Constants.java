@@ -25,6 +25,7 @@ public final class Constants {
   public static class OperatorConstants {
 
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorPanelPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static final int kFlightPortLeft = 2;
     public static final int kFlightPortRight = 3;
@@ -40,25 +41,27 @@ public final class Constants {
 
     public static final int kArmMotorPort = 32;
     public static final boolean kArmMotorReversed = false;
+    public static final int kArmCurrentLimit = 20;
 
     // Arm PID constants
-    public static final double kP = 3; // 3
-    public static final double kI = 0.002; // 0.002
-    public static final double kD = 8; // 8
+    public static final double kP = 3; // 2
+    public static final double kI = 0.002; // 0.004
+    public static final double kD = 4; // 6
     public static final double kIZ = 0;
-    public static final double kFF = 0;
+    public static final double kIZone = 0;
     public static final double kFFCoefficient = 2.4; // 2.4
+    public static final double kIMaxAccum = 0.04;
 
     public static final boolean kEncoderReversed = false;
-    public static final double kEncoderOffset = 0.258;
+    public static final double kEncoderOffset = 0.082;
     public static final double kEncoderConversionFactor = 1.0;
 
     public static final double kMinPosition = 0;
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDrivingPosition = 0.09; // 0.09
-    public static final double kArmScoringPosition = 0.25;
+    public static final double kArmDrivingPosition = 0.125; // 0.08
+    public static final double kArmScoringPosition = 0.27;
   }
 
   public static class ClimbArmConstants {
@@ -201,22 +204,21 @@ public final class Constants {
 
     // How far from the target we want to be
 
-    public static final double kAmpXGoal = 1;
-    public static final double kAmpYGoal = 1;
+    public static final double kAmpXGoal = 0;
+    public static final double kAmpYGoal = 0.8;
     public static final double kAmpRotGoal = 0;
-    public static final double kXP = 0.2;
+
+    public static final double kXP = 0.75; // 0.8
+    public static final double kXI = 0.001;
     public static final double kXD = 0.0;
-    public static final double kYP = 0.2;
+
+    public static final double kYP = 0.8; // 0.8
+    public static final double kYI = 0.01;
     public static final double kYD = 0.0;
-    public static final double kRP = 0.2;
+
+    public static final double kRP = 1.2; // 1.2
+    public static final double kRI = 0.01;
     public static final double kRD = 0.0;
-    // public static final double kLINEAR_P = 0.2;
-
-    // public static final double kLINEAR_D = 0.0;
-
-    // public static final double kANGULAR_P = 0.2;
-
-    // public static final double kANGULAR_D = 0.0;
   }
 
   public static class FieldConstants {
