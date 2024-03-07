@@ -277,7 +277,7 @@ public class RobotContainer {
       m_operatorController,
       LogitechController.ButtonEnum.LEFTBUTTON.value
     )
-      .toggleOnTrue(new OutputCommand(m_intake, m_armSubsystem));
+      .toggleOnTrue(new EjectCommand(m_intake));
     // Intake Button TBD
     //new Trigger(controller::getBButton)
     //  .toggleOnTrue(new IntakeCommand(m_intake, m_armSubsystem));
