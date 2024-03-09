@@ -20,6 +20,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.composites.AutoScoreInAmp;
+import frc.robot.commands.composites.TeleScoreInAmp;
+import frc.robot.commands.finals.DoNothing;
+import frc.robot.commands.finals.LeaveBox;
+import frc.robot.commands.finals.MoveScoreRetreat;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.*;
 import frc.robot.util.PinCommunication;
@@ -46,6 +51,7 @@ public class RobotContainer {
   // );
   private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private ClimbArmSubsystem m_climbArmSubsystem = new ClimbArmSubsystem(
     Constants.ClimbArmConstants.kClimbArmMotorPort
@@ -70,21 +76,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    /*try {
-      Identity identity = new Identity();
-      this.getClass().getMethod(identity + "Bindings").invoke(this);
-      //if (Objects.equals(identity.getIdentity(), "godbrigero")) return;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }*/
-
-    //PinCommunication.sendOnline();
-
-    // m_intake.setDefaultCommand(
-    //   new RunCommand(
-    //       () -> m_intake.setMotor(0), m_intake
-    //   )
-    // };
 
     // if the Swerve is enabled, lets set the default command that the scheduler runs to a RunCommand, that depends on the
     // driver controllers joysticks
@@ -118,30 +109,15 @@ public class RobotContainer {
       );
     }
 
-    // try {
-    //   climbArmSubsystem =
-    //     new ClimbArmSubsystem(
-    //       Constants.ClimbArmConstants.kClimbArmMotorPort,
-    //       Constants.ClimbArmConstants.kClimbArmMotorIsBrushless
-    //     );
-    // } catch (NoChannelFoundException e) {
-    //   e.printStackTrace();
-    // }
-
-    // climbArmSubsystem.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> climbArmSubsystem.tick(false, controller.getBButton()),
-    //     climbArmSubsystem
-    //   )
-    // );
+    if (!m_climbArmSubsystem.isArmOnBottom()) {
+      m_armSubsystem.setLocked(true, 0);
+    }
 
     // Configure the trigger bindings
-    //godbrigeroBindings();
-    configureOperatorLogitech();
-    //configureDriverLogitech();
+    //configureOperatorLogitech();
+    configureOperatorPanel();
     configureFlightStickLeft();
     configureFlightStickRight();
-    //configureOperatorPanel();
   }
 
   /**
@@ -197,6 +173,33 @@ public class RobotContainer {
         // JARED, you need to make a xconfig, which makes the wheels into a x shape to prevent being pushed by other robots.
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
+
+
+    
+    // When the x button on the LogitechController is pressed, we reset the position of the arm
+    new JoystickButton(
+      m_flightModule.rightFlightStick,
+      FlightStick.ButtonEnum.LEFTSLIDERUP.value
+    )
+      .whileTrue(
+        new ClimberUp(m_climbArmSubsystem,Constants.ClimbArmConstants.kClimberArmMotorSpeed,m_armSubsystem.getArmInterface())
+      );
+
+    new JoystickButton(
+      m_flightModule.rightFlightStick,
+      FlightStick.ButtonEnum.LEFTSLIDERDOWN.value
+    )
+      .whileTrue(
+        new ClimberDown(
+          m_climbArmSubsystem,
+          Constants.ClimbArmConstants.kClimberArmMotorSpeed,
+          m_armSubsystem.getArmInterface()
+        )
+      );
+      
+    
+
+
   }
 
   private void configureOperatorLogitech() {
@@ -301,19 +304,19 @@ public class RobotContainer {
   }
 
   private void configureOperatorPanel() {
-    // new JoystickButton(
-    //   m_operatorController,
-    //   LogitechController.ButtonEnum.X.value
-    // )
-    //   .toggleOnTrue(
-    //     new TeleScoreInAmp(
-    //       m_swerveSubsystem,
-    //       m_flightModule,
-    //       m_vision,
-    //       m_armSubsystem,
-    //       m_intake
-    //     )
-    //   );
+    new JoystickButton(
+      m_operatorController,
+      OperatorPanel.ButtonEnum.METALSWITCHDOWN.value
+    )
+      .whileTrue(
+        new TeleScoreInAmp(
+          m_swerveSubsystem,
+          m_flightModule,
+          m_vision,
+          m_armSubsystem,
+          m_intake
+        )
+      );
 
     if (RobotContainerConstants.kArmEnabled) {
       // When the x button on the LogitechController is pressed, we reset the position of the arm
@@ -370,64 +373,23 @@ public class RobotContainer {
     }
   }
 
-  void godbrigeroBindings() {
-    new JoystickButton(m_operatorController, ButtonEnum.A.value)
-      .whileTrue(
-        new RunCommand(
-          () -> {
-            try {
-              // Account for some error
-              m_climbArmSubsystem.setSpeed(
-                m_armSubsystem.getCurrentPosition() > 0.01 ||
-                  m_armSubsystem.getCurrentPosition() < -0.01
-                  ? 0
-                  : 50
-              );
-            } catch (LimitException e) {
-              throw new RuntimeException(e);
-            }
-          },
-          m_climbArmSubsystem
-        )
-      )
-      .whileFalse(
-        new RunCommand(
-          () -> {
-            try {
-              m_climbArmSubsystem.setSpeed(
-                m_operatorController.getRawButton(ButtonEnum.B.value) ? -50 : 0
-              );
-            } catch (LimitException e) {
-              throw new RuntimeException(e);
-            }
-          },
-          m_climbArmSubsystem
-        )
-      );
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    // up - nothing
+    // midup - just leave
+    // mid -> score and leave
+
     // An example command will be run in autonomous
-    System.out.println(m_operatorController.getPOV());
-    switch(m_operatorController.getPOV()) {
-      case 0:
-        return new ClimberDown(m_climbArmSubsystem, 0, null);
-      case 45:
-        // code block
-      case 90:
-      case 135:
-      case 180:
-        return new ClimberUp(m_climbArmSubsystem, 0, null);
-      case 225:
-      case 270:
-      case 315:
-      default:
-        return new IntakeCommand(m_intake, m_armSubsystem, m_swerveSubsystem);   
+    if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDUP.value)) {
+      return new LeaveBox(m_swerveSubsystem);
+    } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDDLE.value)) {
+      return new MoveScoreRetreat(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
     }
+
+    return new DoNothing();
   }
 }

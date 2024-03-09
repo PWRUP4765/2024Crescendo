@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.composites;
 
 import java.util.function.BooleanSupplier;
 
@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.AutoGoToAprilTag;
+import frc.robot.commands.OutputTimed;
+import frc.robot.commands.WaitUntilArmDown;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -23,6 +26,8 @@ public class AutoScoreInAmp extends SequentialCommandGroup {
     ) {
         
         addCommands(
+            new WaitUntilArmDown(armSubsystem),
+
             // Go to the april tag
             new AutoGoToAprilTag(
                 swerveSubsystem,
@@ -31,6 +36,7 @@ public class AutoScoreInAmp extends SequentialCommandGroup {
                 VisionConstants.kAmpYGoal,
                 VisionConstants.kAmpRotGoal
             ),
+
 
             // Move the arm up
             armSubsystem.runOnce(() -> armSubsystem.setPosition(ArmConstants.kArmScoringPosition)),

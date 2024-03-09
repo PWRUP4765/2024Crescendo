@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.VisionSubsystem.VisionTarget;
@@ -44,7 +45,7 @@ public class AutoGoToAprilTag extends Command {
         VisionTarget target = m_vision.findBestTarget();
 
         // If the camera hasn't seen the target recently, uses the previous input's data
-        if (target == null && timesSinceLastSight < 2) {
+        if (target == null && timesSinceLastSight < 4) {
             target = m_lastTarget;
             timesSinceLastSight++;
         }
@@ -53,20 +54,21 @@ public class AutoGoToAprilTag extends Command {
         if (target != null) {
             m_vision.updateCalculations(target, m_desiredX, m_desiredY, m_desiredRot);
 
-            if (m_vision.isAtTarget()) {
-                end(false);
-            }
-
             double sidewaysSpeedX = m_vision.getSidewaysSpeedX();
             double forwardSpeedY = m_vision.getForwardSpeedY();
             double rotationSpeed = m_vision.getRotationSpeed();
 
-            m_swerveSubsystem.drive(sidewaysSpeedX, forwardSpeedY, rotationSpeed);
+            m_swerveSubsystem.drive(sidewaysSpeedX, forwardSpeedY, rotationSpeed, SwerveConstants.kAutonSpeedMultiplier);
         }
     }
 
     @Override
+    public void end(boolean interrupted) {
+        m_swerveSubsystem.drive(0,0,0, SwerveConstants.kAutonSpeedMultiplier);
+    }
+
+    @Override
     public boolean isFinished() {
-        return false;
+        return m_vision.isAtTarget();
     }
 }

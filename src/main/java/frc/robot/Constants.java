@@ -60,7 +60,7 @@ public final class Constants {
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDrivingPosition = 0.125; // 0.08
+    public static final double kArmDrivingPosition = 0.12; // 0.12
     public static final double kArmScoringPosition = 0.27;
   }
 
@@ -68,7 +68,7 @@ public final class Constants {
 
     public static final int kClimbArmMotorPort = 15;
     public static final boolean kClimbArmMotorIsBrushless = false;
-    public static final double kClimberArmMotorSpeed = 0.5;
+    public static final double kClimberArmMotorSpeed = 0.75;
   }
 
   public static class IntakeConstants {
@@ -169,11 +169,15 @@ public final class Constants {
     public static final double kDriveFF = 0;
     public static final double kDriveMinOutput = -1;
     public static final double kDriveMaxOutput = 1;
+
     //multiplies the output speed of all of the drive motors, ALWAYS (0, 1).
-    public static final double kDefaultSpeedMultiplier = 0.5;
-    public static final double kIntakeSpeedMultiplier = 0.5;
+    public static final double kDefaultSpeedMultiplier = 1.0;
+    public static final double kRotationSpeedMultiplier = 0.5;
+    public static final double kIntakeSpeedMultiplier = kDefaultSpeedMultiplier;
+    public static final double kAutonSpeedMultiplier = 0.5;
+
     public static final double kDriveMaxRPM = 5700;
-    public static final int kDriveCurrentLimit = 20;
+    public static final int kDriveCurrentLimit = 30;
 
     //PID values for the turning
     public static final double kTurnP = 1.5;
@@ -208,7 +212,7 @@ public final class Constants {
     public static final double kAmpYGoal = 0.8;
     public static final double kAmpRotGoal = 0;
 
-    public static final double kXP = 0.75; // 0.8
+    public static final double kXP = 0.8; // 0.8
     public static final double kXI = 0.001;
     public static final double kXD = 0.0;
 

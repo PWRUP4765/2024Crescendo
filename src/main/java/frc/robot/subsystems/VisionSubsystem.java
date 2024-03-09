@@ -73,7 +73,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
   
   public boolean isAtTarget() {
-    return m_xCalculation < 0.01 && m_yCalculation < 0.01 && m_rotCalculation < 0.01;
+    return Math.abs(m_xCalculation) < 0.03 && Math.abs(m_yCalculation) < 0.03 && Math.abs(m_rotCalculation) < 0.03;
   }
 
   public double getSidewaysSpeedX() {

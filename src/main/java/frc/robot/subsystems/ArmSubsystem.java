@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private boolean isLocked = false;
 
+  private PowerDistribution m_PDP = new PowerDistribution();
   /**
    * Constructor class for ArmSubsystem
    */
@@ -50,9 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPIDController.setI(kI);
     m_armPIDController.setD(kD);
     m_armPIDController.setIZone(kIZ);
-    m_armPIDController.setIZone(ArmConstants.kIZone);
     m_armPIDController.setIMaxAccum(ArmConstants.kIMaxAccum, 0);
-    
 
     m_armEncoder =
       m_armMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -64,13 +64,19 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPIDController.setFeedbackDevice(m_armEncoder);
 
     m_armMotor.burnFlash();
+
+    m_armPIDController.setReference(
+        currentSetPosition,
+        CANSparkBase.ControlType.kPosition,
+        0,
+        0
+      );
   }
 
   /**
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    System.out.println(currentSetPosition);
     if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.006) {
       m_armPIDController.setReference(
         currentSetPosition,
@@ -80,6 +86,7 @@ public class ArmSubsystem extends SubsystemBase {
       );
       m_armPIDController.setIAccum(0);
     } else {
+      m_armMotor.setSmartCurrentLimit(ArmConstants.kArmCurrentLimit);
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,

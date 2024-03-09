@@ -11,6 +11,9 @@ public class OperatorPanel extends Joystick {
    */
   public enum ButtonEnum {
     // button indexes begin at 1 for some reason
+    GREENBUTTON(1),
+    REDBUTTON(2),
+    BLACKBUTTON(3),
     METALSWITCHDOWN(4),
     TOGGLEWHEELMIDDOWN(5),
     TOGGLEWHEELMIDDLE(6),

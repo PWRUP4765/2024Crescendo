@@ -1,6 +1,7 @@
 package frc.robot.util.controller;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.error.NoChannelFoundException;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class LogitechController extends Joystick {
     RIGHTJOYSTICKBUTTON(12);
 
     public int value;
+
 
     /**
      * @param val for enum setting

@@ -146,6 +146,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param tempSpeedMultiplier The final speed to multiply all of the outputs by
    */
   public void drive(double x, double y, double r, double tempSpeedMultiplier) {
+    r *= SwerveConstants.kRotationSpeedMultiplier;
 
     //dimensions required for doing math
     final double L = SwerveConstants.kDriveBaseLength / 2;
@@ -225,7 +226,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public void reset() {
     m_gyro.reset();
     
-    m_gyro.getDisplacementX();
     m_frontLeftSwerveModule.reset();
     m_frontRightSwerveModule.reset();
     m_rearLeftSwerveModule.reset();
