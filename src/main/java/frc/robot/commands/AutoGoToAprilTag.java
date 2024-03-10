@@ -17,20 +17,20 @@ public class AutoGoToAprilTag extends Command {
     int timesSinceLastSight = 100;
 
     public AutoGoToAprilTag(
-        SwerveSubsystem swerveDrive,
+        SwerveSubsystem swerveSubsystem,
         VisionSubsystem vision,
         double x,
         double y,
         double rot
     ) {
         m_vision = vision;
-        m_swerveSubsystem = swerveDrive;
+        m_swerveSubsystem = swerveSubsystem;
 
         m_desiredX = x;
         m_desiredY = y;
         m_desiredRot = rot;
 
-        addRequirements(swerveDrive);
+        addRequirements(swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.

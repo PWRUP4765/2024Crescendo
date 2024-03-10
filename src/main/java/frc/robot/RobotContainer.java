@@ -25,6 +25,7 @@ import frc.robot.commands.composites.TeleScoreInAmp;
 import frc.robot.commands.finals.DoNothing;
 import frc.robot.commands.finals.LeaveBox;
 import frc.robot.commands.finals.MoveScoreRetreat;
+import frc.robot.commands.finals.MoveScoreRetreatTurn;
 import frc.robot.error.LimitException;
 import frc.robot.subsystems.*;
 import frc.robot.util.PinCommunication;
@@ -61,9 +62,9 @@ public class RobotContainer {
     OperatorConstants.kDriverControllerPort
   );
 
-  final LogitechController m_operatorController = new LogitechController(
+  /*final LogitechController m_operatorController = new LogitechController(
     OperatorConstants.kOperatorControllerPort
-  );
+  );*/
 
   final OperatorPanel m_operatorPanel = new OperatorPanel(
     OperatorConstants.kOperatorPanelPort
@@ -202,7 +203,7 @@ public class RobotContainer {
 
   }
 
-  private void configureOperatorLogitech() {
+  /*private void configureOperatorLogitech() {
     new JoystickButton(
       m_operatorController,
       LogitechController.ButtonEnum.X.value
@@ -301,11 +302,11 @@ public class RobotContainer {
     //     localizationSubsystem
     //   )
     // );
-  }
+  }*/
 
   private void configureOperatorPanel() {
     new JoystickButton(
-      m_operatorController,
+      m_operatorPanel,
       OperatorPanel.ButtonEnum.METALSWITCHDOWN.value
     )
       .whileTrue(
@@ -342,12 +343,17 @@ public class RobotContainer {
       
     }
 
+    new JoystickButton(m_operatorPanel, OperatorPanel.ButtonEnum.REDBUTTON.value)
+      .whileTrue(
+        new FlushCommand(m_intake)
+      );
+
 
 
 
   }
 
-  private void configureDriverLogitech() {
+  /*private void configureDriverLogitech() {
     if (RobotContainerConstants.kArmEnabled) {
       // We should make it so that when the right trigger is pressed, the IntakeMotors start moving
       new JoystickButton(
@@ -371,7 +377,7 @@ public class RobotContainer {
       )
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
-  }
+  }*/
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -388,6 +394,8 @@ public class RobotContainer {
       return new LeaveBox(m_swerveSubsystem);
     } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDDLE.value)) {
       return new MoveScoreRetreat(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
+    } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDDOWN.value)) {
+      return new MoveScoreRetreatTurn(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
     }
 
     return new DoNothing();

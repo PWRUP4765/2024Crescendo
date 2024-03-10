@@ -65,7 +65,7 @@ public class VisionSubsystem extends SubsystemBase {
     }
     return target;
   }
-
+  
   public void updateCalculations(VisionTarget target, double xGoal, double yGoal, double rotGoal) {
     m_xCalculation = calculateSidewaysSpeedX(target, xGoal);
     m_yCalculation = calculateForwardSpeedY(target, yGoal);

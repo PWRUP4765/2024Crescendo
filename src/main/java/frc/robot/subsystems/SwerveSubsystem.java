@@ -232,6 +232,10 @@ public class SwerveSubsystem extends SubsystemBase {
     m_rearRightSwerveModule.reset();
   }
 
+  public double getGyroAngle() {
+    return m_gyro.getAngle() / 360.0;
+  }
+
   private void createShuffleboardTab() {
     sb_tab = Shuffleboard.getTab(sb_name);
 

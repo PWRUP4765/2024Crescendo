@@ -29,6 +29,8 @@ public class MoveDirectionTimed extends Command {
 
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
+
+        addRequirements(swerveSubsystem);
     }
 
     @Override

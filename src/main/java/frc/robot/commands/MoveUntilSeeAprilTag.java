@@ -25,6 +25,8 @@ public class MoveUntilSeeAprilTag extends Command {
         this.m_visionSubsystem = visionSubsystem;
         this.m_xSpeed = xSpeed;
         this.m_ySpeed = ySpeed;
+
+        addRequirements(swerveSubsystem);
     }
 
     @Override

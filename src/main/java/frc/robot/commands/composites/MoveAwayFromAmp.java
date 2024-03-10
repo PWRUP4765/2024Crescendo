@@ -18,7 +18,7 @@ public class MoveAwayFromAmp extends SequentialCommandGroup {
             new MoveDirectionTimed(
                 swerveSubsystem,
                 DriverAllianceUtil.getCurrentAlliance() == DriverStation.Alliance.Blue ? 0.2 : -0.2,
-                0,
+                -0.05,
                 4000
             )
         );

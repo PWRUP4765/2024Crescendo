@@ -60,7 +60,7 @@ public final class Constants {
     public static final double kMaxPosition = 0.25;
 
     public static final double kArmFlatPosition = 0;
-    public static final double kArmDrivingPosition = 0.12; // 0.12
+    public static final double kArmDrivingPosition = 0.11; // 0.12
     public static final double kArmScoringPosition = 0.27;
   }
 
