@@ -65,6 +65,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SwerveConstants.kDirectionD
   );
   double currentSpeedMultiplier = SwerveConstants.kDefaultSpeedMultiplier;
+  boolean pidDirection = false;
 
   //the Shuffleboard tab and entries
   private String sb_name = "SwerveSubsystem";
@@ -78,7 +79,6 @@ public class SwerveSubsystem extends SubsystemBase {
     createShuffleboardTab();
 
     m_directionPIDController.enableContinuousInput(-0.5, 0.5);
-    
   }
 
   /**
@@ -110,7 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     //adjusting for field relativity if necessary
     if (SwerveConstants.kFieldRelative) {
-      double gyroAngle = m_gyro.getAngle() / 360.0; //this gets the angle and puts it from -1/2 to 1/2
+      double gyroAngle = getGyroAngle(); //this gets the angle and puts it from -1/2 to 1/2
       double nonFieldRelativeAngle = Math.atan2(x, y) / (2 * Math.PI); //again, the return value is from -1/2 to 1/2
       double fieldRelativeAngle = nonFieldRelativeAngle - gyroAngle;
 
@@ -119,9 +119,13 @@ public class SwerveSubsystem extends SubsystemBase {
       x = Math.sin(fieldRelativeAngle * 2 * Math.PI) * magnitude;
       y = Math.cos(fieldRelativeAngle * 2 * Math.PI) * magnitude;
     }
-
-    //desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
-    //r = m_directionPIDController.calculate(m_gyro.getYaw() / 360.0, desiredDirection);
+    if (Math.abs(r) > 0) {
+      pidDirection = false;
+    }
+    if (SwerveConstants.kPIDDirection && pidDirection) {
+      desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
+      r = m_directionPIDController.calculate(getGyroAngle(), desiredDirection);
+    }
 
     drive(x, y, r);
   }
@@ -146,6 +150,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param tempSpeedMultiplier The final speed to multiply all of the outputs by
    */
   public void drive(double x, double y, double r, double tempSpeedMultiplier) {
+
     r *= SwerveConstants.kRotationSpeedMultiplier;
 
     //dimensions required for doing math
@@ -219,12 +224,18 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
+  public void setDesiredDirection(double direction) {
+    desiredDirection = direction;
+    pidDirection = true;
+  }
+
   public void setSpeedMultiplier(double speedMultiplier) {
     currentSpeedMultiplier = speedMultiplier;
   }
 
   public void reset() {
     m_gyro.reset();
+    desiredDirection = 0;
     
     m_frontLeftSwerveModule.reset();
     m_frontRightSwerveModule.reset();
@@ -233,7 +244,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public double getGyroAngle() {
-    return m_gyro.getAngle() / 360.0;
+    return MathFunc.putWithinHalfToHalf(m_gyro.getAngle() / 360.0);
   }
 
   private void createShuffleboardTab() {

@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -24,6 +26,8 @@ public class IntakeCommand extends Command {
   private final SwerveSubsystem m_swerveSubsystem;
 
   private double IntakeSpeed = IntakeConstants.kIntakeSpeed;
+  private int counts = 0;
+  private PowerDistribution m_PDP = new PowerDistribution(1, ModuleType.kRev);
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
@@ -36,18 +40,22 @@ public class IntakeCommand extends Command {
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeSubsystem);
-    addRequirements(armSubsystem);
   }
 
   @Override
   public void initialize() {
     m_armSubsystem.setPosition(ArmConstants.kArmFlatPosition);
     m_swerveSubsystem.setSpeedMultiplier(SwerveConstants.kIntakeSpeedMultiplier);
+    counts = 0;
   }
 
   @Override
   public void execute() {
     m_intakeSubsystem.setMotor(IntakeSpeed);
+    if (m_PDP.getCurrent(IntakeConstants.kIntakePDPChannel) > IntakeConstants.kIntakeCurrentThresholdAmps && counts > 25) {
+      m_armSubsystem.setPosition(ArmConstants.kArmDrivingPosition);
+    }
+    counts++;
   }
 
   @Override

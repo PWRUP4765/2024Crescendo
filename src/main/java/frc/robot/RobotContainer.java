@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,10 +16,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.RobotContainerConstants;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.Constants.*;
 import frc.robot.commands.*;
 import frc.robot.commands.composites.AutoScoreInAmp;
 import frc.robot.commands.composites.TeleScoreInAmp;
@@ -37,6 +35,7 @@ import frc.robot.util.controller.OperatorPanel;
 import frc.robot.util.controller.LogitechController.ButtonEnum;
 import frc.robot.util.identity.Identity;
 
+import com.ctre.phoenix.CANifier;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -75,8 +74,12 @@ public class RobotContainer {
     OperatorConstants.kFlightPortRight
   );
 
+  // final CANifier canifier = new CANifier(LEDConstants.canifierPort);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // canifier.configFactoryDefault();
 
     // if the Swerve is enabled, lets set the default command that the scheduler runs to a RunCommand, that depends on the
     // driver controllers joysticks
@@ -108,6 +111,10 @@ public class RobotContainer {
       m_armSubsystem.setDefaultCommand(
         new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
       );
+    } else {
+      m_armSubsystem.setDefaultCommand(
+        new RunCommand(() -> m_armSubsystem.disableArm(), m_armSubsystem)
+      );
     }
 
     if (!m_climbArmSubsystem.isArmOnBottom()) {
@@ -132,6 +139,19 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureFlightStickLeft() {
+    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.A.value)
+      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(0);}));
+    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.B.value)
+      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(0.25);}));
+    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.X.value)
+      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(0.5);}));
+    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.Y.value)
+      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(-0.25);}));
+
+
+
+
+
     ShuffleboardTab sb_tab = Shuffleboard.getTab("test");
 
     sb_tab.add("kDriveP", 1).getEntry();
@@ -171,7 +191,6 @@ public class RobotContainer {
         m_flightModule.rightFlightStick,
         FlightStick.ButtonEnum.X.value
       )
-        // JARED, you need to make a xconfig, which makes the wheels into a x shape to prevent being pushed by other robots.
         .onTrue(m_swerveSubsystem.runOnce(m_swerveSubsystem::reset));
     }
 

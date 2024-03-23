@@ -226,29 +226,4 @@ public class SwerveModule {
       turnCANcoder.getAbsolutePosition().getValueAsDouble()
     );
   }
-
-  private void updatePIDFromShuffleboard() {
-    //this method should only be used to tune PID; it should not be used during competition
-
-    if (sb_kTurnP.getDouble(0) != kTurnP) {
-      kTurnP = sb_kTurnP.getDouble(0);
-      m_turnPIDController.setP(kTurnP);
-    }
-    if (sb_kTurnI.getDouble(0) != kTurnI) {
-      kTurnI = sb_kTurnI.getDouble(0);
-      m_turnPIDController.setP(kTurnI);
-    }
-    if (sb_kTurnD.getDouble(0) != kTurnD) {
-      kTurnD = sb_kTurnD.getDouble(0);
-      m_turnPIDController.setD(kTurnD);
-    }
-    if (sb_kTurnIZ.getDouble(0) != kTurnIZ) {
-      kTurnIZ = sb_kTurnIZ.getDouble(0);
-      m_turnPIDController.setIZone(kTurnIZ);
-    }
-    if (sb_kTurnFF.getDouble(0) != kTurnFF) {
-      kTurnFF = sb_kTurnFF.getDouble(0);
-      m_turnPIDController.setFF(kTurnFF);
-    }
-  }
 }

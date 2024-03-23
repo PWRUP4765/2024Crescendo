@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -45,8 +44,8 @@ public final class Constants {
 
     // Arm PID constants
     public static final double kP = 3; // 2
-    public static final double kI = 0.002; // 0.004
-    public static final double kD = 4; // 6
+    public static final double kI = 0.002; // 0.002
+    public static final double kD = 4; // 4
     public static final double kIZ = 0;
     public static final double kIZone = 0;
     public static final double kFFCoefficient = 2.4; // 2.4
@@ -56,8 +55,8 @@ public final class Constants {
     public static final double kEncoderOffset = 0.082;
     public static final double kEncoderConversionFactor = 1.0;
 
-    public static final double kMinPosition = 0;
-    public static final double kMaxPosition = 0.25;
+    public static final double kArmMinPosition = 0;
+    public static final double kArmMaxPosition = 0.28;
 
     public static final double kArmFlatPosition = 0;
     public static final double kArmDrivingPosition = 0.11; // 0.12
@@ -75,6 +74,10 @@ public final class Constants {
 
     public static final String kCanbusAddress = ""; //TEMP
     public static final int kCurrentLimit = 40;
+
+    // Power Distribution Panel Constants
+    public static final int kIntakePDPChannel = 4; // TEMP
+    public static final double kIntakeCurrentThresholdAmps = 7; // TEMP: whether the intake is intaking a note
 
     // Motor Speeds
     public static final double kIntakeSpeed = 0.5; // TEMP
@@ -156,10 +159,11 @@ public final class Constants {
 
     public static final boolean kFieldRelative = true;
     public static final boolean kOptimizeAngles = true;
-    public static final double kDirectionP = 1;
-    public static final double kDirectionI = 0;
-    public static final double kDirectionD = 1;
-    public static final double kDirectionMultiplier = 0.5;
+    public static final boolean kPIDDirection = true;
+    public static final double kDirectionP = 2;
+    public static final double kDirectionI = 0.004;
+    public static final double kDirectionD = 0.02;
+    public static final double kDirectionMultiplier = 0.01;
 
     //PID values for the driving
     public static final double kDriveP = 0.01;
@@ -232,5 +236,9 @@ public final class Constants {
 
     public static final double kBlueAmpXPosition = 0; //TEMP WE NEED TO FIND THIS IN METERS
     public static final double kBlueAmpYPosition = 0;
+  }
+
+  public static class LEDConstants {
+    public static final int canifierPort = 5;
   }
 }

@@ -12,7 +12,7 @@ public class TurnAmount extends Command {
 
     private double desiredAngle;
     private final double angleChange;
-    
+
 
     /**
      * 

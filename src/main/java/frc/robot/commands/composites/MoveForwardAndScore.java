@@ -9,7 +9,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class MoveForwardAndScore extends SequentialCommandGroup {
-    
+
 
     public MoveForwardAndScore(
         SwerveSubsystem swerveSubsystem,

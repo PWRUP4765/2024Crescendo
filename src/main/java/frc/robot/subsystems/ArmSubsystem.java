@@ -6,10 +6,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -32,8 +30,6 @@ public class ArmSubsystem extends SubsystemBase {
   private GenericEntry sb_encoderPosition, sb_setPosition;
 
   private boolean isLocked = false;
-
-  private PowerDistribution m_PDP = new PowerDistribution();
   /**
    * Constructor class for ArmSubsystem
    */
@@ -73,11 +69,18 @@ public class ArmSubsystem extends SubsystemBase {
       );
   }
 
+  public void disableArm() {
+    m_armPIDController.setReference(
+      0, CANSparkBase.ControlType.kPosition,
+      1,
+      0);
+  }
+
   /**
    * Doesn't change the set position of the arm, but does change the arbFF of the motor controller based on the encoder position
    */
   public void updateFF() {
-    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.006) {
+    if (currentSetPosition == 0 && m_armEncoder.getPosition() < 0.009) {
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
@@ -86,7 +89,6 @@ public class ArmSubsystem extends SubsystemBase {
       );
       m_armPIDController.setIAccum(0);
     } else {
-      m_armMotor.setSmartCurrentLimit(ArmConstants.kArmCurrentLimit);
       m_armPIDController.setReference(
         currentSetPosition,
         CANSparkBase.ControlType.kPosition,
@@ -99,25 +101,22 @@ public class ArmSubsystem extends SubsystemBase {
 
   /**
    * The arm will begin moving to the desired position. 0 means flat forwards, 0.5 means flat backwards.
-   * @param Position The position to move to. Domain: [0, 0.25]
+   * @param Position The position to move to. Domain: [0, 0.28]
    */
   public void setPosition(double position) {
+    if (position > ArmConstants.kArmMaxPosition) {
+      position = ArmConstants.kArmMaxPosition;
+    } else if (position < ArmConstants.kArmMinPosition) {
+      position = ArmConstants.kArmMinPosition;
+    }
+
     if (!isLocked) {
       currentSetPosition = position;
     }
-
-    updateFF();
-    //sb_setPosition.setDouble(position);
   }
 
   public double getCurrentPosition() {
     return m_armEncoder.getPosition();
-  }
-
-  public Command setPositionCommand(double position) {
-    return runOnce(() -> {
-      setPosition(position);
-    });
   }
 
   public void createShuffleboardTab() {
@@ -130,6 +129,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void updateShuffleboardTab() {
     sb_encoderPosition.setDouble(m_armEncoder.getPosition());
+    sb_setPosition.setDouble(currentSetPosition);
   }
 
   /**

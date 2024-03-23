@@ -14,8 +14,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.util.controller.FlightModule;
-import frc.robot.util.controller.FlightStick;
-import frc.robot.util.controller.LogitechController;
 
 /** An example command that uses an example subsystem. */
 public class ScoreAuton extends SequentialCommandGroup {
