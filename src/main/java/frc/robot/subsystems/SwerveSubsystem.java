@@ -121,7 +121,11 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     if (Math.abs(r) > 0) {
       pidDirection = false;
+      desiredDirection = getGyroAngle();
+    } else {
+      pidDirection = true;
     }
+    
     if (SwerveConstants.kPIDDirection && pidDirection) {
       desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
       r = m_directionPIDController.calculate(getGyroAngle(), desiredDirection);
