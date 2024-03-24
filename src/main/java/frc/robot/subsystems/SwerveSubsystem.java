@@ -66,6 +66,7 @@ public class SwerveSubsystem extends SubsystemBase {
   );
   double currentSpeedMultiplier = SwerveConstants.kDefaultSpeedMultiplier;
   boolean pidDirection = false;
+  int countUntilPid = 0;
 
   //the Shuffleboard tab and entries
   private String sb_name = "SwerveSubsystem";
@@ -122,10 +123,14 @@ public class SwerveSubsystem extends SubsystemBase {
     if (Math.abs(r) > 0) {
       pidDirection = false;
       desiredDirection = getGyroAngle();
+      countUntilPid = 0;
+    } else if (countUntilPid < 25) {
+      desiredDirection = getGyroAngle();
+      countUntilPid++;
     } else {
       pidDirection = true;
     }
-    
+
     if (SwerveConstants.kPIDDirection && pidDirection) {
       desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
       r = m_directionPIDController.calculate(getGyroAngle(), desiredDirection);
