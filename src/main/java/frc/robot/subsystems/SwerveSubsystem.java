@@ -234,6 +234,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void setDesiredDirection(double direction) {
+    countUntilPid = 1000;
     desiredDirection = direction;
     pidDirection = true;
   }
