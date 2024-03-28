@@ -233,6 +233,12 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
+  public void setGyroAngle(double position) {
+    m_gyro.reset();
+    m_gyro.setAngleAdjustment(position * 360);
+    setDesiredDirection(getGyroAngle());
+  }
+
   public void setDesiredDirection(double direction) {
     countUntilPid = 1000;
     desiredDirection = direction;
@@ -245,6 +251,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void reset() {
     m_gyro.reset();
+    m_gyro.setAngleAdjustment(0);
     desiredDirection = 0;
     
     m_frontLeftSwerveModule.reset();

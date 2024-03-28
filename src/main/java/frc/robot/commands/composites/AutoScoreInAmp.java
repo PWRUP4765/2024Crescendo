@@ -8,6 +8,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AutoGoToAprilTag;
 import frc.robot.commands.OutputTimed;
+import frc.robot.commands.SetArmPositionCommand;
 import frc.robot.commands.WaitUntilArmDown;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -39,8 +40,10 @@ public class AutoScoreInAmp extends SequentialCommandGroup {
 
 
             // Move the arm up
-            armSubsystem.runOnce(() -> armSubsystem.setPosition(ArmConstants.kArmScoringPosition)),
-            
+            //new SetArmPositionCommand(armSubsystem, ArmConstants.kArmScoringPosition),
+            new SetArmPositionCommand(armSubsystem, ArmConstants.kArmScoringPosition),
+
+
             // Wait until the arm has moved to the right position
             new WaitUntilCommand(new BooleanSupplier() {
                 @Override
@@ -53,7 +56,7 @@ public class AutoScoreInAmp extends SequentialCommandGroup {
             new OutputTimed(intakeSubsystem, 1.0),
 
             // Move the arm back to middle
-            armSubsystem.runOnce(() -> armSubsystem.setPosition(ArmConstants.kArmDrivingPosition))
+            new SetArmPositionCommand(armSubsystem, ArmConstants.kArmDrivingPosition)
         );
     }
 }

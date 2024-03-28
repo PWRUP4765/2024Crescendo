@@ -36,6 +36,9 @@ public class MoveForwardIntake extends Command {
 
     @Override
     public void execute() {
+        if (m_armSubsystem.getCurrentPosition() >= 0.03) {
+            return;
+        }
         m_swerveSubsystem.drive(0, -0.2, 0);
         m_intakeSubsystem.setMotor(IntakeConstants.kIntakeSpeed);
         if (m_PDP.getCurrent(IntakeConstants.kIntakePDPChannel) > IntakeConstants.kIntakeCurrentThresholdAmps) {
@@ -45,6 +48,7 @@ public class MoveForwardIntake extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        m_swerveSubsystem.drive(0, 0, 0);
         m_intakeSubsystem.setMotor(0);
         m_armSubsystem.setPosition(ArmConstants.kArmDrivingPosition);
     }

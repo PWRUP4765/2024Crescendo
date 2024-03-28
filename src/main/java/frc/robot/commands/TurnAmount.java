@@ -2,13 +2,18 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.MathFunc;
 
 public class TurnAmount extends Command {
     
     private final SwerveSubsystem m_swerveSubsystem;
-    private final PIDController m_turnPIDController = new PIDController(1.2, 0, 0.2);
+    private final PIDController m_turnPIDController = new PIDController(
+        SwerveConstants.kDirectionP,
+        SwerveConstants.kDirectionI,
+        SwerveConstants.kDirectionD
+    );
 
     private double desiredAngle;
     private final double angleChange;

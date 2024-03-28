@@ -27,7 +27,7 @@ public class DoubleScore extends SequentialCommandGroup{
                 intakeSubsystem
             ),
             new MoveDirectionTimed(swerveSubsystem, 0, -0.1, 500),
-            new TurnAmount(swerveSubsystem, -0.05),
+            new TurnAmount(swerveSubsystem, -0.075),
             new MoveForwardIntake(
                 swerveSubsystem,
                 armSubsystem,

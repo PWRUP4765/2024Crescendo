@@ -1,10 +1,12 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.VisionSubsystem.VisionTarget;
+import frc.robot.util.DriverAllianceUtil;
 
 public class AutoGoToAprilTag extends Command {
 
@@ -64,6 +66,7 @@ public class AutoGoToAprilTag extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        m_swerveSubsystem.setGyroAngle(DriverAllianceUtil.getCurrentAlliance() == DriverStation.Alliance.Blue ? -0.25 : 0.25);
         m_swerveSubsystem.drive(0,0,0, SwerveConstants.kAutonSpeedMultiplier);
     }
 

@@ -33,7 +33,7 @@ public final class Constants {
   public static class RobotContainerConstants {
 
     public static final boolean kSwerveEnabled = true;
-    public static final boolean kArmEnabled = true;
+    public static final boolean kArmEnabled = false;
   }
 
   public static class ArmConstants {

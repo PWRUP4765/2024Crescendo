@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.OutputTimed;
+import frc.robot.commands.SetArmPositionCommand;
 import frc.robot.commands.TeleGoToAprilTag;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -36,7 +37,7 @@ public class TeleScoreInAmp extends SequentialCommandGroup {
             ),
 
             // Move the arm up
-            armSubsystem.runOnce(() -> armSubsystem.setPosition(ArmConstants.kArmScoringPosition)),
+            new SetArmPositionCommand(armSubsystem, ArmConstants.kArmScoringPosition),
             
             // Wait until the arm has moved to the right position
             new WaitUntilCommand(new BooleanSupplier() {
@@ -52,7 +53,7 @@ public class TeleScoreInAmp extends SequentialCommandGroup {
             new OutputTimed(intakeSubsystem, 1.0),
 
             // Move the arm back to middle
-            armSubsystem.runOnce(() -> armSubsystem.setPosition(ArmConstants.kArmDrivingPosition))
+            new SetArmPositionCommand(armSubsystem, ArmConstants.kArmDrivingPosition)
         );
     }
 }

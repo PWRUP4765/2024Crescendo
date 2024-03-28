@@ -21,6 +21,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.composites.AutoScoreInAmp;
 import frc.robot.commands.composites.TeleScoreInAmp;
 import frc.robot.commands.finals.DoNothing;
+import frc.robot.commands.finals.DoubleScore;
 import frc.robot.commands.finals.LeaveBox;
 import frc.robot.commands.finals.MoveScoreRetreat;
 import frc.robot.commands.finals.MoveScoreRetreatTurn;
@@ -80,6 +81,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     // canifier.configFactoryDefault();
+    
 
     // if the Swerve is enabled, lets set the default command that the scheduler runs to a RunCommand, that depends on the
     // driver controllers joysticks
@@ -121,6 +123,7 @@ public class RobotContainer {
       m_armSubsystem.setLocked(true, 0);
     }
 
+    
     // Configure the trigger bindings
     //configureOperatorLogitech();
     configureOperatorPanel();
@@ -148,7 +151,8 @@ public class RobotContainer {
     new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.Y.value)
       .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(-0.25);}));
 
-
+    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.B17.value)
+      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setGyroAngle(0.25);}));
 
 
 
@@ -216,7 +220,12 @@ public class RobotContainer {
           m_armSubsystem.getArmInterface()
         )
       );
-      
+    
+    
+    new JoystickButton(m_flightModule.rightFlightStick, FlightStick.ButtonEnum.B16.value)
+      .onTrue(
+        new SnapToAmp(m_swerveSubsystem)
+      );
     
 
 
@@ -362,12 +371,21 @@ public class RobotContainer {
       
     }
 
+    new JoystickButton(m_operatorPanel, OperatorPanel.ButtonEnum.BLACKBUTTON.value)
+      .onTrue(
+        m_swerveSubsystem.runOnce(m_swerveSubsystem::reset)
+      );
+
     new JoystickButton(m_operatorPanel, OperatorPanel.ButtonEnum.REDBUTTON.value)
       .whileTrue(
         new FlushCommand(m_intake)
       );
 
 
+    new JoystickButton(m_operatorPanel, OperatorPanel.ButtonEnum.GREENBUTTON.value)
+      .onTrue(
+        new SnapToAmp(m_swerveSubsystem)
+      );
 
 
   }
@@ -409,14 +427,17 @@ public class RobotContainer {
     // mid -> score and leave
 
     // An example command will be run in autonomous
-    if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDUP.value)) {
+    if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELUP.value)) {
+      return new DoNothing();
+    } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDUP.value)) {
       return new LeaveBox(m_swerveSubsystem);
     } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDDLE.value)) {
       return new MoveScoreRetreat(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
     } else if (m_operatorPanel.getRawButton(OperatorPanel.ButtonEnum.TOGGLEWHEELMIDDOWN.value)) {
       return new MoveScoreRetreatTurn(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
+    } else {
+      return new DoubleScore(m_swerveSubsystem, m_vision, m_armSubsystem, m_intake);
     }
 
-    return new DoNothing();
   }
 }
