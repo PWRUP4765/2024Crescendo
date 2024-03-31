@@ -25,7 +25,7 @@ public class MoveDirectionTimed extends Command {
     ) {
         m_swerveSubsystem = swerveSubsystem;
 
-        maxLoops = (int) (time / 20);
+        maxLoops = (int) (time / 20); //FIXME: change this to 50
 
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;

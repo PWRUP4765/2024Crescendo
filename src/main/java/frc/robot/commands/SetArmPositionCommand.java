@@ -12,6 +12,8 @@ public class SetArmPositionCommand extends Command {
 
         m_armSubsystem = armSubsystem;
         setPosition = position;
+
+        addRequirements(armSubsystem);
     }
 
     @Override

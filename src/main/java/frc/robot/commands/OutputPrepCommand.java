@@ -37,7 +37,6 @@ public class OutputPrepCommand extends Command {
 
   @Override
   public void execute() {
-    m_armSubsystem.updateFF();
   }
 
   @Override

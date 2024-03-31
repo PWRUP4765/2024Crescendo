@@ -108,17 +108,7 @@ public class RobotContainer {
         )
       );
     }
-    // if the arm is enabled, lets
-    if (RobotContainerConstants.kArmEnabled) {
-      m_armSubsystem.setDefaultCommand(
-        new RunCommand(() -> m_armSubsystem.updateFF(), m_armSubsystem)
-      );
-    } else {
-      m_armSubsystem.setDefaultCommand(
-        new RunCommand(() -> m_armSubsystem.disableArm(), m_armSubsystem)
-      );
-    }
-
+    
     if (!m_climbArmSubsystem.isArmOnBottom()) {
       m_armSubsystem.setLocked(true, 0);
     }

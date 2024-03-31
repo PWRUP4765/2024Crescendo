@@ -15,7 +15,7 @@ public class MoveForwardIntake extends Command {
     private final SwerveSubsystem m_swerveSubsystem;
     private final ArmSubsystem m_armSubsystem;
     private final IntakeSubsystem m_intakeSubsystem;
-    private PowerDistribution m_PDP = new PowerDistribution(1, ModuleType.kRev);
+    
 
     public MoveForwardIntake(
         SwerveSubsystem swerveSubsystem,
@@ -26,7 +26,7 @@ public class MoveForwardIntake extends Command {
         m_armSubsystem = armSubsystem;
         m_intakeSubsystem = intakeSubsystem;
 
-        addRequirements(swerveSubsystem, intakeSubsystem);
+        addRequirements(swerveSubsystem, intakeSubsystem, armSubsystem);
     }
 
     @Override
@@ -36,12 +36,12 @@ public class MoveForwardIntake extends Command {
 
     @Override
     public void execute() {
-        if (m_armSubsystem.getCurrentPosition() >= 0.03) {
+        if (m_armSubsystem.getCurrentPosition() >= 0.1) {
             return;
         }
         m_swerveSubsystem.drive(0, -0.2, 0);
         m_intakeSubsystem.setMotor(IntakeConstants.kIntakeSpeed);
-        if (m_PDP.getCurrent(IntakeConstants.kIntakePDPChannel) > IntakeConstants.kIntakeCurrentThresholdAmps) {
+        if (m_intakeSubsystem.getIntakeCurrent() > IntakeConstants.kIntakeCurrentThresholdAmps) {
             m_armSubsystem.setPosition(ArmConstants.kArmDrivingPosition);
         }
     }

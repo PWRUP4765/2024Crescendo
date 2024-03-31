@@ -33,14 +33,14 @@ public final class Constants {
   public static class RobotContainerConstants {
 
     public static final boolean kSwerveEnabled = true;
-    public static final boolean kArmEnabled = false;
+    public static final boolean kArmEnabled = true;
   }
 
   public static class ArmConstants {
 
     public static final int kArmMotorPort = 32;
     public static final boolean kArmMotorReversed = false;
-    public static final int kArmCurrentLimit = 20;
+    public static final int kArmCurrentLimit = 16;
 
     // Arm PID constants
     public static final double kP = 3; // 2
@@ -56,11 +56,11 @@ public final class Constants {
     public static final double kEncoderConversionFactor = 1.0;
 
     public static final double kArmMinPosition = 0;
-    public static final double kArmMaxPosition = 0.28;
+    public static final double kArmMaxPosition = 0.3;
 
     public static final double kArmFlatPosition = 0;
     public static final double kArmDrivingPosition = 0.11; // 0.12
-    public static final double kArmScoringPosition = 0.27;
+    public static final double kArmScoringPosition = 0.29;
   }
 
   public static class ClimbArmConstants {

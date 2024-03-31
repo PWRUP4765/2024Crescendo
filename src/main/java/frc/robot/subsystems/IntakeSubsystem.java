@@ -10,6 +10,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +22,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private PWMTalonSRX m_intakeMotor;
     private IntakeSensor m_sensor;
+    private PowerDistribution m_PDP = new PowerDistribution(1, ModuleType.kRev);
 
     public IntakeSubsystem(){
         m_intakeMotor = new PWMTalonSRX(9);
@@ -48,6 +51,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean isDetected(){
        return m_sensor.isDetected();
     }
+
+    public double getIntakeCurrent() {
+        return m_PDP.getCurrent(IntakeConstants.kIntakePDPChannel);
+    }
+
+
 
     public class IntakeSensor { 
 

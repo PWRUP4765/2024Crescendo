@@ -53,7 +53,7 @@ public class TurnAmount extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) < 0.008
-        || Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) > 359.992;
+        return Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) < 0.016
+        || Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) > 359.984;
     }
 }

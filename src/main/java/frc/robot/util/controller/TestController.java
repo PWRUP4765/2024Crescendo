@@ -2,8 +2,6 @@ package frc.robot.util.controller;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.error.NoChannelFoundException;
-import java.util.List;
 
 /**
  * @author goofball06
@@ -11,8 +9,8 @@ import java.util.List;
  */
 public class TestController extends Joystick {
 
-  public ButtonList Buttons = new ButtonList();
-  public AxisList Axes = new AxisList();
+  public final ButtonList Buttons = new ButtonList();
+  public final AxisList Axes = new AxisList();
 
   public class ButtonList {
     public Button

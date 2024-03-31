@@ -25,7 +25,10 @@ public class VisionSubsystem extends SubsystemBase {
   private double
   m_xCalculation = 0,
   m_yCalculation = 0,
-  m_rotCalculation = 0;
+  m_rotCalculation = 0,
+  m_xDistanceFromTarget,
+  m_yDistanceFromTarget,
+  m_rotDistanceFromTarget;
 
   private final PIDController m_xController = new PIDController(
     VisionConstants.kXP,
@@ -67,13 +70,16 @@ public class VisionSubsystem extends SubsystemBase {
   }
   
   public void updateCalculations(VisionTarget target, double xGoal, double yGoal, double rotGoal) {
+    m_xDistanceFromTarget = target.getX() - xGoal;
+    m_yDistanceFromTarget = target.getY() - yGoal;
+    m_rotDistanceFromTarget = target.getZRotation() - rotGoal;
     m_xCalculation = calculateSidewaysSpeedX(target, xGoal);
     m_yCalculation = calculateForwardSpeedY(target, yGoal);
     m_rotCalculation = calculateRotationSpeed(target, rotGoal);
   }
   
   public boolean isAtTarget() {
-    return Math.abs(m_xCalculation) < 0.03 && Math.abs(m_yCalculation) < 0.03 && Math.abs(m_rotCalculation) < 0.03;
+    return Math.abs(m_xDistanceFromTarget) < 0.03 && Math.abs(m_yDistanceFromTarget) < 0.03 && Math.abs(m_rotDistanceFromTarget) < 0.03;
   }
 
   public double getSidewaysSpeedX() {

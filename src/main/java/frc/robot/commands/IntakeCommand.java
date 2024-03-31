@@ -27,7 +27,6 @@ public class IntakeCommand extends Command {
 
   private double IntakeSpeed = IntakeConstants.kIntakeSpeed;
   private int counts = 0;
-  private PowerDistribution m_PDP = new PowerDistribution(1, ModuleType.kRev);
 
   /**
    * @param intakeSubsystem The subsystem used by this command.
@@ -39,7 +38,7 @@ public class IntakeCommand extends Command {
     this.m_swerveSubsystem = swerveSubsystem;
     
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intakeSubsystem);
+    addRequirements(intakeSubsystem, armSubsystem);
   }
 
   @Override
@@ -52,7 +51,7 @@ public class IntakeCommand extends Command {
   @Override
   public void execute() {
     m_intakeSubsystem.setMotor(IntakeSpeed);
-    if (m_PDP.getCurrent(IntakeConstants.kIntakePDPChannel) > IntakeConstants.kIntakeCurrentThresholdAmps && counts > 25) {
+    if (m_intakeSubsystem.getIntakeCurrent() > IntakeConstants.kIntakeCurrentThresholdAmps && counts > 25) {
       m_armSubsystem.setPosition(ArmConstants.kArmDrivingPosition);
     }
     counts++;
