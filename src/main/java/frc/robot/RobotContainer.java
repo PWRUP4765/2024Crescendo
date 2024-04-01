@@ -141,9 +141,6 @@ public class RobotContainer {
     new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.Y.value)
       .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setDesiredDirection(-0.25);}));
 
-    new JoystickButton(m_flightModule.leftFlightStick, FlightStick.ButtonEnum.B17.value)
-      .onTrue(m_swerveSubsystem.runOnce(() -> {m_swerveSubsystem.setGyroAngle(0.25);}));
-
 
 
     ShuffleboardTab sb_tab = Shuffleboard.getTab("test");

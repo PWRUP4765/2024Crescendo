@@ -3,10 +3,14 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.hardware.HardwareComponents;
+import frc.robot.hardware.navX;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.MathFunc;
 
 public class TurnAmount extends Command {
+
+    private final navX m_gyro = HardwareComponents.gyro;
     
     private final SwerveSubsystem m_swerveSubsystem;
     private final PIDController m_turnPIDController = new PIDController(
@@ -34,13 +38,13 @@ public class TurnAmount extends Command {
 
     @Override
     public void initialize() {
-        desiredAngle = m_swerveSubsystem.getGyroAngle() + angleChange;
+        desiredAngle = m_gyro.getAngle() + angleChange;
         desiredAngle = MathFunc.putWithinHalfToHalf(desiredAngle);
     }
 
     @Override
     public void execute() {
-        double currentAngle = m_swerveSubsystem.getGyroAngle();
+        double currentAngle = m_gyro.getAngle();
         double rotationSpeed = m_turnPIDController.calculate(currentAngle, desiredAngle);
 
         m_swerveSubsystem.drive(0, 0, rotationSpeed);
@@ -53,7 +57,7 @@ public class TurnAmount extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) < 0.016
-        || Math.abs(m_swerveSubsystem.getGyroAngle() - desiredAngle) > 359.984;
+        return Math.abs(m_gyro.getAngle() - desiredAngle) < 0.016
+        || Math.abs(m_gyro.getAngle() - desiredAngle) > 359.984;
     }
 }

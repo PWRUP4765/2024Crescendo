@@ -1,15 +1,14 @@
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.hardware.HardwareComponents;
+import frc.robot.hardware.navX;
 import frc.robot.util.MathFunc;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -56,17 +55,17 @@ public class SwerveSubsystem extends SubsystemBase {
   );
 
   //the gyroscope
-  AHRS m_gyro = new AHRS(I2C.Port.kMXP);
+  private final navX m_gyro = HardwareComponents.gyro;
 
-  double desiredDirection;
-  PIDController m_directionPIDController = new PIDController(
+  private double desiredDirection;
+  private PIDController m_directionPIDController = new PIDController(
     SwerveConstants.kDirectionP,
     SwerveConstants.kDirectionI,
     SwerveConstants.kDirectionD
   );
-  double currentSpeedMultiplier = SwerveConstants.kDefaultSpeedMultiplier;
-  boolean pidDirection = false;
-  int countUntilPid = 0;
+  private double currentSpeedMultiplier = SwerveConstants.kDefaultSpeedMultiplier;
+  private boolean pidDirection = false;
+  private int countUntilPid = 0;
 
   //the Shuffleboard tab and entries
   private String sb_name = "SwerveSubsystem";
@@ -111,7 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     //adjusting for field relativity if necessary
     if (SwerveConstants.kFieldRelative) {
-      double gyroAngle = getGyroAngle(); //this gets the angle and puts it from -1/2 to 1/2
+      double gyroAngle = m_gyro.getAngle(); //this gets the angle and puts it from -1/2 to 1/2
       double nonFieldRelativeAngle = Math.atan2(x, y) / (2 * Math.PI); //again, the return value is from -1/2 to 1/2
       double fieldRelativeAngle = nonFieldRelativeAngle - gyroAngle;
 
@@ -122,10 +121,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     if (Math.abs(r) > 0) {
       pidDirection = false;
-      desiredDirection = getGyroAngle();
+      desiredDirection = m_gyro.getAngle();
       countUntilPid = 0;
     } else if (countUntilPid < 25) {
-      desiredDirection = getGyroAngle();
+      desiredDirection = m_gyro.getAngle();
       countUntilPid++;
     } else {
       pidDirection = true;
@@ -133,7 +132,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     if (SwerveConstants.kPIDDirection && pidDirection) {
       desiredDirection = MathFunc.putWithinHalfToHalf(desiredDirection + (r * SwerveConstants.kDirectionMultiplier));
-      r = m_directionPIDController.calculate(getGyroAngle(), desiredDirection);
+      r = m_directionPIDController.calculate(m_gyro.getAngle(), desiredDirection);
     }
 
     drive(x, y, r);
@@ -233,12 +232,6 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
-  public void setGyroAngle(double position) {
-    m_gyro.reset();
-    m_gyro.setAngleAdjustment(position * 360);
-    setDesiredDirection(getGyroAngle());
-  }
-
   public void setDesiredDirection(double direction) {
     countUntilPid = 1000;
     desiredDirection = direction;
@@ -258,10 +251,6 @@ public class SwerveSubsystem extends SubsystemBase {
     m_frontRightSwerveModule.reset();
     m_rearLeftSwerveModule.reset();
     m_rearRightSwerveModule.reset();
-  }
-
-  public double getGyroAngle() {
-    return MathFunc.putWithinHalfToHalf(m_gyro.getAngle() / 360.0);
   }
 
   private void createShuffleboardTab() {
