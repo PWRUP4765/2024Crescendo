@@ -4,5 +4,6 @@ import edu.wpi.first.wpilibj.I2C;
 
 public class HardwareComponents {
     
-    public static navX gyro = new navX(I2C.Port.kMXP);
+    public static NavX gyro = new NavX(I2C.Port.kMXP);
+    // public static IntakeSensor intakeSensor = new IntakeSensor();
 }

@@ -7,12 +7,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * @author goofball06
  * @co-author godbrigero
  */
-public class TestController extends Joystick {
+public class FlightStickTest extends Joystick {
 
   public final ButtonList Buttons = new ButtonList();
   public final AxisList Axes = new AxisList();
 
   public class ButtonList {
+    
     public Button
     X = new Button(1),
     A = new Button(2),
@@ -43,11 +44,11 @@ public class TestController extends Joystick {
       public int value;
 
       public JoystickButton pressTrigger() {
-        return new JoystickButton(TestController.this, this.value);
+        return new JoystickButton(FlightStickTest.this, this.value);
       }
 
       public boolean getRawButton() {
-        return TestController.this.getRawButton(value);
+        return FlightStickTest.this.getRawButton(value);
       }
 
       public Button(int val) {
@@ -61,6 +62,16 @@ public class TestController extends Joystick {
    */
   public class AxisList {
 
+    public Axis 
+    JOYSTICKX = new Axis(0),
+    JOYSTICKY = new Axis(1),
+    JOYSTICKROTATION = new Axis(2),
+    H2X = new Axis(3),
+    H2Y = new Axis(4),
+    LEFTSLIDER = new Axis(5),
+    SCROLLWHEEL = new Axis(6),
+    RIGHTSLIDER = new Axis(7);
+
     public Axis placeholder = new Axis(0);
 
     public class Axis {
@@ -68,7 +79,7 @@ public class TestController extends Joystick {
       public int value;
 
       public double getRawAxis() {
-        return TestController.this.getRawAxis(value);
+        return FlightStickTest.this.getRawAxis(value);
       }
 
       public Axis(int val) {
@@ -80,7 +91,7 @@ public class TestController extends Joystick {
   /**
    * @param port the port of the controller
    */
-  public TestController(int port) {
+  public FlightStickTest(int port) {
     super(port);
   }
 }

@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.hardware.HardwareComponents;
-import frc.robot.hardware.navX;
+import frc.robot.hardware.NavX;
+import frc.robot.subsystems.subsystem_bases.SwerveSubsystemBase;
 import frc.robot.util.MathFunc;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -55,7 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
   );
 
   //the gyroscope
-  private final navX m_gyro = HardwareComponents.gyro;
+  private final NavX m_gyro = HardwareComponents.gyro;
 
   private double desiredDirection;
   private PIDController m_directionPIDController = new PIDController(
@@ -88,6 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param y The backward to forward translation of the robot. Domain: [-1, 1]
    * @param r The rotational movement of the robot. Domain: [-1, 1]
    */
+  // @Override
   public void joystickDrive(double x, double y, double r) {
     x =
       MathFunc.deadband(
@@ -145,6 +147,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param y The backward to forward translation of the robot. Domain: [-1, 1]
    * @param r The rotational movement of the robot. Domain: [-1, 1]
    */
+  // @Override
   public void drive(double x, double y, double r) {
     drive(x, y, r, currentSpeedMultiplier);
   }
@@ -157,6 +160,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param r The rotational movement of the robot. Domain: [-1, 1]
    * @param tempSpeedMultiplier The final speed to multiply all of the outputs by
    */
+  // @Override
   public void drive(double x, double y, double r, double tempSpeedMultiplier) {
 
     r *= SwerveConstants.kRotationSpeedMultiplier;
@@ -232,19 +236,21 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
+  // @Override
   public void setDesiredDirection(double direction) {
     countUntilPid = 1000;
     desiredDirection = direction;
     pidDirection = true;
   }
 
+  // @Override
   public void setSpeedMultiplier(double speedMultiplier) {
     currentSpeedMultiplier = speedMultiplier;
   }
 
+  // @Override
   public void reset() {
     m_gyro.reset();
-    m_gyro.setAngleAdjustment(0);
     desiredDirection = 0;
     
     m_frontLeftSwerveModule.reset();
@@ -296,6 +302,7 @@ public class SwerveSubsystem extends SubsystemBase {
     sb_NAVXRoll.setDouble(m_gyro.getRoll());
   }
 
+  // @Override
   public SwerveModulePosition[] getSwerveModulePositions() {
     return new SwerveModulePosition[] {
       m_frontLeftSwerveModule.getPosition(),

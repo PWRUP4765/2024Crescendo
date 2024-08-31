@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -105,7 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   /**
    * The arm will begin moving to the desired position. 0 means flat forwards, 0.5 means flat backwards.
-   * @param Position The position to move to. Domain: [0, 0.28]
+   * @param Position The position to move to. Domain: [0, 0.3]
    */
   public void setPosition(double position) {
     if (position > ArmConstants.kArmMaxPosition) {

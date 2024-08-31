@@ -4,13 +4,13 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.hardware.HardwareComponents;
-import frc.robot.hardware.navX;
+import frc.robot.hardware.NavX;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.MathFunc;
 
 public class TurnAmount extends Command {
 
-    private final navX m_gyro = HardwareComponents.gyro;
+    private final NavX m_gyro = HardwareComponents.gyro;
     
     private final SwerveSubsystem m_swerveSubsystem;
     private final PIDController m_turnPIDController = new PIDController(

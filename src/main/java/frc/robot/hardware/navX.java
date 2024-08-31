@@ -7,18 +7,24 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.util.MathFunc;
 
-public class navX extends AHRS {
+public class NavX extends AHRS {
 
-    public navX(SPI.Port spi_port_id) {
+    public NavX(SPI.Port spi_port_id) {
         super(spi_port_id);
     }
 
-    public navX(I2C.Port i2c_port_id) {
+    public NavX(I2C.Port i2c_port_id) {
         super(i2c_port_id);
     }
 
-    public navX(SerialPort.Port serial_port_id) {
+    public NavX(SerialPort.Port serial_port_id) {
         super(serial_port_id);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        super.setAngleAdjustment(0);
     }
 
     @Override
